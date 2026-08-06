@@ -12,8 +12,10 @@
       --bg-card: #ffffff;
       --bg-card-hover: #f1f5f9;
       --bg-subtle: #f1f5f9;
-      --bg-category: #e2e8f0;
-      --bg-category-hover: #cbd5e1;
+      --bg-level1: #e2e8f0;
+      --bg-level1-hover: #cbd5e1;
+      --bg-level2: #f1f5f9;
+      --bg-level2-hover: #e2e8f0;
       --border-color: #e2e8f0;
       --border-bright: #cbd5e1;
       --text-main: #0f172a;
@@ -52,6 +54,7 @@
       --role-bg: #e0e7ff;
       --role-text: #3730a3;
       --category-text: #312e81;
+      --subcategory-text: #4338ca;
       --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
       --switcher-bg: #e2e8f0;
       --control-height: 36px;
@@ -61,8 +64,10 @@
       --bg-card: #111827;
       --bg-card-hover: #1f2937;
       --bg-subtle: #0f172a;
-      --bg-category: #172033;
-      --bg-category-hover: #1e293b;
+      --bg-level1: #1e293b;
+      --bg-level1-hover: #334155;
+      --bg-level2: #172033;
+      --bg-level2-hover: #1f293d;
       --border-color: #1f293d;
       --border-bright: #374151;
       --text-main: #f3f4f6;
@@ -100,7 +105,8 @@
 
       --role-bg: rgba(255, 255, 255, 0.08);
       --role-text: #e5e7eb;
-      --category-text: #a5b4fc;
+      --category-text: #c7d2fe;
+      --subcategory-text: #a5b4fc;
       --card-shadow: none;
       --switcher-bg: #1f293d;
       --control-height: 36px;
@@ -420,11 +426,11 @@
       background: var(--bg-card-hover);
     }
 
-    /* Foldable Category Header Row in Table */
-    tr.category-row td {
-      background: var(--bg-category);
+    /* 2-Level Nested Foldable Group Rows */
+    tr.level1-row td {
+      background: var(--bg-level1);
       font-weight: 700;
-      font-size: 0.875rem;
+      font-size: 0.9rem;
       color: var(--category-text);
       border-top: 1px solid var(--border-bright);
       border-bottom: 1px solid var(--border-bright);
@@ -433,11 +439,32 @@
       transition: background-color 0.2s ease;
     }
 
-    tr.category-row:hover td {
-      background: var(--bg-category-hover);
+    tr.level1-row:hover td {
+      background: var(--bg-level1-hover);
     }
 
-    .category-header-content {
+    tr.level2-row td {
+      background: var(--bg-level2);
+      font-weight: 600;
+      font-size: 0.85rem;
+      color: var(--subcategory-text);
+      border-bottom: 1px solid var(--border-color);
+      cursor: pointer;
+      user-select: none;
+      padding-left: 2rem;
+      transition: background-color 0.2s ease;
+    }
+
+    tr.level2-row:hover td {
+      background: var(--bg-level2-hover);
+    }
+
+    /* Indent data rows under level 2 */
+    tr.level2-item-row td:first-child {
+      padding-left: 1.5rem;
+    }
+
+    .group-header-content {
       display: flex;
       align-items: center;
       gap: 0.5rem;
@@ -452,13 +479,13 @@
     }
 
     .category-count-badge {
-      font-size: 0.75rem;
+      font-size: 0.725rem;
       font-weight: 600;
       color: var(--text-muted);
       background: var(--bg-card);
       padding: 0.1rem 0.45rem;
       border-radius: 10px;
-      margin-left: 0.4rem;
+      margin-left: 0.3rem;
     }
 
     /* Badges */
@@ -1155,10 +1182,11 @@
       }
     ];
 
-    // User Switcher, Dynamic Theme & Collapsible Category State
+    // User Switcher, Dynamic Theme & 2-Level Collapsible Sets
     let currentUser = "Anton";
     let currentFilter = "ALL";
-    const collapsedCategories = new Set();
+    const collapsedLevel1 = new Set();
+    const collapsedLevel2 = new Set();
     const userPills = document.querySelectorAll('.user-pill-btn');
 
     function applyUserTheme(userName) {
@@ -1209,7 +1237,7 @@
       return dataset.filter(item => item.status === currentFilter);
     }
 
-    // Render Table View with Collapsible Category Headers
+    // Render Table View with 2-Level Nested Collapsible Categories
     function renderTableView(data) {
       const tbody = document.getElementById('tableBody');
       tbody.innerHTML = '';
@@ -1219,60 +1247,129 @@
         return;
       }
 
-      // Group data by category
-      const categoriesMap = new Map();
+      // Build 2-Level Nested Hierarchy Map: Level1 -> Level2 -> Items
+      const hierarchy = new Map();
+
       data.forEach(item => {
-        if (!categoriesMap.has(item.category)) {
-          categoriesMap.set(item.category, []);
+        const parts = item.category.split('>').map(s => s.trim());
+        const level1 = parts[0];
+        const level2 = parts[1] || null;
+
+        if (!hierarchy.has(level1)) {
+          hierarchy.set(level1, new Map());
         }
-        categoriesMap.get(item.category).push(item);
+        const level1Map = hierarchy.get(level1);
+
+        if (!level1Map.has(level2)) {
+          level1Map.set(level2, []);
+        }
+        level1Map.get(level2).push(item);
       });
 
-      categoriesMap.forEach((items, categoryName) => {
-        const isCollapsed = collapsedCategories.has(categoryName);
-        
-        // Category Header Row
-        const catRow = document.createElement('tr');
-        catRow.className = 'category-row';
-        catRow.title = 'Click to fold/unfold category items';
-        catRow.innerHTML = `
+      // Render Hierarchy
+      hierarchy.forEach((level2Map, level1Name) => {
+        // Calculate total items under Level 1
+        let level1TotalItems = 0;
+        level2Map.forEach(items => { level1TotalItems += items.length; });
+
+        const isL1Collapsed = collapsedLevel1.has(level1Name);
+
+        // Level 1 Row
+        const l1Row = document.createElement('tr');
+        l1Row.className = 'level1-row';
+        l1Row.title = 'Click to fold/unfold main category';
+        l1Row.innerHTML = `
           <td colspan="5">
-            <div class="category-header-content">
-              <span class="fold-arrow">${isCollapsed ? '▶' : '▼'}</span>
-              <span>📂 ${categoryName}</span>
-              <span class="category-count-badge">${items.length}</span>
+            <div class="group-header-content">
+              <span class="fold-arrow">${isL1Collapsed ? '▶' : '▼'}</span>
+              <span>📁 ${level1Name}</span>
+              <span class="category-count-badge">${level1TotalItems}</span>
             </div>
           </td>
         `;
 
-        catRow.addEventListener('click', () => {
-          if (collapsedCategories.has(categoryName)) {
-            collapsedCategories.delete(categoryName);
+        l1Row.addEventListener('click', () => {
+          if (collapsedLevel1.has(level1Name)) {
+            collapsedLevel1.delete(level1Name);
           } else {
-            collapsedCategories.add(categoryName);
+            collapsedLevel1.add(level1Name);
           }
           renderTableView(getFilteredData());
         });
 
-        tbody.appendChild(catRow);
+        tbody.appendChild(l1Row);
 
-        // Render category item rows if not collapsed
-        if (!isCollapsed) {
-          items.forEach(item => {
-            const tr = document.createElement('tr');
-            tr.className = 'item-row';
-            tr.innerHTML = `
-              <td>${getStatusBadge(item.status)}</td>
-              <td>${getPriorityBadge(item.priority)}</td>
-              <td>${item.role ? `<span class="role-tag">${item.role}</span>` : '<span style="color: var(--text-dim); font-size: 0.75rem;">—</span>'}</td>
-              <td style="font-weight: 500; color: var(--text-main);">${item.issue || ''}</td>
-              <td>
-                ${item.response ? `<div class="text-response">${item.response}</div>` : ''}
-                ${item.notes ? `<div class="text-notes">💬 ${item.notes}</div>` : ''}
-                ${!item.response && !item.notes ? '<span style="color: var(--text-dim); font-size: 0.75rem;">—</span>' : ''}
-              </td>
-            `;
-            tbody.appendChild(tr);
+        // If Level 1 is expanded, render Level 2 subcategories
+        if (!isL1Collapsed) {
+          level2Map.forEach((items, level2Name) => {
+            // Case A: Has a Level 2 subcategory
+            if (level2Name) {
+              const l2Key = `${level1Name} > ${level2Name}`;
+              const isL2Collapsed = collapsedLevel2.has(l2Key);
+
+              const l2Row = document.createElement('tr');
+              l2Row.className = 'level2-row';
+              l2Row.title = 'Click to fold/unfold subcategory';
+              l2Row.innerHTML = `
+                <td colspan="5">
+                  <div class="group-header-content">
+                    <span class="fold-arrow">${isL2Collapsed ? '▶' : '▼'}</span>
+                    <span>📄 ${level2Name}</span>
+                    <span class="category-count-badge">${items.length}</span>
+                  </div>
+                </td>
+              `;
+
+              l2Row.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (collapsedLevel2.has(l2Key)) {
+                  collapsedLevel2.delete(l2Key);
+                } else {
+                  collapsedLevel2.add(l2Key);
+                }
+                renderTableView(getFilteredData());
+              });
+
+              tbody.appendChild(l2Row);
+
+              // Render data rows under Level 2 if not collapsed
+              if (!isL2Collapsed) {
+                items.forEach(item => {
+                  const tr = document.createElement('tr');
+                  tr.className = 'item-row level2-item-row';
+                  tr.innerHTML = `
+                    <td>${getStatusBadge(item.status)}</td>
+                    <td>${getPriorityBadge(item.priority)}</td>
+                    <td>${item.role ? `<span class="role-tag">${item.role}</span>` : '<span style="color: var(--text-dim); font-size: 0.75rem;">—</span>'}</td>
+                    <td style="font-weight: 500; color: var(--text-main);">${item.issue || ''}</td>
+                    <td>
+                      ${item.response ? `<div class="text-response">${item.response}</div>` : ''}
+                      ${item.notes ? `<div class="text-notes">💬 ${item.notes}</div>` : ''}
+                      ${!item.response && !item.notes ? '<span style="color: var(--text-dim); font-size: 0.75rem;">—</span>' : ''}
+                    </td>
+                  `;
+                  tbody.appendChild(tr);
+                });
+              }
+            } else {
+              // Case B: Directly under Level 1 (no level 2 name)
+              items.forEach(item => {
+                const tr = document.createElement('tr');
+                tr.className = 'item-row';
+                tr.innerHTML = `
+                  <td>${getStatusBadge(item.status)}</td>
+                  <td>${getPriorityBadge(item.priority)}</td>
+                  <td>${item.role ? `<span class="role-tag">${item.role}</span>` : '<span style="color: var(--text-dim); font-size: 0.75rem;">—</span>'}</td>
+                  <td style="font-weight: 500; color: var(--text-main);">${item.issue || ''}</td>
+                  <td>
+                    ${item.response ? `<div class="text-response">${item.response}</div>` : ''}
+                    ${item.notes ? `<div class="text-notes">💬 ${item.notes}</div>` : ''}
+                    ${!item.response && !item.notes ? '<span style="color: var(--text-dim); font-size: 0.75rem;">—</span>' : ''}
+                  </td>
+                `;
+                tbody.appendChild(tr);
+              });
+            }
           });
         }
       });

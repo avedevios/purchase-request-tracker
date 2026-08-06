@@ -51,6 +51,14 @@
       --prio-could-bg: #dcfce7;
       --prio-could-text: #15803d;
 
+      --ball-anton-bg: #e0e7ff;
+      --ball-anton-text: #3730a3;
+      --ball-anton-border: #c7d2fe;
+
+      --ball-adonis-bg: #d1fae5;
+      --ball-adonis-text: #065f46;
+      --ball-adonis-border: #a7f3d0;
+
       --role-bg: #e0e7ff;
       --role-text: #3730a3;
       --category-text: #312e81;
@@ -102,6 +110,14 @@
 
       --prio-could-bg: rgba(34, 197, 94, 0.2);
       --prio-could-text: #86efac;
+
+      --ball-anton-bg: rgba(99, 102, 241, 0.2);
+      --ball-anton-text: #c7d2fe;
+      --ball-anton-border: rgba(165, 180, 252, 0.3);
+
+      --ball-adonis-bg: rgba(16, 185, 129, 0.2);
+      --ball-adonis-text: #a7f3d0;
+      --ball-adonis-border: rgba(167, 243, 208, 0.3);
 
       --role-bg: rgba(255, 255, 255, 0.08);
       --role-text: #e5e7eb;
@@ -321,6 +337,31 @@
       background: var(--primary-hover);
     }
 
+    /* Styled Response Column Action Button */
+    .btn-response-action {
+      background: var(--bg-card);
+      border: 1px solid var(--border-bright);
+      color: var(--text-main);
+      padding: 0.22rem 0.65rem;
+      border-radius: 6px;
+      font-size: 0.775rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+      margin-bottom: 0.2rem;
+    }
+
+    .btn-response-action:hover {
+      background: var(--primary);
+      color: #ffffff;
+      border-color: var(--primary);
+      transform: translateY(-1px);
+    }
+
     /* View Switcher Toggle */
     .view-toggle {
       background: var(--switcher-bg);
@@ -372,6 +413,25 @@
       background-position: right 0.35rem center;
       background-size: 9px;
       line-height: 1.2;
+    }
+
+    /* Where is ball Badge Select Tints */
+    .badge-select.ball-anton {
+      background-color: var(--ball-anton-bg);
+      color: var(--ball-anton-text);
+      border-color: var(--ball-anton-border);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 24 24' fill='%236366f1'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    }
+    .badge-select.ball-adonis {
+      background-color: var(--ball-adonis-bg);
+      color: var(--ball-adonis-text);
+      border-color: var(--ball-adonis-border);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 24 24' fill='%2310b981'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    }
+    .badge-select.ball-none {
+      background-color: transparent;
+      color: var(--text-dim);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 24 24' fill='%2394a3b8'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
     }
 
     .badge-select.status-fixed {
@@ -882,6 +942,7 @@
       <table>
         <thead>
           <tr>
+            <th style="width: 120px;">Where is ball</th>
             <th style="width: 125px;">Status</th>
             <th style="width: 105px;">Priority</th>
             <th style="width: 85px;">Role</th>
@@ -909,6 +970,7 @@
   <script>
     const defaultLocalData = [
       {
+        "ball": null,
         "category": "Main menu",
         "status": "Fixed",
         "priority": "Should",
@@ -918,6 +980,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "Main menu",
         "status": "Backlog",
         "priority": "Could",
@@ -927,6 +990,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "Purchase Request Form > Purchase Request Form Fields",
         "status": "Fixed",
         "priority": null,
@@ -936,6 +1000,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "Purchase Request Form > Purchase Request Form Fields",
         "status": "Fixed",
         "priority": "Should",
@@ -945,6 +1010,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "Purchase Request Form > Purchase Request Form Fields",
         "status": "Backlog",
         "priority": "Could",
@@ -954,6 +1020,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "Purchase Request Form > Purchase Request Form Behavior",
         "status": "Fixed",
         "priority": "Must",
@@ -963,6 +1030,7 @@
         "notes": "Fixed"
       },
       {
+        "ball": null,
         "category": "Purchase Request Form > Purchase Request Form Behavior",
         "status": "Fixed",
         "priority": "Should",
@@ -972,6 +1040,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "Purchase Request Form > Purchase Request Form Behavior",
         "status": "Backlog",
         "priority": "Could",
@@ -981,6 +1050,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "Purchase Request List",
         "status": "Fixed",
         "priority": "Must",
@@ -990,6 +1060,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "Manage Purchase Request Form",
         "status": "Fixed",
         "priority": null,
@@ -999,6 +1070,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "Manage Purchase Request Form",
         "status": "Fixed",
         "priority": null,
@@ -1008,6 +1080,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "Manage Purchase Request Form",
         "status": "Fixed",
         "priority": null,
@@ -1017,6 +1090,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "Manage Purchase Request Form",
         "status": "Deprecated",
         "priority": null,
@@ -1026,6 +1100,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "Manage Purchase Request Form",
         "status": "Deprecated",
         "priority": null,
@@ -1035,6 +1110,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "Manage Purchase Request Form",
         "status": "Fixed",
         "priority": "Must",
@@ -1044,6 +1120,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "Manage Purchase Request Form",
         "status": "Backlog",
         "priority": "Should",
@@ -1053,6 +1130,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "Notifications",
         "status": "Fixed",
         "priority": null,
@@ -1062,6 +1140,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "Notifications",
         "status": "Backlog",
         "priority": "Should",
@@ -1071,6 +1150,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "PR Roles List > PR Roles List Form",
         "status": "Deprecated",
         "priority": null,
@@ -1080,6 +1160,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "PR Roles List > PR Roles List Behavior",
         "status": "Backlog",
         "priority": "Should",
@@ -1089,6 +1170,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "PR Roles List > PR Roles List Behavior",
         "status": "Fixed",
         "priority": null,
@@ -1098,6 +1180,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "PR Roles List > PR Roles List Behavior",
         "status": "Fixed",
         "priority": null,
@@ -1107,6 +1190,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "PR Roles List > PR Roles List Behavior",
         "status": "Fixed",
         "priority": null,
@@ -1116,6 +1200,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "Deprtment Lead List",
         "status": "Backlog",
         "priority": "Could",
@@ -1125,6 +1210,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "Deprtment Lead List",
         "status": "Fixed",
         "priority": "Must",
@@ -1134,6 +1220,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "Deprtment Lead List",
         "status": "To Do",
         "priority": "Should",
@@ -1143,6 +1230,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "WorkFlow > DM Stage",
         "status": "Fixed",
         "priority": "Must",
@@ -1152,6 +1240,7 @@
         "notes": "Fixed"
       },
       {
+        "ball": null,
         "category": "WorkFlow > DM Stage",
         "status": "Fixed",
         "priority": "Could",
@@ -1161,6 +1250,7 @@
         "notes": "Fixed"
       },
       {
+        "ball": null,
         "category": "WorkFlow > DM Stage",
         "status": "To Do",
         "priority": "Must",
@@ -1170,6 +1260,7 @@
         "notes": "Still there"
       },
       {
+        "ball": null,
         "category": "WorkFlow > DM Stage",
         "status": "To Do",
         "priority": "Must",
@@ -1179,6 +1270,7 @@
         "notes": "You're saying about Confirm extra budget, but I said about Approve. Also Confirm extra budget unavailable"
       },
       {
+        "ball": null,
         "category": "WorkFlow > PM Stage",
         "status": "Fixed",
         "priority": "Must",
@@ -1188,6 +1280,7 @@
         "notes": "Fixed"
       },
       {
+        "ball": null,
         "category": "WorkFlow > PM Stage",
         "status": "To Do",
         "priority": "Must",
@@ -1197,6 +1290,7 @@
         "notes": "I see error, process blocked. But also I see popup that all ok and it kicks me to the list"
       },
       {
+        "ball": null,
         "category": "WorkFlow > PM Stage",
         "status": "Fixed",
         "priority": "Must",
@@ -1206,6 +1300,7 @@
         "notes": "Fixed"
       },
       {
+        "ball": null,
         "category": "WorkFlow > PM Stage",
         "status": "Fixed",
         "priority": "Must",
@@ -1215,6 +1310,7 @@
         "notes": "Fixed"
       },
       {
+        "ball": null,
         "category": "WorkFlow > PM Stage",
         "status": "Fixed",
         "priority": "Must",
@@ -1224,6 +1320,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "WorkFlow > PM Stage",
         "status": "To Do",
         "priority": "Must",
@@ -1233,6 +1330,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "WorkFlow > PO Stage",
         "status": "Fixed",
         "priority": "Must",
@@ -1242,6 +1340,7 @@
         "notes": "Fixed"
       },
       {
+        "ball": null,
         "category": "WorkFlow > PO Stage",
         "status": "To Do",
         "priority": "Must",
@@ -1251,6 +1350,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "WorkFlow > PO Stage",
         "status": "To Do",
         "priority": "Must",
@@ -1260,6 +1360,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "WorkFlow > PO Stage After PM Rejection",
         "status": "To Do",
         "priority": "Must",
@@ -1269,6 +1370,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "WorkFlow > PO Stage After PM Rejection",
         "status": "To Do",
         "priority": "Must",
@@ -1278,6 +1380,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "WorkFlow > PM Stage After PO Approval",
         "status": "To Do",
         "priority": "Should",
@@ -1287,6 +1390,7 @@
         "notes": null
       },
       {
+        "ball": null,
         "category": "WorkFlow > GM Stage",
         "status": "To Do",
         "priority": "Must",
@@ -1296,6 +1400,7 @@
         "notes": "I tried on overbudget PR"
       },
       {
+        "ball": null,
         "category": "WorkFlow > GM Stage",
         "status": "To Do",
         "priority": "Must",
@@ -1477,6 +1582,17 @@
       }
     }
 
+    // Response Button Click Handler Placeholder
+    function handleResponseBtnClick(item) {
+      const currentResp = item.response || '';
+      const newResponse = prompt('Enter response / resolution details:', currentResp);
+      if (newResponse !== null && newResponse.trim() !== currentResp) {
+        item.response = newResponse.trim() || null;
+        render();
+        saveChanges(`Updated response for "${item.issue.substring(0, 20)}..."`);
+      }
+    }
+
     // Single Fold / Unfold Toggle Handler
     const foldToggleBtn = document.getElementById('foldToggleBtn');
     const foldToggleIcon = document.getElementById('foldToggleIcon');
@@ -1503,7 +1619,14 @@
       renderTableView(getFilteredData());
     });
 
-    // Helper functions for Status / Priority / Role Badge Classes
+    // Helper functions for Status / Priority / Role / Ball Badge Classes
+    function getBallClass(ball) {
+      if (!ball) return 'ball-none';
+      if (ball === 'Anton') return 'ball-anton';
+      if (ball === 'Adonis') return 'ball-adonis';
+      return 'ball-none';
+    }
+
     function getStatusClass(status) {
       if (!status) return 'status-deprecated';
       const s = status.toLowerCase().replace(/\s+/g, '');
@@ -1570,13 +1693,13 @@
       });
     }
 
-    // Render Table View with Compact Row Heights
+    // Render Table View with Theme-Aware "Where is ball" Dropdown Badges
     function renderTableView(data) {
       const tbody = document.getElementById('tableBody');
       tbody.innerHTML = '';
 
       if (data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No items match the selected filter.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No items match the selected filter.</td></tr>`;
         return;
       }
 
@@ -1602,7 +1725,7 @@
         l1Row.className = 'level1-row';
         l1Row.title = 'Click to fold/unfold main category';
         l1Row.innerHTML = `
-          <td colspan="5">
+          <td colspan="6">
             <div class="group-header-content">
               <span class="fold-arrow">${isL1Collapsed ? '▶' : '▼'}</span>
               <span>📁 ${level1Name}</span>
@@ -1629,7 +1752,7 @@
               l2Row.className = 'level2-row';
               l2Row.title = 'Click to fold/unfold subcategory';
               l2Row.innerHTML = `
-                <td colspan="5">
+                <td colspan="6">
                   <div class="group-header-content">
                     <span class="fold-arrow">${isL2Collapsed ? '▶' : '▼'}</span>
                     <span>📄 ${level2Name}</span>
@@ -1652,6 +1775,13 @@
                   const tr = document.createElement('tr');
                   tr.className = 'item-row level2-item-row';
                   tr.innerHTML = `
+                    <td>
+                      <select class="badge-select ${getBallClass(item.ball)} ball-select">
+                        <option value="" ${!item.ball ? 'selected' : ''}>— None —</option>
+                        <option value="Anton" ${item.ball === 'Anton' ? 'selected' : ''}>Anton</option>
+                        <option value="Adonis" ${item.ball === 'Adonis' ? 'selected' : ''}>Adonis</option>
+                      </select>
+                    </td>
                     <td>
                       <select class="badge-select ${getStatusClass(item.status)} status-select">
                         <option value="Fixed" ${item.status === 'Fixed' ? 'selected' : ''}>Fixed</option>
@@ -1682,18 +1812,23 @@
                       <div class="editable-text issue-text" contenteditable="true" title="Click to edit issue text">${item.issue || ''}</div>
                     </td>
                     <td>
-                      ${item.response ? `<div class="editable-text text-response" contenteditable="true" title="Click to edit response">${item.response}</div>` : ''}
+                      <div>
+                        <button class="btn-response-action">
+                          <span>💬</span>
+                          <span>${item.response ? item.response : '+ Add Response'}</span>
+                        </button>
+                      </div>
                       ${item.notes ? `<div class="editable-text text-notes" contenteditable="true" title="Click to edit notes">💬 ${item.notes}</div>` : ''}
-                      ${!item.response && !item.notes ? '<span class="editable-text text-notes" contenteditable="true" style="color: var(--text-dim);">—</span>' : ''}
                     </td>
                   `;
 
+                  tr.querySelector('.ball-select').addEventListener('change', (e) => updateItemProperty(item, 'ball', e.target.value));
                   tr.querySelector('.status-select').addEventListener('change', (e) => updateItemProperty(item, 'status', e.target.value));
                   tr.querySelector('.prio-select').addEventListener('change', (e) => updateItemProperty(item, 'priority', e.target.value));
                   tr.querySelector('.role-select').addEventListener('change', (e) => updateItemProperty(item, 'role', e.target.value));
+                  tr.querySelector('.btn-response-action').addEventListener('click', () => handleResponseBtnClick(item));
 
                   setupEditableText(tr.querySelector('.issue-text'), item, 'issue');
-                  setupEditableText(tr.querySelector('.text-response'), item, 'response');
                   setupEditableText(tr.querySelector('.text-notes'), item, 'notes');
 
                   tbody.appendChild(tr);
@@ -1704,6 +1839,13 @@
                 const tr = document.createElement('tr');
                 tr.className = 'item-row';
                 tr.innerHTML = `
+                  <td>
+                    <select class="badge-select ${getBallClass(item.ball)} ball-select">
+                      <option value="" ${!item.ball ? 'selected' : ''}>— None —</option>
+                      <option value="Anton" ${item.ball === 'Anton' ? 'selected' : ''}>Anton</option>
+                      <option value="Adonis" ${item.ball === 'Adonis' ? 'selected' : ''}>Adonis</option>
+                    </select>
+                  </td>
                   <td>
                     <select class="badge-select ${getStatusClass(item.status)} status-select">
                       <option value="Fixed" ${item.status === 'Fixed' ? 'selected' : ''}>Fixed</option>
@@ -1734,18 +1876,23 @@
                     <div class="editable-text issue-text" contenteditable="true" title="Click to edit issue text">${item.issue || ''}</div>
                   </td>
                   <td>
-                    ${item.response ? `<div class="editable-text text-response" contenteditable="true" title="Click to edit response">${item.response}</div>` : ''}
+                    <div>
+                      <button class="btn-response-action">
+                        <span>💬</span>
+                        <span>${item.response ? item.response : '+ Add Response'}</span>
+                      </button>
+                    </div>
                     ${item.notes ? `<div class="editable-text text-notes" contenteditable="true" title="Click to edit notes">💬 ${item.notes}</div>` : ''}
-                    ${!item.response && !item.notes ? '<span class="editable-text text-notes" contenteditable="true" style="color: var(--text-dim);">—</span>' : ''}
                   </td>
                 `;
 
+                tr.querySelector('.ball-select').addEventListener('change', (e) => updateItemProperty(item, 'ball', e.target.value));
                 tr.querySelector('.status-select').addEventListener('change', (e) => updateItemProperty(item, 'status', e.target.value));
                 tr.querySelector('.prio-select').addEventListener('change', (e) => updateItemProperty(item, 'priority', e.target.value));
                 tr.querySelector('.role-select').addEventListener('change', (e) => updateItemProperty(item, 'role', e.target.value));
+                tr.querySelector('.btn-response-action').addEventListener('click', () => handleResponseBtnClick(item));
 
                 setupEditableText(tr.querySelector('.issue-text'), item, 'issue');
-                setupEditableText(tr.querySelector('.text-response'), item, 'response');
                 setupEditableText(tr.querySelector('.text-notes'), item, 'notes');
 
                 tbody.appendChild(tr);
@@ -1786,11 +1933,10 @@
               <div class="kanban-card">
                 <div class="card-meta">
                   <span class="card-category">${item.category}</span>
-                  <select class="badge-select ${getPrioClass(item.priority)} kanban-prio-select">
-                    <option value="" ${!item.priority ? 'selected' : ''}>— None —</option>
-                    <option value="Must" ${item.priority === 'Must' ? 'selected' : ''}>Must</option>
-                    <option value="Should" ${item.priority === 'Should' ? 'selected' : ''}>Should</option>
-                    <option value="Could" ${item.priority === 'Could' ? 'selected' : ''}>Could</option>
+                  <select class="badge-select ${getBallClass(item.ball)} kanban-ball-select">
+                    <option value="" ${!item.ball ? 'selected' : ''}>— None —</option>
+                    <option value="Anton" ${item.ball === 'Anton' ? 'selected' : ''}>Anton</option>
+                    <option value="Adonis" ${item.ball === 'Adonis' ? 'selected' : ''}>Adonis</option>
                   </select>
                 </div>
                 <div class="editable-text card-issue" contenteditable="true" title="Click to edit issue text">${item.issue}</div>
@@ -1803,6 +1949,12 @@
                     <option value="PO" ${item.role === 'PO' ? 'selected' : ''}>PO</option>
                     <option value="GM" ${item.role === 'GM' ? 'selected' : ''}>GM</option>
                   </select>
+                  <select class="badge-select ${getPrioClass(item.priority)} kanban-prio-select">
+                    <option value="" ${!item.priority ? 'selected' : ''}>— Priority —</option>
+                    <option value="Must" ${item.priority === 'Must' ? 'selected' : ''}>Must</option>
+                    <option value="Should" ${item.priority === 'Should' ? 'selected' : ''}>Should</option>
+                    <option value="Could" ${item.priority === 'Could' ? 'selected' : ''}>Could</option>
+                  </select>
                   <select class="badge-select ${getStatusClass(item.status)} kanban-status-select">
                     <option value="Fixed" ${item.status === 'Fixed' ? 'selected' : ''}>Fixed</option>
                     <option value="To Do" ${item.status === 'To Do' ? 'selected' : ''}>To Do</option>
@@ -1810,12 +1962,13 @@
                     <option value="Deprecated" ${item.status === 'Deprecated' ? 'selected' : ''}>Deprecated</option>
                   </select>
                 </div>
-                ${item.response || item.notes ? `
-                  <div class="detail-box">
-                    ${item.response ? `<div class="editable-text" contenteditable="true" style="font-size: 0.8rem; color: var(--text-main); font-weight: 500;">${item.response}</div>` : ''}
-                    ${item.notes ? `<div class="editable-text" contenteditable="true" style="font-size: 0.75rem; color: var(--text-muted); font-style: italic; margin-top: 2px;">💬 ${item.notes}</div>` : ''}
-                  </div>
-                ` : ''}
+                <div class="detail-box">
+                  <button class="btn-response-action kanban-response-btn">
+                    <span>💬</span>
+                    <span>${item.response ? item.response : '+ Add Response'}</span>
+                  </button>
+                  ${item.notes ? `<div class="editable-text" contenteditable="true" style="font-size: 0.75rem; color: var(--text-muted); font-style: italic; margin-top: 2px;">💬 ${item.notes}</div>` : ''}
+                </div>
               </div>
             `).join('')}
           </div>
@@ -1823,9 +1976,11 @@
 
         colEl.querySelectorAll('.kanban-card').forEach((cardEl, idx) => {
           const item = colData[idx];
+          cardEl.querySelector('.kanban-ball-select').addEventListener('change', (e) => updateItemProperty(item, 'ball', e.target.value));
           cardEl.querySelector('.kanban-status-select').addEventListener('change', (e) => updateItemProperty(item, 'status', e.target.value));
           cardEl.querySelector('.kanban-prio-select').addEventListener('change', (e) => updateItemProperty(item, 'priority', e.target.value));
           cardEl.querySelector('.kanban-role-select').addEventListener('change', (e) => updateItemProperty(item, 'role', e.target.value));
+          cardEl.querySelector('.kanban-response-btn').addEventListener('click', () => handleResponseBtnClick(item));
           setupEditableText(cardEl.querySelector('.card-issue'), item, 'issue');
         });
 

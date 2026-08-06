@@ -1,0 +1,1330 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light" data-user="Anton">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Purchase Request Tracker & Issue Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root[data-theme="light"] {
+      --bg-card: #ffffff;
+      --bg-card-hover: #f1f5f9;
+      --bg-subtle: #f1f5f9;
+      --bg-category: #e2e8f0;
+      --border-color: #e2e8f0;
+      --border-bright: #cbd5e1;
+      --text-main: #0f172a;
+      --text-muted: #475569;
+      --text-dim: #94a3b8;
+      
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --primary-glow: rgba(79, 70, 229, 0.15);
+      
+      --status-fixed-bg: #dcfce7;
+      --status-fixed-text: #15803d;
+      --status-fixed-border: #bbf7d0;
+
+      --status-todo-bg: #fef3c7;
+      --status-todo-text: #b45309;
+      --status-todo-border: #fde68a;
+
+      --status-backlog-bg: #dbeafe;
+      --status-backlog-text: #1d4ed8;
+      --status-backlog-border: #bfdbfe;
+
+      --status-deprecated-bg: #f1f5f9;
+      --status-deprecated-text: #475569;
+      --status-deprecated-border: #cbd5e1;
+
+      --prio-must-bg: #ffe4e6;
+      --prio-must-text: #be123c;
+
+      --prio-should-bg: #ffedd5;
+      --prio-should-text: #c2410c;
+
+      --prio-could-bg: #dcfce7;
+      --prio-could-text: #15803d;
+
+      --role-bg: #e0e7ff;
+      --role-text: #3730a3;
+      --category-text: #312e81;
+      --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --switcher-bg: #e2e8f0;
+    }
+
+    :root[data-theme="dark"] {
+      --bg-card: #111827;
+      --bg-card-hover: #1f2937;
+      --bg-subtle: #0f172a;
+      --bg-category: #172033;
+      --border-color: #1f293d;
+      --border-bright: #374151;
+      --text-main: #f3f4f6;
+      --text-muted: #9ca3af;
+      --text-dim: #6b7280;
+      
+      --primary: #6366f1;
+      --primary-hover: #4f46e5;
+      --primary-glow: rgba(99, 102, 241, 0.25);
+      
+      --status-fixed-bg: rgba(16, 185, 129, 0.15);
+      --status-fixed-text: #34d399;
+      --status-fixed-border: rgba(52, 211, 153, 0.3);
+
+      --status-todo-bg: rgba(245, 158, 11, 0.15);
+      --status-todo-text: #fbbf24;
+      --status-todo-border: rgba(251, 191, 36, 0.3);
+
+      --status-backlog-bg: rgba(59, 130, 246, 0.15);
+      --status-backlog-text: #60a5fa;
+      --status-backlog-border: rgba(96, 165, 250, 0.3);
+
+      --status-deprecated-bg: rgba(107, 114, 128, 0.15);
+      --status-deprecated-text: #9ca3af;
+      --status-deprecated-border: rgba(156, 163, 175, 0.3);
+
+      --prio-must-bg: rgba(244, 63, 94, 0.2);
+      --prio-must-text: #fda4af;
+
+      --prio-should-bg: rgba(249, 115, 22, 0.2);
+      --prio-should-text: #fdba74;
+
+      --prio-could-bg: rgba(34, 197, 94, 0.2);
+      --prio-could-text: #86efac;
+
+      --role-bg: rgba(255, 255, 255, 0.08);
+      --role-text: #e5e7eb;
+      --category-text: #a5b4fc;
+      --card-shadow: none;
+      --switcher-bg: #1f293d;
+    }
+
+    /* Dynamic User Background Color Tints */
+    :root[data-user="Anton"][data-theme="light"] {
+      --bg-main: #f5f7ff;
+      --bg-gradient-accent: rgba(99, 102, 241, 0.05);
+    }
+    :root[data-user="Anton"][data-theme="dark"] {
+      --bg-main: #0c0f1f;
+      --bg-gradient-accent: rgba(99, 102, 241, 0.1);
+    }
+
+    :root[data-user="Adonis"][data-theme="light"] {
+      --bg-main: #f3faf6;
+      --bg-gradient-accent: rgba(16, 185, 129, 0.05);
+    }
+    :root[data-user="Adonis"][data-theme="dark"] {
+      --bg-main: #071310;
+      --bg-gradient-accent: rgba(16, 185, 129, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: var(--bg-main);
+      background-image: radial-gradient(circle at 50% 0%, var(--bg-gradient-accent) 0%, transparent 60%);
+      color: var(--text-main);
+      min-height: 100vh;
+      padding: 2rem 1.5rem;
+      line-height: 1.5;
+      transition: background-color 0.4s ease, background-image 0.4s ease, color 0.3s ease;
+    }
+
+    .container {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    /* Header Section */
+    header {
+      margin-bottom: 2rem;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 1.5rem;
+    }
+
+    .title-area h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2rem;
+      font-weight: 700;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+    }
+
+    .title-area p {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      margin-top: 0.25rem;
+    }
+
+    .header-actions {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 0.75rem;
+    }
+
+    /* Segmented User Switcher UI */
+    .user-switcher-container {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      background: var(--bg-card);
+      border: 1px solid var(--border-bright);
+      padding: 4px;
+      border-radius: 40px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .user-switcher-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-dim);
+      padding: 0 0.4rem 0 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .user-pills {
+      display: flex;
+      background: var(--switcher-bg);
+      border-radius: 30px;
+      padding: 3px;
+      gap: 3px;
+    }
+
+    .user-pill-btn {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      padding: 0.4rem 0.85rem;
+      border-radius: 24px;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .user-pill-btn:hover {
+      color: var(--text-main);
+    }
+
+    .user-pill-btn.active {
+      background: var(--bg-card);
+      color: var(--text-main);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+    }
+
+    .user-avatar-circle {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #ffffff;
+      transition: transform 0.2s ease;
+    }
+
+    .user-pill-btn.active .user-avatar-circle {
+      transform: scale(1.1);
+    }
+
+    .avatar-anton {
+      background: linear-gradient(135deg, #6366f1 0%, #3b82f6 100%);
+    }
+
+    .avatar-adonis {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    }
+
+    .btn {
+      background: var(--bg-card);
+      color: var(--text-main);
+      border: 1px solid var(--border-bright);
+      padding: 0.6rem 1.1rem;
+      border-radius: 8px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.5rem;
+      transition: all 0.2s ease;
+      box-shadow: var(--card-shadow);
+    }
+
+    .btn:hover {
+      background: var(--bg-card-hover);
+      border-color: var(--primary);
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      box-shadow: 0 4px 14px var(--primary-glow);
+    }
+
+    .btn-primary:hover {
+      background: var(--primary-hover);
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 1rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      position: relative;
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--border-bright);
+    }
+
+    .stat-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.25rem;
+      flex-shrink: 0;
+    }
+
+    .stat-info .stat-value {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.75rem;
+      font-weight: 700;
+      line-height: 1.2;
+    }
+
+    .stat-info .stat-label {
+      color: var(--text-muted);
+      font-size: 0.85rem;
+    }
+
+    /* Toolbar Area Card (Original spot between stats & table) */
+    .control-card-area {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 0.75rem 1rem;
+      margin-bottom: 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--card-shadow);
+    }
+
+    .control-area-title {
+      font-weight: 600;
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .view-toggle {
+      display: flex;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 2px;
+    }
+
+    .view-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.45rem 0.95rem;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+    }
+
+    .view-btn.active {
+      background: var(--bg-card);
+      color: var(--text-main);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Views: Table View */
+    .table-container {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: var(--card-shadow);
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.875rem;
+    }
+
+    th {
+      background: var(--bg-subtle);
+      padding: 1rem;
+      color: var(--text-muted);
+      font-weight: 600;
+      font-size: 0.775rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    td {
+      padding: 1rem;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: top;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background: var(--bg-card-hover);
+    }
+
+    /* Category Header Row in Table */
+    tr.category-row td {
+      background: var(--bg-category);
+      font-weight: 700;
+      font-size: 0.9rem;
+      color: var(--category-text);
+      border-top: 1px solid var(--border-bright);
+      border-bottom: 1px solid var(--border-bright);
+    }
+
+    /* Badges */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      padding: 0.25rem 0.6rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      line-height: 1;
+      letter-spacing: 0.02em;
+    }
+
+    .badge-fixed {
+      background: var(--status-fixed-bg);
+      color: var(--status-fixed-text);
+      border: 1px solid var(--status-fixed-border);
+    }
+
+    .badge-todo {
+      background: var(--status-todo-bg);
+      color: var(--status-todo-text);
+      border: 1px solid var(--status-todo-border);
+    }
+
+    .badge-backlog {
+      background: var(--status-backlog-bg);
+      color: var(--status-backlog-text);
+      border: 1px solid var(--status-backlog-border);
+    }
+
+    .badge-deprecated {
+      background: var(--status-deprecated-bg);
+      color: var(--status-deprecated-text);
+      border: 1px solid var(--status-deprecated-border);
+    }
+
+    .badge-prio-must {
+      background: var(--prio-must-bg);
+      color: var(--prio-must-text);
+    }
+
+    .badge-prio-should {
+      background: var(--prio-should-bg);
+      color: var(--prio-should-text);
+    }
+
+    .badge-prio-could {
+      background: var(--prio-could-bg);
+      color: var(--prio-could-text);
+    }
+
+    .role-tag {
+      display: inline-block;
+      background: var(--role-bg);
+      color: var(--role-text);
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      font-family: monospace;
+      font-size: 0.8rem;
+      font-weight: 600;
+    }
+
+    .text-response {
+      color: var(--text-main);
+      font-size: 0.85rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .text-notes {
+      color: var(--text-muted);
+      font-size: 0.8rem;
+      font-style: italic;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+    }
+
+    /* Views: Kanban Board */
+    .kanban-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.25rem;
+    }
+
+    .kanban-col {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: 12px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      box-shadow: var(--card-shadow);
+    }
+
+    .kanban-col-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 1rem;
+      margin-bottom: 1rem;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .kanban-col-title {
+      font-weight: 600;
+      font-size: 0.95rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .count-badge {
+      background: var(--bg-subtle);
+      color: var(--text-muted);
+      padding: 0.15rem 0.5rem;
+      border-radius: 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+    }
+
+    .kanban-cards {
+      display: flex;
+      flex-direction: column;
+      gap: 0.8rem;
+      overflow-y: auto;
+      max-height: 70vh;
+      padding-right: 2px;
+    }
+
+    .kanban-card {
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.6rem;
+      transition: border-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .kanban-card:hover {
+      border-color: var(--primary);
+      transform: translateY(-2px);
+    }
+
+    .card-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .card-category {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .card-issue {
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-main);
+      line-height: 1.4;
+    }
+
+    .detail-box {
+      background: var(--bg-card);
+      border-left: 3px solid var(--primary);
+      padding: 0.5rem 0.75rem;
+      border-radius: 0 6px 6px 0;
+      margin-top: 0.4rem;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+
+    @media (max-width: 768px) {
+      body {
+        padding: 1rem;
+      }
+      .header-actions {
+        width: 100%;
+        justify-content: space-between;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="title-area">
+        <h1>Purchase Request Tracker</h1>
+        <p>Comprehensive overview & audit log of feature requests, bugs, and system workflow stages</p>
+      </div>
+      <div class="header-actions">
+        <!-- Segmented User Switcher -->
+        <div class="user-switcher-container">
+          <span class="user-switcher-label">User</span>
+          <div class="user-pills">
+            <button class="user-pill-btn active" data-user="Anton">
+              <span class="user-avatar-circle avatar-anton">An</span>
+              <span>Anton</span>
+            </button>
+            <button class="user-pill-btn" data-user="Adonis">
+              <span class="user-avatar-circle avatar-adonis">Ad</span>
+              <span>Adonis</span>
+            </button>
+          </div>
+        </div>
+
+        <button class="btn" id="themeToggleBtn" title="Toggle Light/Dark Theme">
+          <span id="themeIcon">☀️</span>
+          <span id="themeText">Light Mode</span>
+        </button>
+
+        <button class="btn btn-primary" id="exportBtn">
+          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          Export JSON
+        </button>
+      </div>
+    </header>
+
+    <!-- Stats Cards -->
+    <div class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-icon" style="background: var(--role-bg); color: var(--primary);">📋</div>
+        <div class="stat-info">
+          <div class="stat-value" id="statTotal">0</div>
+          <div class="stat-label">Total Items</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background: var(--status-fixed-bg); color: var(--status-fixed-text);">✅</div>
+        <div class="stat-info">
+          <div class="stat-value" id="statFixed">0</div>
+          <div class="stat-label">Fixed</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background: var(--status-todo-bg); color: var(--status-todo-text);">📌</div>
+        <div class="stat-info">
+          <div class="stat-value" id="statTodo">0</div>
+          <div class="stat-label">To Do</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background: var(--status-backlog-bg); color: var(--status-backlog-text);">⏳</div>
+        <div class="stat-info">
+          <div class="stat-value" id="statBacklog">0</div>
+          <div class="stat-label">Backlog</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon" style="background: var(--status-deprecated-bg); color: var(--status-deprecated-text);">🚫</div>
+        <div class="stat-info">
+          <div class="stat-value" id="statDeprecated">0</div>
+          <div class="stat-label">Deprecated</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Control Area Card (In the original spot between stats grid and dataset) -->
+    <div class="control-card-area">
+      <div class="control-area-title">
+        <span>Display Mode</span>
+      </div>
+      <div class="view-toggle">
+        <button class="view-btn active" id="tableViewBtn">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z"/></svg>
+          <span>Table</span>
+        </button>
+        <button class="view-btn" id="kanbanViewBtn">
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h4v16H4V4zm6 0h4v16h-4V4zm6 0h4v16h-4V4z"/></svg>
+          <span>Board</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Main Content Area -->
+    <div id="tableView" class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 110px;">Status</th>
+            <th style="width: 90px;">Priority</th>
+            <th style="width: 70px;">Role</th>
+            <th>Issue & Context</th>
+            <th style="width: 320px;">Response / Resolution Notes</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody">
+          <!-- Populated by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+
+    <div id="kanbanView" class="kanban-grid" style="display: none;">
+      <!-- Populated by JavaScript -->
+    </div>
+  </div>
+
+  <script>
+    const dataset = [
+      {
+        "category": "Main menu",
+        "status": "Fixed",
+        "priority": "Should",
+        "role": "Emp",
+        "issue": "Title screen is list, in list are buttons: add, edit, delete (if needs)",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "Main menu",
+        "status": "Backlog",
+        "priority": "Could",
+        "role": null,
+        "issue": "Title screen is list, not a button",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "Purchase Request Form > Purchase Request Form Fields",
+        "status": "Fixed",
+        "priority": null,
+        "role": null,
+        "issue": "Could we not allow negative sum?",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "Purchase Request Form > Purchase Request Form Fields",
+        "status": "Fixed",
+        "priority": "Should",
+        "role": null,
+        "issue": "Could we autofill employee name and make this field not editable for role Employee",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "Purchase Request Form > Purchase Request Form Fields",
+        "status": "Backlog",
+        "priority": "Could",
+        "role": null,
+        "issue": "Could we show short form for default and chekbox for full form?",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "Purchase Request Form > Purchase Request Form Behavior",
+        "status": "Fixed",
+        "priority": "Must",
+        "role": null,
+        "issue": "After Submit it showes popup that everything alright and 1 button \"Return\". Should return to the list",
+        "response": "Ready for testing",
+        "notes": "Fixed"
+      },
+      {
+        "category": "Purchase Request Form > Purchase Request Form Behavior",
+        "status": "Fixed",
+        "priority": "Should",
+        "role": null,
+        "issue": "Button Cancel clear the form, but do we need separate button for that? Maybe better remove this button or move there Home button (to List)",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "Purchase Request Form > Purchase Request Form Behavior",
+        "status": "Backlog",
+        "priority": "Could",
+        "role": null,
+        "issue": "Maybe it will be convinient to Save form before submitting. But it should be well highlighted to understand which PR isn't submitted",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "Purchase Request List",
+        "status": "Fixed",
+        "priority": "Must",
+        "role": null,
+        "issue": "PR Status in List doesn't fiil out",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "Manage Purchase Request Form",
+        "status": "Fixed",
+        "priority": null,
+        "role": null,
+        "issue": "UI of the list of stages, could naming be clearer, using some similar entities? ",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "Manage Purchase Request Form",
+        "status": "Fixed",
+        "priority": null,
+        "role": null,
+        "issue": "Could we clearer see timeline? What stage is right now? Maybe using some colors",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "Manage Purchase Request Form",
+        "status": "Fixed",
+        "priority": null,
+        "role": null,
+        "issue": "Current stage should be bright, all other - grey, to understand where we are now?",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "Manage Purchase Request Form",
+        "status": "Deprecated",
+        "priority": null,
+        "role": null,
+        "issue": "UX of stages, do we need all that amount of fields? Seems like many of them dublicate each other",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "Manage Purchase Request Form",
+        "status": "Deprecated",
+        "priority": null,
+        "role": null,
+        "issue": "Too many entities, validate and approve? What the difference? Maybe use just less terms for easiness?",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "Manage Purchase Request Form",
+        "status": "Fixed",
+        "priority": "Must",
+        "role": null,
+        "issue": "In finished PR all dots white again",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "Manage Purchase Request Form",
+        "status": "Backlog",
+        "priority": "Should",
+        "role": null,
+        "issue": "In finished PR some dots are green. GM dot is white. Could we highligh somehow that PR is closed, colors doesn't matter?",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "Notifications",
+        "status": "Fixed",
+        "priority": null,
+        "role": null,
+        "issue": "Email notification coming twice",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "Notifications",
+        "status": "Backlog",
+        "priority": "Should",
+        "role": null,
+        "issue": "Sender of notification should be common 365 account, not Adonis (e.g. donotrespond@mtmmachines.ca) ",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "PR Roles List > PR Roles List Form",
+        "status": "Deprecated",
+        "priority": null,
+        "role": null,
+        "issue": "Do we need columns: Title, Approval, Attachments? ",
+        "response": "Column \"Title\" and \"Attachments\" come automatically, they can be hidden if we don't use. Attachments is currently used.",
+        "notes": null
+      },
+      {
+        "category": "PR Roles List > PR Roles List Behavior",
+        "status": "Backlog",
+        "priority": "Should",
+        "role": null,
+        "issue": "Glitch with clicking rows. If cursor on it you can't open it. Maybe restrict open that way and add some button \"Open\"",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "PR Roles List > PR Roles List Behavior",
+        "status": "Fixed",
+        "priority": null,
+        "role": null,
+        "issue": "Finding role works for email column instead of 365 account",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "PR Roles List > PR Roles List Behavior",
+        "status": "Fixed",
+        "priority": null,
+        "role": "GM",
+        "issue": "At Stage 1 it should ask DM approval, but I entered as GM and I have ability to make a GM approval (before DM approval, before budget checking) ",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "PR Roles List > PR Roles List Behavior",
+        "status": "Fixed",
+        "priority": null,
+        "role": "DM",
+        "issue": "When I entered like DM of department of PR (Quality), I'm not able to validate anything - everything is grey ",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "Deprtment Lead List",
+        "status": "Backlog",
+        "priority": "Could",
+        "role": null,
+        "issue": "Could we deprecate this table and use just PR Roles?",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "Deprtment Lead List",
+        "status": "Fixed",
+        "priority": "Must",
+        "role": null,
+        "issue": "Number of PR appear with delay, we have enogh time for a few approval, refusal to go on. So we will have notifications with empty number",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "Deprtment Lead List",
+        "status": "To Do",
+        "priority": "Should",
+        "role": null,
+        "issue": "We need to prevent any actions BEFORE number appear",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "WorkFlow > DM Stage",
+        "status": "Fixed",
+        "priority": "Must",
+        "role": "PM",
+        "issue": "After DM rejection PR doesn't close. PM could enter, change reason of rejection and reject again",
+        "response": "Ready for testing",
+        "notes": "Fixed"
+      },
+      {
+        "category": "WorkFlow > DM Stage",
+        "status": "Fixed",
+        "priority": "Could",
+        "role": "DM",
+        "issue": "DM don't need Officer PR adjustment refusal reason in the list of reasons",
+        "response": "The user is notified abot selecting the right choise",
+        "notes": "Fixed"
+      },
+      {
+        "category": "WorkFlow > DM Stage",
+        "status": "To Do",
+        "priority": "Must",
+        "role": "DM",
+        "issue": "Can approve as DM without DM Role, checking just Dep Lead List and doesn't check PR Roles. Should it? Or Dep Lead List is enough?",
+        "response": "Ready for testing",
+        "notes": "Still there"
+      },
+      {
+        "category": "WorkFlow > DM Stage",
+        "status": "To Do",
+        "priority": "Must",
+        "role": "DM",
+        "issue": "DM Stage if budget exceed. I can Approve, should I? Anyway Confirm extra budget unavalable",
+        "response": "You can approve the request, then it is sent to the GM to validate",
+        "notes": "You're saying about Confirm extra budget, but I said about Approve. Also Confirm extra budget unavailable"
+      },
+      {
+        "category": "WorkFlow > PM Stage",
+        "status": "Fixed",
+        "priority": "Must",
+        "role": "PM",
+        "issue": "PM click reject - nothing happens, no popup. But process is going on. If I close PR and open it again, all dots are white like its new PR",
+        "response": "Ready for testing",
+        "notes": "Fixed"
+      },
+      {
+        "category": "WorkFlow > PM Stage",
+        "status": "To Do",
+        "priority": "Must",
+        "role": "PM",
+        "issue": "Officer PR adjustment refusal reason could be chosen even if officer didn't assigned yet",
+        "response": "Ready for testing",
+        "notes": "I see error, process blocked. But also I see popup that all ok and it kicks me to the list"
+      },
+      {
+        "category": "WorkFlow > PM Stage",
+        "status": "Fixed",
+        "priority": "Must",
+        "role": "PM",
+        "issue": "If Officer PR adjustment refusal reason - PR doesn't go to the officer",
+        "response": "Ready for testing",
+        "notes": "Fixed"
+      },
+      {
+        "category": "WorkFlow > PM Stage",
+        "status": "Fixed",
+        "priority": "Must",
+        "role": "PM",
+        "issue": "I can work as PM even i have only DM role",
+        "response": "Please give time, when switching roles",
+        "notes": "Fixed"
+      },
+      {
+        "category": "WorkFlow > PM Stage",
+        "status": "Fixed",
+        "priority": "Must",
+        "role": "PM",
+        "issue": "Can't approve as PM even if have PM Role",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "WorkFlow > PM Stage",
+        "status": "To Do",
+        "priority": "Must",
+        "role": "PM",
+        "issue": "When I create one more PR, \"Assign to\" equal entry of previous PR (I mean field about PO)",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "WorkFlow > PO Stage",
+        "status": "Fixed",
+        "priority": "Must",
+        "role": "PO",
+        "issue": "Even I have PO role I can't submit PR after PM",
+        "response": "Ready for testing, give time between roles",
+        "notes": "Fixed"
+      },
+      {
+        "category": "WorkFlow > PO Stage",
+        "status": "To Do",
+        "priority": "Must",
+        "role": "PM",
+        "issue": "When press Submit - error \"Please load a PR\" and doesn't allow me go forward",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "WorkFlow > PO Stage",
+        "status": "To Do",
+        "priority": "Must",
+        "role": "PM",
+        "issue": "Reject unavailable",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "WorkFlow > PO Stage After PM Rejection",
+        "status": "To Do",
+        "priority": "Must",
+        "role": "PM",
+        "issue": "DM Stage dot is white. After PM rejection",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "WorkFlow > PO Stage After PM Rejection",
+        "status": "To Do",
+        "priority": "Must",
+        "role": "PM",
+        "issue": "I can submit wihout PO Role. Only if it was PM rejection",
+        "response": null,
+        "notes": null
+      },
+      {
+        "category": "WorkFlow > PM Stage After PO Approval",
+        "status": "To Do",
+        "priority": "Should",
+        "role": "PM",
+        "issue": "Last stage when Procurement Manager needs to final confirm, his dot doesn't change to orange from previous green",
+        "response": "Pending",
+        "notes": null
+      },
+      {
+        "category": "WorkFlow > GM Stage",
+        "status": "To Do",
+        "priority": "Must",
+        "role": "GM",
+        "issue": "I can't approve on GM stage even I have GM Role",
+        "response": "Pending ",
+        "notes": "I tried on overbudget PR"
+      },
+      {
+        "category": "WorkFlow > GM Stage",
+        "status": "To Do",
+        "priority": "Must",
+        "role": "GM",
+        "issue": "On GM approval stage PM could reject PR",
+        "response": "GM can reject, meaning that the extra budget is not valid, then is sent to DM for dinal Invalidation",
+        "notes": null
+      }
+    ];
+
+    // User Switcher & Dynamic Theme Setup
+    let currentUser = "Anton";
+    const userPills = document.querySelectorAll('.user-pill-btn');
+
+    function applyUserTheme(userName) {
+      document.documentElement.setAttribute('data-user', userName);
+    }
+
+    userPills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        userPills.forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+        currentUser = pill.getAttribute('data-user');
+        applyUserTheme(currentUser);
+      });
+    });
+
+    // Helper functions for Badges
+    function getStatusBadge(status) {
+      if (!status) return '<span class="badge badge-deprecated">None</span>';
+      const s = status.toLowerCase().replace(/\s+/g, '');
+      if (s === 'fixed') return '<span class="badge badge-fixed">Fixed</span>';
+      if (s === 'todo') return '<span class="badge badge-todo">To Do</span>';
+      if (s === 'backlog') return '<span class="badge badge-backlog">Backlog</span>';
+      if (s === 'deprecated') return '<span class="badge badge-deprecated">Deprecated</span>';
+      return `<span class="badge badge-deprecated">${status}</span>`;
+    }
+
+    function getPriorityBadge(priority) {
+      if (!priority) return '<span style="color: var(--text-dim); font-size: 0.75rem;">—</span>';
+      const p = priority.toLowerCase();
+      if (p === 'must') return '<span class="badge badge-prio-must">Must</span>';
+      if (p === 'should') return '<span class="badge badge-prio-should">Should</span>';
+      if (p === 'could') return '<span class="badge badge-prio-could">Could</span>';
+      return `<span class="badge">${priority}</span>`;
+    }
+
+    // Render Statistics
+    function updateStats(data) {
+      document.getElementById('statTotal').textContent = data.length;
+      document.getElementById('statFixed').textContent = data.filter(d => d.status === 'Fixed').length;
+      document.getElementById('statTodo').textContent = data.filter(d => d.status === 'To Do').length;
+      document.getElementById('statBacklog').textContent = data.filter(d => d.status === 'Backlog').length;
+      document.getElementById('statDeprecated').textContent = data.filter(d => d.status === 'Deprecated').length;
+    }
+
+    // Render Table View
+    function renderTableView(data) {
+      const tbody = document.getElementById('tableBody');
+      tbody.innerHTML = '';
+
+      let currentCategory = '';
+      data.forEach(item => {
+        if (item.category !== currentCategory) {
+          currentCategory = item.category;
+          const catRow = document.createElement('tr');
+          catRow.className = 'category-row';
+          catRow.innerHTML = `<td colspan="5">📂 ${currentCategory}</td>`;
+          tbody.appendChild(catRow);
+        }
+
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>${getStatusBadge(item.status)}</td>
+          <td>${getPriorityBadge(item.priority)}</td>
+          <td>${item.role ? `<span class="role-tag">${item.role}</span>` : '<span style="color: var(--text-dim); font-size: 0.75rem;">—</span>'}</td>
+          <td style="font-weight: 500; color: var(--text-main);">${item.issue || ''}</td>
+          <td>
+            ${item.response ? `<div class="text-response">${item.response}</div>` : ''}
+            ${item.notes ? `<div class="text-notes">💬 ${item.notes}</div>` : ''}
+            ${!item.response && !item.notes ? '<span style="color: var(--text-dim); font-size: 0.75rem;">—</span>' : ''}
+          </td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // Render Kanban View
+    function renderKanbanView(data) {
+      const kanbanGrid = document.getElementById('kanbanView');
+      kanbanGrid.innerHTML = '';
+
+      const columns = ['Fixed', 'To Do', 'Backlog', 'Deprecated'];
+      
+      columns.forEach(colStatus => {
+        const colData = data.filter(d => d.status === colStatus);
+        
+        const colEl = document.createElement('div');
+        colEl.className = 'kanban-col';
+
+        let badgeHtml = getStatusBadge(colStatus);
+
+        colEl.innerHTML = `
+          <div class="kanban-col-header">
+            <div class="kanban-col-title">
+              ${badgeHtml}
+            </div>
+            <span class="count-badge">${colData.length}</span>
+          </div>
+          <div class="kanban-cards">
+            ${colData.length === 0 ? '<div style="color: var(--text-dim); font-size: 0.8rem; text-align: center; padding: 1.5rem 0;">No items</div>' : ''}
+            ${colData.map(item => `
+              <div class="kanban-card">
+                <div class="card-meta">
+                  <span class="card-category">${item.category}</span>
+                  ${getPriorityBadge(item.priority)}
+                </div>
+                <div class="card-issue">${item.issue}</div>
+                ${item.role ? `<div><span class="role-tag">${item.role}</span></div>` : ''}
+                ${item.response || item.notes ? `
+                  <div class="detail-box">
+                    ${item.response ? `<div style="font-size: 0.8rem; color: var(--text-main); font-weight: 500;">${item.response}</div>` : ''}
+                    ${item.notes ? `<div style="font-size: 0.75rem; color: var(--text-muted); font-style: italic; margin-top: 2px;">💬 ${item.notes}</div>` : ''}
+                  </div>
+                ` : ''}
+              </div>
+            `).join('')}
+          </div>
+        `;
+
+        kanbanGrid.appendChild(colEl);
+      });
+    }
+
+    function render() {
+      updateStats(dataset);
+      renderTableView(dataset);
+      renderKanbanView(dataset);
+    }
+
+    // View Switcher (Table vs Board)
+    const tableBtn = document.getElementById('tableViewBtn');
+    const kanbanBtn = document.getElementById('kanbanViewBtn');
+    const tableView = document.getElementById('tableView');
+    const kanbanView = document.getElementById('kanbanView');
+
+    tableBtn.addEventListener('click', () => {
+      tableBtn.classList.add('active');
+      kanbanBtn.classList.remove('active');
+      tableView.style.display = 'block';
+      kanbanView.style.display = 'none';
+    });
+
+    kanbanBtn.addEventListener('click', () => {
+      kanbanBtn.classList.add('active');
+      tableBtn.classList.remove('active');
+      tableView.style.display = 'none';
+      kanbanView.style.display = 'grid';
+    });
+
+    // Theme Toggle Logic
+    const themeBtn = document.getElementById('themeToggleBtn');
+    const themeIcon = document.getElementById('themeIcon');
+    const themeText = document.getElementById('themeText');
+
+    themeBtn.addEventListener('click', () => {
+      const currentTheme = document.documentElement.getAttribute('data-theme');
+      const newTheme = currentTheme === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', newTheme);
+
+      if (newTheme === 'dark') {
+        themeIcon.textContent = '🌙';
+        themeText.textContent = 'Dark Mode';
+      } else {
+        themeIcon.textContent = '☀️';
+        themeText.textContent = 'Light Mode';
+      }
+    });
+
+    // Export Functionality
+    document.getElementById('exportBtn').addEventListener('click', () => {
+      const exportObject = {
+        currentUser: currentUser,
+        exportedAt: new Date().toISOString(),
+        items: dataset
+      };
+      const blob = new Blob([JSON.stringify(exportObject, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `purchase_requests_${currentUser.toLowerCase()}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    });
+
+    // Initial render & theme setup
+    applyUserTheme(currentUser);
+    render();
+  </script>
+</body>
+</html>

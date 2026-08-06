@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en" data-theme="light" data-user="Anton">
+<html lang="en" data-theme="light" data-user="Anton" data-source="local">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -131,6 +131,35 @@
       --bg-gradient-accent: rgba(16, 185, 129, 0.1);
     }
 
+    /* Mode-Dependent Table Row Background Colors */
+    /* 🌿 MINT GREEN for Local JSON Mode */
+    :root[data-source="local"][data-theme="light"] tr.item-row td {
+      background-color: #f0fdf4;
+    }
+    :root[data-source="local"][data-theme="light"] tr.item-row:hover td {
+      background-color: #dcfce7;
+    }
+    :root[data-source="local"][data-theme="dark"] tr.item-row td {
+      background-color: #062016;
+    }
+    :root[data-source="local"][data-theme="dark"] tr.item-row:hover td {
+      background-color: #0b3323;
+    }
+
+    /* 🎨 CORAL ORANGE for GitHub Repo Mode */
+    :root[data-source="github"][data-theme="light"] tr.item-row td {
+      background-color: #fff7ed;
+    }
+    :root[data-source="github"][data-theme="light"] tr.item-row:hover td {
+      background-color: #ffedd5;
+    }
+    :root[data-source="github"][data-theme="dark"] tr.item-row td {
+      background-color: #25140b;
+    }
+    :root[data-source="github"][data-theme="dark"] tr.item-row:hover td {
+      background-color: #3a1e10;
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -153,7 +182,7 @@
       margin: 0 auto;
     }
 
-    /* Streamlined Header */
+    /* Streamlined Header with Perfectly Uniform Component Heights */
     header {
       margin-bottom: 1.5rem;
       display: flex;
@@ -175,30 +204,33 @@
     .header-actions {
       display: flex;
       align-items: center;
-      gap: 0.6rem;
+      gap: 0.5rem;
       flex-wrap: nowrap;
     }
 
+    /* Perfectly Uniform 36px Height & Alignment */
     .user-switcher-container,
+    .source-switcher-container,
     .view-toggle,
     .btn {
-      height: var(--control-height);
+      height: 36px !important;
       box-sizing: border-box;
+      display: inline-flex;
+      align-items: center;
     }
 
-    /* Segmented User Switcher */
-    .user-switcher-container {
-      display: flex;
-      align-items: center;
+    .user-switcher-container,
+    .source-switcher-container {
       background: var(--bg-card);
       border: 1px solid var(--border-bright);
-      padding: 3px;
+      padding: 2px;
       border-radius: 30px;
       box-shadow: var(--card-shadow);
     }
 
-    .user-pills {
+    .segmented-pills {
       display: flex;
+      align-items: center;
       height: 100%;
       background: var(--switcher-bg);
       border-radius: 24px;
@@ -206,9 +238,10 @@
       gap: 2px;
     }
 
-    .user-pill-btn {
+    .segmented-pill-btn {
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 0.35rem;
       padding: 0 0.65rem;
       height: 100%;
@@ -220,26 +253,28 @@
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
+      white-space: nowrap;
+      line-height: 1;
     }
 
-    .user-pill-btn:hover {
+    .segmented-pill-btn:hover {
       color: var(--text-main);
     }
 
-    .user-pill-btn.active {
+    .segmented-pill-btn.active {
       background: var(--bg-card);
       color: var(--text-main);
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
     }
 
     .user-avatar-circle {
-      width: 20px;
-      height: 20px;
+      width: 18px;
+      height: 18px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.7rem;
+      font-size: 0.65rem;
       font-weight: 700;
       color: #ffffff;
     }
@@ -252,7 +287,7 @@
       background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     }
 
-    /* Buttons */
+    /* Standardized Buttons */
     .btn {
       background: var(--bg-card);
       color: var(--text-main);
@@ -262,12 +297,12 @@
       font-size: 0.8rem;
       font-weight: 600;
       cursor: pointer;
-      display: inline-flex;
-      align-items: center;
+      justify-content: center;
       gap: 0.35rem;
       transition: all 0.2s ease;
       box-shadow: var(--card-shadow);
       white-space: nowrap;
+      line-height: 1;
     }
 
     .btn:hover {
@@ -288,12 +323,10 @@
 
     /* View Switcher Toggle */
     .view-toggle {
-      display: flex;
-      align-items: center;
       background: var(--switcher-bg);
       border: 1px solid var(--border-bright);
       border-radius: 30px;
-      padding: 3px;
+      padding: 2px;
       gap: 2px;
       box-shadow: var(--card-shadow);
     }
@@ -310,8 +343,10 @@
       cursor: pointer;
       display: flex;
       align-items: center;
+      justify-content: center;
       gap: 0.3rem;
       transition: all 0.2s ease;
+      line-height: 1;
     }
 
     .view-btn.active {
@@ -403,7 +438,7 @@
       transform: scale(1.03);
     }
 
-    /* Content Editable Inline Text (Compact & Tight) */
+    /* Content Editable Inline Text */
     .editable-text {
       padding: 0.1rem 0.3rem;
       margin: 0;
@@ -519,7 +554,7 @@
       transform: translateY(0);
     }
 
-    /* Views: Table View (Compact Padding) */
+    /* Views: Table View */
     .table-container {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
@@ -550,14 +585,11 @@
       padding: 0.45rem 0.75rem;
       border-bottom: 1px solid var(--border-color);
       vertical-align: middle;
+      transition: background-color 0.2s ease;
     }
 
     tr:last-child td {
       border-bottom: none;
-    }
-
-    tr.item-row:hover td {
-      background: var(--bg-card-hover);
     }
 
     /* 2-Level Nested Foldable Group Rows */
@@ -750,22 +782,29 @@
       <div class="header-actions">
         <!-- 1. User Switcher -->
         <div class="user-switcher-container">
-          <div class="user-pills">
-            <button class="user-pill-btn active" data-user="Anton">
+          <div class="segmented-pills">
+            <button class="segmented-pill-btn active" data-user="Anton">
               <span class="user-avatar-circle avatar-anton">An</span>
               <span>Anton</span>
             </button>
-            <button class="user-pill-btn" data-user="Adonis">
+            <button class="segmented-pill-btn" data-user="Adonis">
               <span class="user-avatar-circle avatar-adonis">Ad</span>
               <span>Adonis</span>
             </button>
           </div>
         </div>
 
-        <!-- 2. GitHub Token Configuration Button -->
-        <button class="btn" id="githubTokenBtn" title="Set GitHub Token for auto-saving commits">
-          <span>🔑 Sync Repo</span>
-        </button>
+        <!-- 2. Data Source Switcher (Local JSON vs GitHub Repo) -->
+        <div class="source-switcher-container">
+          <div class="segmented-pills">
+            <button class="segmented-pill-btn active" id="srcLocalBtn" data-source="local" title="Load dataset from local memory">
+              <span>📄 Local JSON</span>
+            </button>
+            <button class="segmented-pill-btn" id="srcGithubBtn" data-source="github" title="Load dataset live from GitHub repository">
+              <span>⚡ GitHub Repo</span>
+            </button>
+          </div>
+        </div>
 
         <!-- 3. Fold / Unfold Toggle Button -->
         <button class="btn" id="foldToggleBtn" title="Toggle Fold/Unfold All Groups">
@@ -868,7 +907,7 @@
   </div>
 
   <script>
-    let dataset = [
+    const defaultLocalData = [
       {
         "category": "Main menu",
         "status": "Fixed",
@@ -1267,12 +1306,14 @@
       }
     ];
 
+    let dataset = JSON.parse(JSON.stringify(defaultLocalData));
     let currentUser = "Anton";
     let currentFilter = "ALL";
+    let activeDataSource = "local"; // "local" or "github"
     let isAllFolded = false;
     const collapsedLevel1 = new Set();
     const collapsedLevel2 = new Set();
-    const userPills = document.querySelectorAll('.user-pill-btn');
+    const userPills = document.querySelectorAll('.user-switcher-container .segmented-pill-btn');
 
     // GitHub Repo Info
     const REPO_OWNER = 'avedevios';
@@ -1291,6 +1332,11 @@
       document.documentElement.setAttribute('data-user', userName);
     }
 
+    function updateDataSourceAttribute(source) {
+      activeDataSource = source;
+      document.documentElement.setAttribute('data-source', source);
+    }
+
     userPills.forEach(pill => {
       pill.addEventListener('click', () => {
         userPills.forEach(p => p.classList.remove('active'));
@@ -1300,22 +1346,55 @@
       });
     });
 
-    // GitHub PAT Token Prompt
-    document.getElementById('githubTokenBtn').addEventListener('click', () => {
-      const currentToken = localStorage.getItem('gh_token') || '';
-      const newToken = prompt('Enter your GitHub Personal Access Token (PAT) with repo scope:', currentToken);
-      if (newToken !== null) {
-        localStorage.setItem('gh_token', newToken.trim());
-        if (newToken.trim()) {
-          showToast('GitHub Token saved! Auto-commit enabled.', '🔑');
-          syncFromGitHub();
-        } else {
-          showToast('GitHub Token cleared.', 'ℹ️');
-        }
-      }
+    // Data Source Switcher (Local JSON vs GitHub Repo)
+    const srcLocalBtn = document.getElementById('srcLocalBtn');
+    const srcGithubBtn = document.getElementById('srcGithubBtn');
+
+    srcLocalBtn.addEventListener('click', () => {
+      srcLocalBtn.classList.add('active');
+      srcGithubBtn.classList.remove('active');
+      updateDataSourceAttribute('local');
+      loadLocalJson();
     });
 
-    // Sync dataset FROM GitHub Repo on load
+    srcGithubBtn.addEventListener('click', () => {
+      srcGithubBtn.classList.add('active');
+      srcLocalBtn.classList.remove('active');
+      updateDataSourceAttribute('github');
+      syncFromGitHub();
+    });
+
+    // Load Local purchase_requests.json dataset with localStorage persistence
+    async function loadLocalJson() {
+      const savedLocal = localStorage.getItem('local_dataset');
+      if (savedLocal) {
+        try {
+          dataset = JSON.parse(savedLocal);
+          render();
+          showToast('Loaded local saved dataset!', '📄');
+          return;
+        } catch (e) {}
+      }
+
+      try {
+        const res = await fetch('./purchase_requests.json');
+        if (res.ok) {
+          dataset = await res.json();
+          localStorage.setItem('local_dataset', JSON.stringify(dataset));
+          render();
+          showToast('Loaded data from local purchase_requests.json', '📄');
+          return;
+        }
+      } catch (err) {
+        console.warn('File protocol or CORS restriction, using local dataset memory fallback', err);
+      }
+      dataset = JSON.parse(JSON.stringify(defaultLocalData));
+      localStorage.setItem('local_dataset', JSON.stringify(dataset));
+      render();
+      showToast('Loaded local dataset!', '📄');
+    }
+
+    // Sync dataset FROM GitHub Repo
     async function syncFromGitHub() {
       try {
         const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`);
@@ -1327,7 +1406,18 @@
           showToast('Synced latest data from GitHub repository!', '⚡');
         }
       } catch (err) {
-        console.warn('GitHub fetch failed, using local dataset fallback', err);
+        console.warn('GitHub fetch failed, loading local dataset', err);
+        loadLocalJson();
+      }
+    }
+
+    // Save changes: In GitHub Mode commits to API if token exists; In Local Mode saves in localStorage
+    function saveChanges(commitMessage) {
+      if (activeDataSource === 'github') {
+        saveToGitHub(commitMessage);
+      } else {
+        localStorage.setItem('local_dataset', JSON.stringify(dataset));
+        showToast('Saved locally in browser memory! Use "Export" to download JSON file.', '💾');
       }
     }
 
@@ -1335,15 +1425,21 @@
     async function saveToGitHub(commitMessage) {
       const token = localStorage.getItem('gh_token');
       if (!token) {
-        showToast('Set GitHub Token via "🔑 Sync Repo" to save edits back to GitHub!', '💡');
-        return;
+        const userToken = prompt('Enter your GitHub Personal Access Token (PAT) to commit changes back to GitHub:');
+        if (userToken && userToken.trim()) {
+          localStorage.setItem('gh_token', userToken.trim());
+        } else {
+          showToast('GitHub Token required to commit changes to GitHub!', '💡');
+          return;
+        }
       }
 
       showToast('Committing update to GitHub repository...', '⏳');
 
       try {
+        const currentToken = localStorage.getItem('gh_token');
         const getRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
-          headers: { 'Authorization': `token ${token}` }
+          headers: { 'Authorization': `token ${currentToken}` }
         });
 
         if (!getRes.ok) throw new Error('Could not fetch file SHA');
@@ -1356,7 +1452,7 @@
         const putRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
           method: 'PUT',
           headers: {
-            'Authorization': `token ${token}`,
+            'Authorization': `token ${currentToken}`,
             'Content-Type': 'application/json',
             'Accept': 'application/vnd.github.v3+json'
           },
@@ -1447,7 +1543,7 @@
       const oldVal = item[prop];
       item[prop] = value || null;
       render();
-      saveToGitHub(`Update ${prop} of "${item.issue.substring(0, 25)}..." from ${oldVal} to ${value}`);
+      saveChanges(`Update ${prop} of "${item.issue.substring(0, 25)}..." from ${oldVal} to ${value}`);
     }
 
     // Bind Inline Text Editing (Blur & Enter key listener)
@@ -1455,7 +1551,6 @@
       if (!element) return;
       element.addEventListener('blur', () => {
         let newText = element.innerText.trim();
-        // Clean out leading comment emoji if present in notes
         if (propertyName === 'notes' && newText.startsWith('💬')) {
           newText = newText.replace(/^💬\s*/, '').trim();
         }
@@ -1463,7 +1558,7 @@
           const oldText = item[propertyName] || '';
           item[propertyName] = newText || null;
           updateStats(dataset);
-          saveToGitHub(`Update ${propertyName} from "${oldText.substring(0, 20)}..." to "${newText.substring(0, 20)}..."`);
+          saveChanges(`Update ${propertyName} from "${oldText.substring(0, 20)}..." to "${newText.substring(0, 20)}..."`);
         }
       });
 
@@ -1812,25 +1907,20 @@
 
     // Export Functionality
     document.getElementById('exportBtn').addEventListener('click', () => {
-      const exportObject = {
-        currentUser: currentUser,
-        activeFilter: currentFilter,
-        exportedAt: new Date().toISOString(),
-        items: getFilteredData()
-      };
+      const exportObject = getFilteredData();
       const blob = new Blob([JSON.stringify(exportObject, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `purchase_requests_${currentUser.toLowerCase()}_${currentFilter.toLowerCase()}.json`;
+      a.download = `purchase_requests.json`;
       a.click();
       URL.revokeObjectURL(url);
     });
 
-    // Initial render, theme & GitHub sync
+    // Initial render, theme & load dataset
     applyUserTheme(currentUser);
-    syncFromGitHub();
-    render();
+    updateDataSourceAttribute(activeDataSource);
+    loadLocalJson();
   </script>
 </body>
 </html>

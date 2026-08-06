@@ -31,6 +31,9 @@ temp/
 .env.test.local
 .env.production.local
 
+# Data & Local Dataset Files
+purchase_requests.json
+
 # Agent & AI Brain Logs / Cache
 .gemini/
 .agents/

@@ -133,7 +133,7 @@
       background-image: radial-gradient(circle at 50% 0%, var(--bg-gradient-accent) 0%, transparent 60%);
       color: var(--text-main);
       min-height: 100vh;
-      padding: 2rem 1.5rem;
+      padding: 1.5rem 1.5rem;
       line-height: 1.5;
       transition: background-color 0.4s ease, background-image 0.4s ease, color 0.3s ease;
     }
@@ -143,76 +143,62 @@
       margin: 0 auto;
     }
 
-    /* Header Section */
+    /* Streamlined Header - Single Row Fit */
     header {
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
       display: flex;
-      flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      gap: 1.5rem;
+      gap: 1rem;
+      flex-wrap: nowrap;
     }
 
     .title-area h1 {
       font-family: 'Outfit', sans-serif;
-      font-size: 2rem;
+      font-size: 1.6rem;
       font-weight: 700;
       color: var(--text-main);
       letter-spacing: -0.02em;
-    }
-
-    .title-area p {
-      color: var(--text-muted);
-      font-size: 0.95rem;
-      margin-top: 0.25rem;
+      white-space: nowrap;
     }
 
     .header-actions {
       display: flex;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 0.75rem;
+      gap: 0.6rem;
+      flex-wrap: nowrap;
     }
 
-    /* Segmented User Switcher UI */
+    /* Compact Segmented User Switcher */
     .user-switcher-container {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.3rem;
       background: var(--bg-card);
       border: 1px solid var(--border-bright);
-      padding: 4px;
-      border-radius: 40px;
+      padding: 3px;
+      border-radius: 30px;
       box-shadow: var(--card-shadow);
-    }
-
-    .user-switcher-label {
-      font-size: 0.75rem;
-      font-weight: 600;
-      color: var(--text-dim);
-      padding: 0 0.4rem 0 0.8rem;
-      text-transform: uppercase;
-      letter-spacing: 0.05em;
     }
 
     .user-pills {
       display: flex;
       background: var(--switcher-bg);
-      border-radius: 30px;
-      padding: 3px;
-      gap: 3px;
+      border-radius: 26px;
+      padding: 2px;
+      gap: 2px;
     }
 
     .user-pill-btn {
       display: flex;
       align-items: center;
-      gap: 0.5rem;
-      padding: 0.4rem 0.85rem;
-      border-radius: 24px;
+      gap: 0.35rem;
+      padding: 0.3rem 0.65rem;
+      border-radius: 20px;
       border: none;
       background: transparent;
       color: var(--text-muted);
-      font-size: 0.875rem;
+      font-size: 0.8rem;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.2s ease;
@@ -225,24 +211,19 @@
     .user-pill-btn.active {
       background: var(--bg-card);
       color: var(--text-main);
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
     }
 
     .user-avatar-circle {
-      width: 24px;
-      height: 24px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.75rem;
+      font-size: 0.7rem;
       font-weight: 700;
       color: #ffffff;
-      transition: transform 0.2s ease;
-    }
-
-    .user-pill-btn.active .user-avatar-circle {
-      transform: scale(1.1);
     }
 
     .avatar-anton {
@@ -253,52 +234,22 @@
       background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     }
 
-    /* View Switcher Toggle (Compact) */
-    .view-toggle {
-      display: flex;
-      background: var(--switcher-bg);
-      border: 1px solid var(--border-bright);
-      border-radius: 30px;
-      padding: 3px;
-      gap: 2px;
-      box-shadow: var(--card-shadow);
-    }
-
-    .view-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      padding: 0.4rem 0.85rem;
-      border-radius: 24px;
-      font-size: 0.875rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      transition: all 0.2s ease;
-    }
-
-    .view-btn.active {
-      background: var(--bg-card);
-      color: var(--text-main);
-      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
-    }
-
+    /* Compact Buttons */
     .btn {
       background: var(--bg-card);
       color: var(--text-main);
       border: 1px solid var(--border-bright);
-      padding: 0.6rem 1.1rem;
+      padding: 0.45rem 0.85rem;
       border-radius: 8px;
-      font-size: 0.875rem;
-      font-weight: 500;
+      font-size: 0.8rem;
+      font-weight: 600;
       cursor: pointer;
       display: inline-flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.35rem;
       transition: all 0.2s ease;
       box-shadow: var(--card-shadow);
+      white-space: nowrap;
     }
 
     .btn:hover {
@@ -310,26 +261,62 @@
       background: var(--primary);
       color: #ffffff;
       border: none;
-      box-shadow: 0 4px 14px var(--primary-glow);
+      box-shadow: 0 3px 10px var(--primary-glow);
     }
 
     .btn-primary:hover {
       background: var(--primary-hover);
     }
 
+    .icon-btn {
+      padding: 0.45rem 0.65rem;
+    }
+
+    /* View Switcher Toggle (Compact) */
+    .view-toggle {
+      display: flex;
+      background: var(--switcher-bg);
+      border: 1px solid var(--border-bright);
+      border-radius: 26px;
+      padding: 2px;
+      gap: 2px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .view-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.35rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.3rem;
+      transition: all 0.2s ease;
+    }
+
+    .view-btn.active {
+      background: var(--bg-card);
+      color: var(--text-main);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
+    }
+
     /* Stats Grid */
     .stats-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
       gap: 1rem;
-      margin-bottom: 2rem;
+      margin-bottom: 1.5rem;
     }
 
     .stat-card {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: 12px;
-      padding: 1.25rem;
+      padding: 1rem 1.25rem;
       display: flex;
       align-items: center;
       gap: 1rem;
@@ -345,26 +332,26 @@
     }
 
     .stat-icon {
-      width: 48px;
-      height: 48px;
+      width: 42px;
+      height: 42px;
       border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.25rem;
+      font-size: 1.15rem;
       flex-shrink: 0;
     }
 
     .stat-info .stat-value {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.75rem;
+      font-size: 1.5rem;
       font-weight: 700;
       line-height: 1.2;
     }
 
     .stat-info .stat-label {
       color: var(--text-muted);
-      font-size: 0.85rem;
+      font-size: 0.8rem;
     }
 
     /* Views: Table View */
@@ -385,17 +372,17 @@
 
     th {
       background: var(--bg-subtle);
-      padding: 1rem;
+      padding: 0.85rem 1rem;
       color: var(--text-muted);
       font-weight: 600;
-      font-size: 0.775rem;
+      font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.05em;
       border-bottom: 1px solid var(--border-color);
     }
 
     td {
-      padding: 1rem;
+      padding: 0.85rem 1rem;
       border-bottom: 1px solid var(--border-color);
       vertical-align: top;
     }
@@ -412,7 +399,7 @@
     tr.category-row td {
       background: var(--bg-category);
       font-weight: 700;
-      font-size: 0.9rem;
+      font-size: 0.875rem;
       color: var(--category-text);
       border-top: 1px solid var(--border-bright);
       border-bottom: 1px solid var(--border-bright);
@@ -422,9 +409,9 @@
     .badge {
       display: inline-flex;
       align-items: center;
-      padding: 0.25rem 0.6rem;
+      padding: 0.2rem 0.55rem;
       border-radius: 6px;
-      font-size: 0.75rem;
+      font-size: 0.725rem;
       font-weight: 600;
       line-height: 1;
       letter-spacing: 0.02em;
@@ -473,33 +460,33 @@
       display: inline-block;
       background: var(--role-bg);
       color: var(--role-text);
-      padding: 0.2rem 0.5rem;
+      padding: 0.15rem 0.45rem;
       border-radius: 4px;
       font-family: monospace;
-      font-size: 0.8rem;
+      font-size: 0.775rem;
       font-weight: 600;
     }
 
     .text-response {
       color: var(--text-main);
       font-size: 0.85rem;
-      margin-bottom: 0.25rem;
+      margin-bottom: 0.2rem;
     }
 
     .text-notes {
       color: var(--text-muted);
-      font-size: 0.8rem;
+      font-size: 0.775rem;
       font-style: italic;
       display: flex;
       align-items: center;
-      gap: 0.3rem;
+      gap: 0.25rem;
     }
 
     /* Views: Kanban Board */
     .kanban-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-      gap: 1.25rem;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1rem;
     }
 
     .kanban-col {
@@ -517,32 +504,32 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding-bottom: 1rem;
-      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      margin-bottom: 0.75rem;
       border-bottom: 1px solid var(--border-color);
     }
 
     .kanban-col-title {
       font-weight: 600;
-      font-size: 0.95rem;
+      font-size: 0.9rem;
       display: flex;
       align-items: center;
-      gap: 0.5rem;
+      gap: 0.4rem;
     }
 
     .count-badge {
       background: var(--bg-subtle);
       color: var(--text-muted);
-      padding: 0.15rem 0.5rem;
+      padding: 0.12rem 0.45rem;
       border-radius: 10px;
-      font-size: 0.75rem;
+      font-size: 0.725rem;
       font-weight: 600;
     }
 
     .kanban-cards {
       display: flex;
       flex-direction: column;
-      gap: 0.8rem;
+      gap: 0.75rem;
       overflow-y: auto;
       max-height: 70vh;
       padding-right: 2px;
@@ -552,10 +539,10 @@
       background: var(--bg-subtle);
       border: 1px solid var(--border-color);
       border-radius: 8px;
-      padding: 1rem;
+      padding: 0.85rem;
       display: flex;
       flex-direction: column;
-      gap: 0.6rem;
+      gap: 0.5rem;
       transition: border-color 0.2s ease, transform 0.2s ease;
     }
 
@@ -571,13 +558,13 @@
     }
 
     .card-category {
-      font-size: 0.75rem;
+      font-size: 0.725rem;
       color: var(--text-muted);
       font-weight: 500;
     }
 
     .card-issue {
-      font-size: 0.875rem;
+      font-size: 0.85rem;
       font-weight: 500;
       color: var(--text-main);
       line-height: 1.4;
@@ -586,35 +573,32 @@
     .detail-box {
       background: var(--bg-card);
       border-left: 3px solid var(--primary);
-      padding: 0.5rem 0.75rem;
+      padding: 0.4rem 0.65rem;
       border-radius: 0 6px 6px 0;
-      margin-top: 0.4rem;
+      margin-top: 0.3rem;
       box-shadow: 0 1px 2px rgba(0,0,0,0.05);
     }
 
-    @media (max-width: 768px) {
-      body {
-        padding: 1rem;
+    @media (max-width: 900px) {
+      header {
+        flex-wrap: wrap;
       }
       .header-actions {
-        width: 100%;
-        justify-content: space-between;
+        flex-wrap: wrap;
       }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Header -->
+    <!-- Streamlined Header -->
     <header>
       <div class="title-area">
         <h1>Purchase Request Tracker</h1>
-        <p>Comprehensive overview & audit log of feature requests, bugs, and system workflow stages</p>
       </div>
       <div class="header-actions">
-        <!-- 1. Segmented User Switcher -->
+        <!-- 1. Compact User Switcher -->
         <div class="user-switcher-container">
-          <span class="user-switcher-label">User</span>
           <div class="user-pills">
             <button class="user-pill-btn active" data-user="Anton">
               <span class="user-avatar-circle avatar-anton">An</span>
@@ -627,26 +611,26 @@
           </div>
         </div>
 
-        <!-- 2. Light Mode Toggle -->
-        <button class="btn" id="themeToggleBtn" title="Toggle Light/Dark Theme">
+        <!-- 2. Light / Dark Theme Button -->
+        <button class="btn icon-btn" id="themeToggleBtn" title="Toggle Light/Dark Theme">
           <span id="themeIcon">☀️</span>
-          <span id="themeText">Light Mode</span>
+          <span id="themeText">Light</span>
         </button>
 
-        <!-- 3. Export JSON -->
+        <!-- 3. Export JSON Button -->
         <button class="btn btn-primary" id="exportBtn">
-          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-          Export JSON
+          <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
+          Export
         </button>
 
-        <!-- 4. View Switcher (Table vs Board) positioned to the RIGHT of Export JSON -->
+        <!-- 4. Table / Board View Switcher -->
         <div class="view-toggle">
           <button class="view-btn active" id="tableViewBtn">
-            <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z"/></svg>
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z"/></svg>
             <span>Table</span>
           </button>
           <button class="view-btn" id="kanbanViewBtn">
-            <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h4v16H4V4zm6 0h4v16h-4V4zm6 0h4v16h-4V4z"/></svg>
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h4v16H4V4zm6 0h4v16h-4V4zm6 0h4v16h-4V4z"/></svg>
             <span>Board</span>
           </button>
         </div>
@@ -1277,10 +1261,10 @@
 
       if (newTheme === 'dark') {
         themeIcon.textContent = '🌙';
-        themeText.textContent = 'Dark Mode';
+        themeText.textContent = 'Dark';
       } else {
         themeIcon.textContent = '☀️';
-        themeText.textContent = 'Light Mode';
+        themeText.textContent = 'Light';
       }
     });
 

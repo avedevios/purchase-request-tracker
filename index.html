@@ -734,7 +734,7 @@
       font-style: italic;
     }
 
-    /* Response Chat Modal Dialog */
+    /* Response Chat Modal Dialog - Styled with Page Background (Fon) */
     .modal-overlay {
       position: fixed;
       top: 0;
@@ -751,7 +751,8 @@
     }
 
     .modal-card {
-      background: var(--bg-card);
+      background-color: var(--bg-main);
+      background-image: radial-gradient(circle at 50% 0%, var(--bg-gradient-accent) 0%, transparent 60%);
       border: 1px solid var(--border-bright);
       border-radius: 16px;
       width: 100%;
@@ -759,7 +760,7 @@
       max-height: 85vh;
       display: flex;
       flex-direction: column;
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
       animation: modalSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
@@ -774,6 +775,7 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
+      background: transparent;
     }
 
     .modal-title h3 {
@@ -816,6 +818,7 @@
       gap: 1rem;
       min-height: 250px;
       max-height: 450px;
+      background: transparent;
     }
 
     .chat-bubble {
@@ -863,18 +866,21 @@
       background: var(--primary);
       color: #ffffff;
       border-bottom-right-radius: 2px;
+      box-shadow: 0 2px 8px var(--primary-glow);
     }
 
     .chat-bubble.other .chat-bubble-content {
-      background: var(--bg-subtle);
+      background: var(--bg-card);
       color: var(--text-main);
       border: 1px solid var(--border-color);
       border-bottom-left-radius: 2px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
 
     .modal-footer {
       padding: 0.9rem 1.25rem;
       border-top: 1px solid var(--border-color);
+      background: transparent;
     }
 
     .chat-input-wrapper {
@@ -885,7 +891,7 @@
 
     .chat-input-wrapper textarea {
       flex: 1;
-      background: var(--bg-subtle);
+      background: var(--bg-card);
       border: 1px solid var(--border-bright);
       color: var(--text-main);
       border-radius: 10px;
@@ -895,6 +901,7 @@
       outline: none;
       resize: none;
       line-height: 1.4;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
 
     .chat-input-wrapper textarea:focus {
@@ -1807,6 +1814,14 @@
     const sendChatBtn = document.getElementById('sendChatBtn');
     const chatIssueSubtitle = document.getElementById('chatIssueSubtitle');
 
+    function scrollToChatBottom() {
+      setTimeout(() => {
+        if (chatThreadContainer) {
+          chatThreadContainer.scrollTop = chatThreadContainer.scrollHeight;
+        }
+      }, 50);
+    }
+
     function openChatModal(item) {
       activeChatItem = item;
       chatIssueSubtitle.textContent = item.issue || 'Issue response thread';
@@ -1823,6 +1838,7 @@
 
       renderChatThread();
       chatModal.style.display = 'flex';
+      scrollToChatBottom();
       setTimeout(() => chatInput.focus(), 100);
     }
 
@@ -1848,7 +1864,7 @@
         chatThreadContainer.appendChild(bubble);
       });
 
-      chatThreadContainer.scrollTop = chatThreadContainer.scrollHeight;
+      scrollToChatBottom();
     }
 
     function postNewChatMessage() {
@@ -1874,6 +1890,7 @@
       chatInput.value = '';
       renderChatThread();
       render();
+      scrollToChatBottom();
       saveChanges(`Added response & passed ball to ${currentUser} for "${activeChatItem.issue.substring(0, 20)}..."`);
     }
 

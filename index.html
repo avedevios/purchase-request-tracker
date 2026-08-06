@@ -179,7 +179,6 @@
       flex-wrap: nowrap;
     }
 
-    /* Uniform Heights across controls */
     .user-switcher-container,
     .view-toggle,
     .btn {
@@ -321,23 +320,112 @@
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
     }
 
-    /* Editable Status Select Dropdown */
-    .status-select {
-      background: transparent;
+    /* Elegant Custom Badge Dropdown Selectors */
+    .badge-select {
+      appearance: none;
+      -webkit-appearance: none;
       border: 1px solid transparent;
       border-radius: 6px;
-      padding: 0.2rem 0.4rem;
+      padding: 0.15rem 1.2rem 0.15rem 0.45rem;
       font-family: inherit;
-      font-size: 0.75rem;
+      font-size: 0.725rem;
       font-weight: 600;
       cursor: pointer;
       outline: none;
       transition: all 0.2s ease;
+      background-repeat: no-repeat;
+      background-position: right 0.35rem center;
+      background-size: 9px;
+      line-height: 1.2;
     }
 
-    .status-select:hover, .status-select:focus {
+    .badge-select.status-fixed {
+      background-color: var(--status-fixed-bg);
+      color: var(--status-fixed-text);
+      border-color: var(--status-fixed-border);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 24 24' fill='%2315803d'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    }
+    .badge-select.status-todo {
+      background-color: var(--status-todo-bg);
+      color: var(--status-todo-text);
+      border-color: var(--status-todo-border);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 24 24' fill='%23b45309'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    }
+    .badge-select.status-backlog {
+      background-color: var(--status-backlog-bg);
+      color: var(--status-backlog-text);
+      border-color: var(--status-backlog-border);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 24 24' fill='%231d4ed8'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    }
+    .badge-select.status-deprecated {
+      background-color: var(--status-deprecated-bg);
+      color: var(--status-deprecated-text);
+      border-color: var(--status-deprecated-border);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 24 24' fill='%23475569'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    }
+
+    .badge-select.prio-must {
+      background-color: var(--prio-must-bg);
+      color: var(--prio-must-text);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 24 24' fill='%23be123c'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    }
+    .badge-select.prio-should {
+      background-color: var(--prio-should-bg);
+      color: var(--prio-should-text);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 24 24' fill='%23c2410c'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    }
+    .badge-select.prio-could {
+      background-color: var(--prio-could-bg);
+      color: var(--prio-could-text);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 24 24' fill='%2315803d'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    }
+    .badge-select.prio-none {
+      background-color: transparent;
+      color: var(--text-dim);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 24 24' fill='%2394a3b8'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    }
+
+    .badge-select.role-badge {
+      background-color: var(--role-bg);
+      color: var(--role-text);
+      font-family: monospace;
+      font-size: 0.775rem;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 24 24' fill='%233730a3'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    }
+    .badge-select.role-none {
+      background-color: transparent;
+      color: var(--text-dim);
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 24 24' fill='%2394a3b8'%3E%3Cpath d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+    }
+
+    .badge-select:hover {
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+      transform: scale(1.03);
+    }
+
+    /* Content Editable Inline Text (Compact & Tight) */
+    .editable-text {
+      padding: 0.1rem 0.3rem;
+      margin: 0;
+      border-radius: 4px;
+      border: 1px solid transparent;
+      outline: none;
+      transition: all 0.2s ease;
+      cursor: text;
+      line-height: 1.35;
+      display: inline-block;
+      width: 100%;
+    }
+
+    .editable-text:hover {
+      background: var(--bg-subtle);
       border-color: var(--border-bright);
+    }
+
+    .editable-text:focus {
       background: var(--bg-card);
+      border-color: var(--primary);
+      box-shadow: 0 0 0 2px var(--primary-glow);
     }
 
     /* Clickable Interactive Stats Cards */
@@ -431,7 +519,7 @@
       transform: translateY(0);
     }
 
-    /* Views: Table View */
+    /* Views: Table View (Compact Padding) */
     .table-container {
       background: var(--bg-card);
       border: 1px solid var(--border-color);
@@ -449,7 +537,7 @@
 
     th {
       background: var(--bg-subtle);
-      padding: 0.85rem 1rem;
+      padding: 0.55rem 0.75rem;
       color: var(--text-muted);
       font-weight: 600;
       font-size: 0.75rem;
@@ -459,9 +547,9 @@
     }
 
     td {
-      padding: 0.85rem 1rem;
+      padding: 0.45rem 0.75rem;
       border-bottom: 1px solid var(--border-color);
-      vertical-align: top;
+      vertical-align: middle;
     }
 
     tr:last-child td {
@@ -476,10 +564,11 @@
     tr.level1-row td {
       background: var(--bg-level1);
       font-weight: 700;
-      font-size: 0.9rem;
+      font-size: 0.875rem;
       color: var(--category-text);
       border-top: 1px solid var(--border-bright);
       border-bottom: 1px solid var(--border-bright);
+      padding: 0.4rem 0.75rem;
       cursor: pointer;
       user-select: none;
       transition: background-color 0.2s ease;
@@ -492,12 +581,12 @@
     tr.level2-row td {
       background: var(--bg-level2);
       font-weight: 600;
-      font-size: 0.85rem;
+      font-size: 0.825rem;
       color: var(--subcategory-text);
       border-bottom: 1px solid var(--border-color);
+      padding: 0.35rem 0.75rem 0.35rem 2rem;
       cursor: pointer;
       user-select: none;
-      padding-left: 2rem;
       transition: background-color 0.2s ease;
     }
 
@@ -505,7 +594,6 @@
       background: var(--bg-level2-hover);
     }
 
-    /* Indent data rows under level 2 */
     tr.level2-item-row td:first-child {
       padding-left: 1.5rem;
     }
@@ -534,81 +622,15 @@
       margin-left: 0.3rem;
     }
 
-    /* Badges */
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      padding: 0.2rem 0.55rem;
-      border-radius: 6px;
-      font-size: 0.725rem;
-      font-weight: 600;
-      line-height: 1;
-      letter-spacing: 0.02em;
-    }
-
-    .badge-fixed {
-      background: var(--status-fixed-bg);
-      color: var(--status-fixed-text);
-      border: 1px solid var(--status-fixed-border);
-    }
-
-    .badge-todo {
-      background: var(--status-todo-bg);
-      color: var(--status-todo-text);
-      border: 1px solid var(--status-todo-border);
-    }
-
-    .badge-backlog {
-      background: var(--status-backlog-bg);
-      color: var(--status-backlog-text);
-      border: 1px solid var(--status-backlog-border);
-    }
-
-    .badge-deprecated {
-      background: var(--status-deprecated-bg);
-      color: var(--status-deprecated-text);
-      border: 1px solid var(--status-deprecated-border);
-    }
-
-    .badge-prio-must {
-      background: var(--prio-must-bg);
-      color: var(--prio-must-text);
-    }
-
-    .badge-prio-should {
-      background: var(--prio-should-bg);
-      color: var(--prio-should-text);
-    }
-
-    .badge-prio-could {
-      background: var(--prio-could-bg);
-      color: var(--prio-could-text);
-    }
-
-    .role-tag {
-      display: inline-block;
-      background: var(--role-bg);
-      color: var(--role-text);
-      padding: 0.15rem 0.45rem;
-      border-radius: 4px;
-      font-family: monospace;
-      font-size: 0.775rem;
-      font-weight: 600;
-    }
-
     .text-response {
       color: var(--text-main);
       font-size: 0.85rem;
-      margin-bottom: 0.2rem;
     }
 
     .text-notes {
       color: var(--text-muted);
       font-size: 0.775rem;
       font-style: italic;
-      display: flex;
-      align-items: center;
-      gap: 0.25rem;
     }
 
     /* Views: Kanban Board */
@@ -821,9 +843,9 @@
       <table>
         <thead>
           <tr>
-            <th style="width: 130px;">Status</th>
-            <th style="width: 90px;">Priority</th>
-            <th style="width: 70px;">Role</th>
+            <th style="width: 125px;">Status</th>
+            <th style="width: 105px;">Priority</th>
+            <th style="width: 85px;">Role</th>
             <th>Issue & Context</th>
             <th style="width: 320px;">Response / Resolution Notes</th>
           </tr>
@@ -1245,7 +1267,6 @@
       }
     ];
 
-    // User Switcher, Dynamic Theme & GitHub Sync Setup
     let currentUser = "Anton";
     let currentFilter = "ALL";
     let isAllFolded = false;
@@ -1253,7 +1274,7 @@
     const collapsedLevel2 = new Set();
     const userPills = document.querySelectorAll('.user-pill-btn');
 
-    // GitHub Repo Database Info
+    // GitHub Repo Info
     const REPO_OWNER = 'avedevios';
     const REPO_NAME = 'purchase-request-tracker';
     const FILE_PATH = 'purchase_requests.json';
@@ -1321,7 +1342,6 @@
       showToast('Committing update to GitHub repository...', '⏳');
 
       try {
-        // 1. Fetch current file SHA hash
         const getRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
           headers: { 'Authorization': `token ${token}` }
         });
@@ -1330,11 +1350,9 @@
         const fileInfo = await getRes.json();
         const sha = fileInfo.sha;
 
-        // 2. Base64 encode UTF-8 content
         const jsonString = JSON.stringify(dataset, null, 2);
         const encodedContent = btoa(unescape(encodeURIComponent(jsonString)));
 
-        // 3. Commit PUT request
         const putRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
           method: 'PUT',
           headers: {
@@ -1363,14 +1381,13 @@
       }
     }
 
-    // Single Fold / Unfold All Toggle Handler
+    // Single Fold / Unfold Toggle Handler
     const foldToggleBtn = document.getElementById('foldToggleBtn');
     const foldToggleIcon = document.getElementById('foldToggleIcon');
     const foldToggleText = document.getElementById('foldToggleText');
 
     foldToggleBtn.addEventListener('click', () => {
       isAllFolded = !isAllFolded;
-      
       if (isAllFolded) {
         dataset.forEach(item => {
           const parts = item.category.split('>').map(s => s.trim());
@@ -1387,31 +1404,32 @@
         foldToggleIcon.textContent = '▶';
         foldToggleText.textContent = 'Fold All';
       }
-      
       renderTableView(getFilteredData());
     });
 
-    // Helper functions for Badges
-    function getStatusBadge(status) {
-      if (!status) return '<span class="badge badge-deprecated">None</span>';
+    // Helper functions for Status / Priority / Role Badge Classes
+    function getStatusClass(status) {
+      if (!status) return 'status-deprecated';
       const s = status.toLowerCase().replace(/\s+/g, '');
-      if (s === 'fixed') return '<span class="badge badge-fixed">Fixed</span>';
-      if (s === 'todo') return '<span class="badge badge-todo">To Do</span>';
-      if (s === 'backlog') return '<span class="badge badge-backlog">Backlog</span>';
-      if (s === 'deprecated') return '<span class="badge badge-deprecated">Deprecated</span>';
-      return `<span class="badge badge-deprecated">${status}</span>`;
+      if (s === 'fixed') return 'status-fixed';
+      if (s === 'todo') return 'status-todo';
+      if (s === 'backlog') return 'status-backlog';
+      return 'status-deprecated';
     }
 
-    function getPriorityBadge(priority) {
-      if (!priority) return '<span style="color: var(--text-dim); font-size: 0.75rem;">—</span>';
+    function getPrioClass(priority) {
+      if (!priority) return 'prio-none';
       const p = priority.toLowerCase();
-      if (p === 'must') return '<span class="badge badge-prio-must">Must</span>';
-      if (p === 'should') return '<span class="badge badge-prio-should">Should</span>';
-      if (p === 'could') return '<span class="badge badge-prio-could">Could</span>';
-      return `<span class="badge">${priority}</span>`;
+      if (p === 'must') return 'prio-must';
+      if (p === 'should') return 'prio-should';
+      if (p === 'could') return 'prio-could';
+      return 'prio-none';
     }
 
-    // Render Statistics
+    function getRoleClass(role) {
+      return role ? 'role-badge' : 'role-none';
+    }
+
     function updateStats(data) {
       document.getElementById('statTotal').textContent = data.length;
       document.getElementById('statFixed').textContent = data.filter(d => d.status === 'Fixed').length;
@@ -1420,57 +1438,71 @@
       document.getElementById('statDeprecated').textContent = data.filter(d => d.status === 'Deprecated').length;
     }
 
-    // Get Filtered Dataset
     function getFilteredData() {
       if (currentFilter === 'ALL') return dataset;
       return dataset.filter(item => item.status === currentFilter);
     }
 
-    // Update Status of an Item
-    function updateItemStatus(itemRef, newStatus) {
-      const oldStatus = itemRef.status;
-      itemRef.status = newStatus;
+    function updateItemProperty(item, prop, value) {
+      const oldVal = item[prop];
+      item[prop] = value || null;
       render();
-      saveToGitHub(`Update status of "${itemRef.issue.substring(0, 30)}..." from ${oldStatus} to ${newStatus}`);
+      saveToGitHub(`Update ${prop} of "${item.issue.substring(0, 25)}..." from ${oldVal} to ${value}`);
     }
 
-    // Render Table View with 2-Level Nested Collapsible Categories
+    // Bind Inline Text Editing (Blur & Enter key listener)
+    function setupEditableText(element, item, propertyName) {
+      if (!element) return;
+      element.addEventListener('blur', () => {
+        let newText = element.innerText.trim();
+        // Clean out leading comment emoji if present in notes
+        if (propertyName === 'notes' && newText.startsWith('💬')) {
+          newText = newText.replace(/^💬\s*/, '').trim();
+        }
+        if (newText !== (item[propertyName] || '')) {
+          const oldText = item[propertyName] || '';
+          item[propertyName] = newText || null;
+          updateStats(dataset);
+          saveToGitHub(`Update ${propertyName} from "${oldText.substring(0, 20)}..." to "${newText.substring(0, 20)}..."`);
+        }
+      });
+
+      element.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && !e.shiftKey) {
+          e.preventDefault();
+          element.blur();
+        }
+      });
+    }
+
+    // Render Table View with Compact Row Heights
     function renderTableView(data) {
       const tbody = document.getElementById('tableBody');
       tbody.innerHTML = '';
 
       if (data.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-muted);">No items match the selected filter.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 1.5rem; color: var(--text-muted);">No items match the selected filter.</td></tr>`;
         return;
       }
 
-      // Build 2-Level Nested Hierarchy Map
       const hierarchy = new Map();
-
       data.forEach(item => {
         const parts = item.category.split('>').map(s => s.trim());
         const level1 = parts[0];
         const level2 = parts[1] || null;
 
-        if (!hierarchy.has(level1)) {
-          hierarchy.set(level1, new Map());
-        }
+        if (!hierarchy.has(level1)) hierarchy.set(level1, new Map());
         const level1Map = hierarchy.get(level1);
-
-        if (!level1Map.has(level2)) {
-          level1Map.set(level2, []);
-        }
+        if (!level1Map.has(level2)) level1Map.set(level2, []);
         level1Map.get(level2).push(item);
       });
 
-      // Render Hierarchy
       hierarchy.forEach((level2Map, level1Name) => {
         let level1TotalItems = 0;
         level2Map.forEach(items => { level1TotalItems += items.length; });
 
         const isL1Collapsed = collapsedLevel1.has(level1Name);
 
-        // Level 1 Row
         const l1Row = document.createElement('tr');
         l1Row.className = 'level1-row';
         l1Row.title = 'Click to fold/unfold main category';
@@ -1485,17 +1517,13 @@
         `;
 
         l1Row.addEventListener('click', () => {
-          if (collapsedLevel1.has(level1Name)) {
-            collapsedLevel1.delete(level1Name);
-          } else {
-            collapsedLevel1.add(level1Name);
-          }
+          if (collapsedLevel1.has(level1Name)) collapsedLevel1.delete(level1Name);
+          else collapsedLevel1.add(level1Name);
           renderTableView(getFilteredData());
         });
 
         tbody.appendChild(l1Row);
 
-        // Render Level 2 subcategories if Level 1 expanded
         if (!isL1Collapsed) {
           level2Map.forEach((items, level2Name) => {
             if (level2Name) {
@@ -1517,11 +1545,8 @@
 
               l2Row.addEventListener('click', (e) => {
                 e.stopPropagation();
-                if (collapsedLevel2.has(l2Key)) {
-                  collapsedLevel2.delete(l2Key);
-                } else {
-                  collapsedLevel2.add(l2Key);
-                }
+                if (collapsedLevel2.has(l2Key)) collapsedLevel2.delete(l2Key);
+                else collapsedLevel2.add(l2Key);
                 renderTableView(getFilteredData());
               });
 
@@ -1533,27 +1558,48 @@
                   tr.className = 'item-row level2-item-row';
                   tr.innerHTML = `
                     <td>
-                      <select class="status-select" data-issue="${encodeURIComponent(item.issue)}">
+                      <select class="badge-select ${getStatusClass(item.status)} status-select">
                         <option value="Fixed" ${item.status === 'Fixed' ? 'selected' : ''}>Fixed</option>
                         <option value="To Do" ${item.status === 'To Do' ? 'selected' : ''}>To Do</option>
                         <option value="Backlog" ${item.status === 'Backlog' ? 'selected' : ''}>Backlog</option>
                         <option value="Deprecated" ${item.status === 'Deprecated' ? 'selected' : ''}>Deprecated</option>
                       </select>
                     </td>
-                    <td>${getPriorityBadge(item.priority)}</td>
-                    <td>${item.role ? `<span class="role-tag">${item.role}</span>` : '<span style="color: var(--text-dim); font-size: 0.75rem;">—</span>'}</td>
-                    <td style="font-weight: 500; color: var(--text-main);">${item.issue || ''}</td>
                     <td>
-                      ${item.response ? `<div class="text-response">${item.response}</div>` : ''}
-                      ${item.notes ? `<div class="text-notes">💬 ${item.notes}</div>` : ''}
-                      ${!item.response && !item.notes ? '<span style="color: var(--text-dim); font-size: 0.75rem;">—</span>' : ''}
+                      <select class="badge-select ${getPrioClass(item.priority)} prio-select">
+                        <option value="" ${!item.priority ? 'selected' : ''}>— None —</option>
+                        <option value="Must" ${item.priority === 'Must' ? 'selected' : ''}>Must</option>
+                        <option value="Should" ${item.priority === 'Should' ? 'selected' : ''}>Should</option>
+                        <option value="Could" ${item.priority === 'Could' ? 'selected' : ''}>Could</option>
+                      </select>
+                    </td>
+                    <td>
+                      <select class="badge-select ${getRoleClass(item.role)} role-select">
+                        <option value="" ${!item.role ? 'selected' : ''}>— None —</option>
+                        <option value="Emp" ${item.role === 'Emp' ? 'selected' : ''}>Emp</option>
+                        <option value="DM" ${item.role === 'DM' ? 'selected' : ''}>DM</option>
+                        <option value="PM" ${item.role === 'PM' ? 'selected' : ''}>PM</option>
+                        <option value="PO" ${item.role === 'PO' ? 'selected' : ''}>PO</option>
+                        <option value="GM" ${item.role === 'GM' ? 'selected' : ''}>GM</option>
+                      </select>
+                    </td>
+                    <td>
+                      <div class="editable-text issue-text" contenteditable="true" title="Click to edit issue text">${item.issue || ''}</div>
+                    </td>
+                    <td>
+                      ${item.response ? `<div class="editable-text text-response" contenteditable="true" title="Click to edit response">${item.response}</div>` : ''}
+                      ${item.notes ? `<div class="editable-text text-notes" contenteditable="true" title="Click to edit notes">💬 ${item.notes}</div>` : ''}
+                      ${!item.response && !item.notes ? '<span class="editable-text text-notes" contenteditable="true" style="color: var(--text-dim);">—</span>' : ''}
                     </td>
                   `;
 
-                  const select = tr.querySelector('.status-select');
-                  select.addEventListener('change', (e) => {
-                    updateItemStatus(item, e.target.value);
-                  });
+                  tr.querySelector('.status-select').addEventListener('change', (e) => updateItemProperty(item, 'status', e.target.value));
+                  tr.querySelector('.prio-select').addEventListener('change', (e) => updateItemProperty(item, 'priority', e.target.value));
+                  tr.querySelector('.role-select').addEventListener('change', (e) => updateItemProperty(item, 'role', e.target.value));
+
+                  setupEditableText(tr.querySelector('.issue-text'), item, 'issue');
+                  setupEditableText(tr.querySelector('.text-response'), item, 'response');
+                  setupEditableText(tr.querySelector('.text-notes'), item, 'notes');
 
                   tbody.appendChild(tr);
                 });
@@ -1564,27 +1610,48 @@
                 tr.className = 'item-row';
                 tr.innerHTML = `
                   <td>
-                    <select class="status-select">
+                    <select class="badge-select ${getStatusClass(item.status)} status-select">
                       <option value="Fixed" ${item.status === 'Fixed' ? 'selected' : ''}>Fixed</option>
                       <option value="To Do" ${item.status === 'To Do' ? 'selected' : ''}>To Do</option>
                       <option value="Backlog" ${item.status === 'Backlog' ? 'selected' : ''}>Backlog</option>
                       <option value="Deprecated" ${item.status === 'Deprecated' ? 'selected' : ''}>Deprecated</option>
                     </select>
                   </td>
-                  <td>${getPriorityBadge(item.priority)}</td>
-                  <td>${item.role ? `<span class="role-tag">${item.role}</span>` : '<span style="color: var(--text-dim); font-size: 0.75rem;">—</span>'}</td>
-                  <td style="font-weight: 500; color: var(--text-main);">${item.issue || ''}</td>
                   <td>
-                    ${item.response ? `<div class="text-response">${item.response}</div>` : ''}
-                    ${item.notes ? `<div class="text-notes">💬 ${item.notes}</div>` : ''}
-                    ${!item.response && !item.notes ? '<span style="color: var(--text-dim); font-size: 0.75rem;">—</span>' : ''}
+                    <select class="badge-select ${getPrioClass(item.priority)} prio-select">
+                      <option value="" ${!item.priority ? 'selected' : ''}>— None —</option>
+                      <option value="Must" ${item.priority === 'Must' ? 'selected' : ''}>Must</option>
+                      <option value="Should" ${item.priority === 'Should' ? 'selected' : ''}>Should</option>
+                      <option value="Could" ${item.priority === 'Could' ? 'selected' : ''}>Could</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select class="badge-select ${getRoleClass(item.role)} role-select">
+                      <option value="" ${!item.role ? 'selected' : ''}>— None —</option>
+                      <option value="Emp" ${item.role === 'Emp' ? 'selected' : ''}>Emp</option>
+                      <option value="DM" ${item.role === 'DM' ? 'selected' : ''}>DM</option>
+                      <option value="PM" ${item.role === 'PM' ? 'selected' : ''}>PM</option>
+                      <option value="PO" ${item.role === 'PO' ? 'selected' : ''}>PO</option>
+                      <option value="GM" ${item.role === 'GM' ? 'selected' : ''}>GM</option>
+                    </select>
+                  </td>
+                  <td>
+                    <div class="editable-text issue-text" contenteditable="true" title="Click to edit issue text">${item.issue || ''}</div>
+                  </td>
+                  <td>
+                    ${item.response ? `<div class="editable-text text-response" contenteditable="true" title="Click to edit response">${item.response}</div>` : ''}
+                    ${item.notes ? `<div class="editable-text text-notes" contenteditable="true" title="Click to edit notes">💬 ${item.notes}</div>` : ''}
+                    ${!item.response && !item.notes ? '<span class="editable-text text-notes" contenteditable="true" style="color: var(--text-dim);">—</span>' : ''}
                   </td>
                 `;
 
-                const select = tr.querySelector('.status-select');
-                select.addEventListener('change', (e) => {
-                  updateItemStatus(item, e.target.value);
-                });
+                tr.querySelector('.status-select').addEventListener('change', (e) => updateItemProperty(item, 'status', e.target.value));
+                tr.querySelector('.prio-select').addEventListener('change', (e) => updateItemProperty(item, 'priority', e.target.value));
+                tr.querySelector('.role-select').addEventListener('change', (e) => updateItemProperty(item, 'role', e.target.value));
+
+                setupEditableText(tr.querySelector('.issue-text'), item, 'issue');
+                setupEditableText(tr.querySelector('.text-response'), item, 'response');
+                setupEditableText(tr.querySelector('.text-notes'), item, 'notes');
 
                 tbody.appendChild(tr);
               });
@@ -1609,7 +1676,7 @@
         const colEl = document.createElement('div');
         colEl.className = 'kanban-col';
 
-        let badgeHtml = getStatusBadge(colStatus);
+        let badgeHtml = `<span class="badge ${getStatusClass(colStatus)}">${colStatus}</span>`;
 
         colEl.innerHTML = `
           <div class="kanban-col-header">
@@ -1620,16 +1687,28 @@
           </div>
           <div class="kanban-cards">
             ${colData.length === 0 ? '<div style="color: var(--text-dim); font-size: 0.8rem; text-align: center; padding: 1.5rem 0;">No items</div>' : ''}
-            ${colData.map((item, idx) => `
+            ${colData.map((item) => `
               <div class="kanban-card">
                 <div class="card-meta">
                   <span class="card-category">${item.category}</span>
-                  ${getPriorityBadge(item.priority)}
+                  <select class="badge-select ${getPrioClass(item.priority)} kanban-prio-select">
+                    <option value="" ${!item.priority ? 'selected' : ''}>— None —</option>
+                    <option value="Must" ${item.priority === 'Must' ? 'selected' : ''}>Must</option>
+                    <option value="Should" ${item.priority === 'Should' ? 'selected' : ''}>Should</option>
+                    <option value="Could" ${item.priority === 'Could' ? 'selected' : ''}>Could</option>
+                  </select>
                 </div>
-                <div class="card-issue">${item.issue}</div>
+                <div class="editable-text card-issue" contenteditable="true" title="Click to edit issue text">${item.issue}</div>
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.2rem;">
-                  ${item.role ? `<span class="role-tag">${item.role}</span>` : '<span></span>'}
-                  <select class="status-select kanban-status-select" data-index="${idx}" data-status="${item.status}">
+                  <select class="badge-select ${getRoleClass(item.role)} kanban-role-select">
+                    <option value="" ${!item.role ? 'selected' : ''}>— None —</option>
+                    <option value="Emp" ${item.role === 'Emp' ? 'selected' : ''}>Emp</option>
+                    <option value="DM" ${item.role === 'DM' ? 'selected' : ''}>DM</option>
+                    <option value="PM" ${item.role === 'PM' ? 'selected' : ''}>PM</option>
+                    <option value="PO" ${item.role === 'PO' ? 'selected' : ''}>PO</option>
+                    <option value="GM" ${item.role === 'GM' ? 'selected' : ''}>GM</option>
+                  </select>
+                  <select class="badge-select ${getStatusClass(item.status)} kanban-status-select">
                     <option value="Fixed" ${item.status === 'Fixed' ? 'selected' : ''}>Fixed</option>
                     <option value="To Do" ${item.status === 'To Do' ? 'selected' : ''}>To Do</option>
                     <option value="Backlog" ${item.status === 'Backlog' ? 'selected' : ''}>Backlog</option>
@@ -1638,8 +1717,8 @@
                 </div>
                 ${item.response || item.notes ? `
                   <div class="detail-box">
-                    ${item.response ? `<div style="font-size: 0.8rem; color: var(--text-main); font-weight: 500;">${item.response}</div>` : ''}
-                    ${item.notes ? `<div style="font-size: 0.75rem; color: var(--text-muted); font-style: italic; margin-top: 2px;">💬 ${item.notes}</div>` : ''}
+                    ${item.response ? `<div class="editable-text" contenteditable="true" style="font-size: 0.8rem; color: var(--text-main); font-weight: 500;">${item.response}</div>` : ''}
+                    ${item.notes ? `<div class="editable-text" contenteditable="true" style="font-size: 0.75rem; color: var(--text-muted); font-style: italic; margin-top: 2px;">💬 ${item.notes}</div>` : ''}
                   </div>
                 ` : ''}
               </div>
@@ -1647,10 +1726,12 @@
           </div>
         `;
 
-        colEl.querySelectorAll('.kanban-status-select').forEach((sel, i) => {
-          sel.addEventListener('change', (e) => {
-            updateItemStatus(colData[i], e.target.value);
-          });
+        colEl.querySelectorAll('.kanban-card').forEach((cardEl, idx) => {
+          const item = colData[idx];
+          cardEl.querySelector('.kanban-status-select').addEventListener('change', (e) => updateItemProperty(item, 'status', e.target.value));
+          cardEl.querySelector('.kanban-prio-select').addEventListener('change', (e) => updateItemProperty(item, 'priority', e.target.value));
+          cardEl.querySelector('.kanban-role-select').addEventListener('change', (e) => updateItemProperty(item, 'role', e.target.value));
+          setupEditableText(cardEl.querySelector('.card-issue'), item, 'issue');
         });
 
         kanbanGrid.appendChild(colEl);

@@ -337,38 +337,48 @@
       background: var(--primary-hover);
     }
 
-    /* Styled Response Column Action Button */
+    /* Clickable Text for Response Column with Full Multiline Support */
     .btn-response-action {
-      background: var(--bg-card);
-      border: 1px solid var(--border-bright);
+      background: transparent;
+      border: none;
       color: var(--text-main);
-      padding: 0.22rem 0.65rem;
-      border-radius: 6px;
-      font-size: 0.775rem;
-      font-weight: 600;
+      padding: 0.15rem 0.3rem;
+      border-radius: 4px;
+      font-size: 0.85rem;
+      font-weight: 500;
       cursor: pointer;
       transition: all 0.2s ease;
       display: inline-flex;
-      align-items: center;
+      align-items: flex-start;
       gap: 0.35rem;
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
-      margin-bottom: 0.2rem;
-      max-width: 100%;
+      box-shadow: none;
+      margin-bottom: 0.1rem;
+      width: 100%;
       text-align: left;
+      line-height: 1.4;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
 
     .btn-response-action span.response-btn-text {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 220px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      max-width: 100%;
     }
 
     .btn-response-action:hover {
-      background: var(--primary);
-      color: #ffffff;
-      border-color: var(--primary);
-      transform: translateY(-1px);
+      background: rgba(79, 70, 229, 0.08);
+      color: var(--primary);
+      text-decoration: underline;
+    }
+
+    .btn-response-action.empty-response {
+      color: var(--text-dim);
+      font-style: italic;
+    }
+
+    .btn-response-action.empty-response:hover {
+      color: var(--primary);
     }
 
     /* View Switcher Toggle */
@@ -519,6 +529,8 @@
       line-height: 1.35;
       display: inline-block;
       width: 100%;
+      white-space: pre-wrap;
+      word-break: break-word;
     }
 
     .editable-text:hover {
@@ -653,7 +665,7 @@
     td {
       padding: 0.45rem 0.75rem;
       border-bottom: 1px solid var(--border-color);
-      vertical-align: middle;
+      vertical-align: top;
       transition: background-color 0.2s ease;
     }
 
@@ -2081,7 +2093,7 @@
       saveChanges(`Update ${prop} of "${item.issue.substring(0, 25)}..." from ${oldVal} to ${value}`);
     }
 
-    // Bind Inline Text Editing (Blur & Enter key listener)
+    // Bind Inline Text Editing (Blur & Shift+Enter listener)
     function setupEditableText(element, item, propertyName) {
       if (!element) return;
       element.addEventListener('blur', () => {
@@ -2096,13 +2108,6 @@
           saveChanges(`Update ${propertyName} from "${oldText.substring(0, 20)}..." to "${newText.substring(0, 20)}..."`);
         }
       });
-
-      element.addEventListener('keydown', (e) => {
-        if (e.key === 'Enter' && !e.shiftKey) {
-          e.preventDefault();
-          element.blur();
-        }
-      });
     }
 
     function getResponseButtonLabel(item) {
@@ -2113,10 +2118,10 @@
       if (item.response) {
         return `💬 ${item.response}`;
       }
-      return `💬 + Add Response`;
+      return `+ Add Response`;
     }
 
-    // Render Table View with Dynamic "Where is ball" Transfer
+    // Render Table View with Clickable Response Text
     function renderTableView(data) {
       const tbody = document.getElementById('tableBody');
       tbody.innerHTML = '';
@@ -2195,6 +2200,7 @@
 
               if (!isL2Collapsed) {
                 items.forEach(item => {
+                  const hasResponse = (item.comments && item.comments.length > 0) || item.response;
                   const tr = document.createElement('tr');
                   tr.className = 'item-row level2-item-row';
                   tr.innerHTML = `
@@ -2236,7 +2242,7 @@
                     </td>
                     <td>
                       <div>
-                        <button class="btn-response-action">
+                        <button class="btn-response-action ${!hasResponse ? 'empty-response' : ''}" title="Click to open discussion thread">
                           <span class="response-btn-text">${getResponseButtonLabel(item)}</span>
                         </button>
                       </div>
@@ -2258,6 +2264,7 @@
               }
             } else {
               items.forEach(item => {
+                const hasResponse = (item.comments && item.comments.length > 0) || item.response;
                 const tr = document.createElement('tr');
                 tr.className = 'item-row';
                 tr.innerHTML = `
@@ -2299,7 +2306,7 @@
                   </td>
                   <td>
                     <div>
-                      <button class="btn-response-action">
+                      <button class="btn-response-action ${!hasResponse ? 'empty-response' : ''}" title="Click to open discussion thread">
                         <span class="response-btn-text">${getResponseButtonLabel(item)}</span>
                       </button>
                     </div>
@@ -2350,7 +2357,9 @@
           </div>
           <div class="kanban-cards">
             ${colData.length === 0 ? '<div style="color: var(--text-dim); font-size: 0.8rem; text-align: center; padding: 1.5rem 0;">No items</div>' : ''}
-            ${colData.map((item) => `
+            ${colData.map((item) => {
+              const hasResponse = (item.comments && item.comments.length > 0) || item.response;
+              return `
               <div class="kanban-card">
                 <div class="card-meta">
                   <span class="card-category">${item.category}</span>
@@ -2384,13 +2393,14 @@
                   </select>
                 </div>
                 <div class="detail-box">
-                  <button class="btn-response-action kanban-response-btn">
+                  <button class="btn-response-action kanban-response-btn ${!hasResponse ? 'empty-response' : ''}" title="Click to open discussion thread">
                     <span class="response-btn-text">${getResponseButtonLabel(item)}</span>
                   </button>
                   ${item.notes ? `<div class="editable-text" contenteditable="true" style="font-size: 0.75rem; color: var(--text-muted); font-style: italic; margin-top: 2px;">💬 ${item.notes}</div>` : ''}
                 </div>
               </div>
-            `).join('')}
+            `;
+            }).join('')}
           </div>
         `;
 

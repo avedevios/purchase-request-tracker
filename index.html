@@ -13,6 +13,7 @@
       --bg-card-hover: #f1f5f9;
       --bg-subtle: #f1f5f9;
       --bg-category: #e2e8f0;
+      --bg-category-hover: #cbd5e1;
       --border-color: #e2e8f0;
       --border-bright: #cbd5e1;
       --text-main: #0f172a;
@@ -61,6 +62,7 @@
       --bg-card-hover: #1f2937;
       --bg-subtle: #0f172a;
       --bg-category: #172033;
+      --bg-category-hover: #1e293b;
       --border-color: #1f293d;
       --border-bright: #374151;
       --text-main: #f3f4f6;
@@ -414,11 +416,11 @@
       border-bottom: none;
     }
 
-    tr:hover td {
+    tr.item-row:hover td {
       background: var(--bg-card-hover);
     }
 
-    /* Category Header Row in Table */
+    /* Foldable Category Header Row in Table */
     tr.category-row td {
       background: var(--bg-category);
       font-weight: 700;
@@ -426,6 +428,37 @@
       color: var(--category-text);
       border-top: 1px solid var(--border-bright);
       border-bottom: 1px solid var(--border-bright);
+      cursor: pointer;
+      user-select: none;
+      transition: background-color 0.2s ease;
+    }
+
+    tr.category-row:hover td {
+      background: var(--bg-category-hover);
+    }
+
+    .category-header-content {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .fold-arrow {
+      display: inline-block;
+      font-size: 0.75rem;
+      width: 14px;
+      text-align: center;
+      transition: transform 0.2s ease;
+    }
+
+    .category-count-badge {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      background: var(--bg-card);
+      padding: 0.1rem 0.45rem;
+      border-radius: 10px;
+      margin-left: 0.4rem;
     }
 
     /* Badges */
@@ -1122,9 +1155,10 @@
       }
     ];
 
-    // User Switcher & Dynamic Theme Setup
+    // User Switcher, Dynamic Theme & Collapsible Category State
     let currentUser = "Anton";
     let currentFilter = "ALL";
+    const collapsedCategories = new Set();
     const userPills = document.querySelectorAll('.user-pill-btn');
 
     function applyUserTheme(userName) {
@@ -1175,7 +1209,7 @@
       return dataset.filter(item => item.status === currentFilter);
     }
 
-    // Render Table View
+    // Render Table View with Collapsible Category Headers
     function renderTableView(data) {
       const tbody = document.getElementById('tableBody');
       tbody.innerHTML = '';
@@ -1185,29 +1219,62 @@
         return;
       }
 
-      let currentCategory = '';
+      // Group data by category
+      const categoriesMap = new Map();
       data.forEach(item => {
-        if (item.category !== currentCategory) {
-          currentCategory = item.category;
-          const catRow = document.createElement('tr');
-          catRow.className = 'category-row';
-          catRow.innerHTML = `<td colspan="5">📂 ${currentCategory}</td>`;
-          tbody.appendChild(catRow);
+        if (!categoriesMap.has(item.category)) {
+          categoriesMap.set(item.category, []);
         }
+        categoriesMap.get(item.category).push(item);
+      });
 
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td>${getStatusBadge(item.status)}</td>
-          <td>${getPriorityBadge(item.priority)}</td>
-          <td>${item.role ? `<span class="role-tag">${item.role}</span>` : '<span style="color: var(--text-dim); font-size: 0.75rem;">—</span>'}</td>
-          <td style="font-weight: 500; color: var(--text-main);">${item.issue || ''}</td>
-          <td>
-            ${item.response ? `<div class="text-response">${item.response}</div>` : ''}
-            ${item.notes ? `<div class="text-notes">💬 ${item.notes}</div>` : ''}
-            ${!item.response && !item.notes ? '<span style="color: var(--text-dim); font-size: 0.75rem;">—</span>' : ''}
+      categoriesMap.forEach((items, categoryName) => {
+        const isCollapsed = collapsedCategories.has(categoryName);
+        
+        // Category Header Row
+        const catRow = document.createElement('tr');
+        catRow.className = 'category-row';
+        catRow.title = 'Click to fold/unfold category items';
+        catRow.innerHTML = `
+          <td colspan="5">
+            <div class="category-header-content">
+              <span class="fold-arrow">${isCollapsed ? '▶' : '▼'}</span>
+              <span>📂 ${categoryName}</span>
+              <span class="category-count-badge">${items.length}</span>
+            </div>
           </td>
         `;
-        tbody.appendChild(tr);
+
+        catRow.addEventListener('click', () => {
+          if (collapsedCategories.has(categoryName)) {
+            collapsedCategories.delete(categoryName);
+          } else {
+            collapsedCategories.add(categoryName);
+          }
+          renderTableView(getFilteredData());
+        });
+
+        tbody.appendChild(catRow);
+
+        // Render category item rows if not collapsed
+        if (!isCollapsed) {
+          items.forEach(item => {
+            const tr = document.createElement('tr');
+            tr.className = 'item-row';
+            tr.innerHTML = `
+              <td>${getStatusBadge(item.status)}</td>
+              <td>${getPriorityBadge(item.priority)}</td>
+              <td>${item.role ? `<span class="role-tag">${item.role}</span>` : '<span style="color: var(--text-dim); font-size: 0.75rem;">—</span>'}</td>
+              <td style="font-weight: 500; color: var(--text-main);">${item.issue || ''}</td>
+              <td>
+                ${item.response ? `<div class="text-response">${item.response}</div>` : ''}
+                ${item.notes ? `<div class="text-notes">💬 ${item.notes}</div>` : ''}
+                ${!item.response && !item.notes ? '<span style="color: var(--text-dim); font-size: 0.75rem;">—</span>' : ''}
+              </td>
+            `;
+            tbody.appendChild(tr);
+          });
+        }
       });
     }
 
@@ -1273,14 +1340,12 @@
       card.addEventListener('click', () => {
         const targetFilter = card.getAttribute('data-filter');
         
-        // If clicking already active filter card (except Total), reset to ALL
         if (currentFilter === targetFilter && targetFilter !== 'ALL') {
           currentFilter = 'ALL';
         } else {
           currentFilter = targetFilter;
         }
 
-        // Highlight active stat card
         statCards.forEach(c => {
           if (c.getAttribute('data-filter') === currentFilter) {
             c.classList.add('active');

@@ -211,6 +211,50 @@
       color: var(--text-main);
       letter-spacing: -0.02em;
       white-space: nowrap;
+      display: flex;
+      align-items: center;
+    }
+
+    /* Prominent & Extra Large Source Title Badge */
+    .source-title-badge {
+      display: inline-block;
+      vertical-align: middle;
+      font-size: 1.35rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      padding: 0.35rem 1.1rem;
+      border-radius: 10px;
+      margin-left: 1rem;
+      text-transform: uppercase;
+      line-height: 1.1;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      transition: all 0.2s ease;
+    }
+
+    .source-title-badge.badge-local {
+      background: #16a34a;
+      color: #ffffff;
+      border: 2px solid #22c55e;
+      box-shadow: 0 4px 14px rgba(22, 163, 74, 0.35);
+    }
+    :root[data-theme="dark"] .source-title-badge.badge-local {
+      background: #059669;
+      color: #ffffff;
+      border: 2px solid #10b981;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.45);
+    }
+
+    .source-title-badge.badge-github {
+      background: #ea580c;
+      color: #ffffff;
+      border: 2px solid #f97316;
+      box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35);
+    }
+    :root[data-theme="dark"] .source-title-badge.badge-github {
+      background: #d97706;
+      color: #ffffff;
+      border: 2px solid #f59e0b;
+      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.45);
     }
 
     .header-actions {
@@ -1030,7 +1074,10 @@
     <!-- Header -->
     <header>
       <div class="title-area">
-        <h1>Purchase Request Tracker</h1>
+        <h1>
+          <span>Purchase Request Tracker</span>
+          <span id="sourceTitleBadge" class="source-title-badge badge-local">LOCAL</span>
+        </h1>
       </div>
       <div class="header-actions">
         <!-- 1. User Switcher -->
@@ -1706,6 +1753,16 @@
     function updateDataSourceAttribute(source) {
       activeDataSource = source;
       document.documentElement.setAttribute('data-source', source);
+      const titleBadge = document.getElementById('sourceTitleBadge');
+      if (titleBadge) {
+        if (source === 'local') {
+          titleBadge.textContent = 'LOCAL';
+          titleBadge.className = 'source-title-badge badge-local';
+        } else {
+          titleBadge.textContent = 'GITHUB';
+          titleBadge.className = 'source-title-badge badge-github';
+        }
+      }
       if (source === 'github') {
         startGitHubPolling();
       } else if (ghPollInterval) {

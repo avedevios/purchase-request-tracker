@@ -694,19 +694,25 @@
           </div>
         </div>
 
-        <!-- 2. Light / Dark Theme Button -->
+        <!-- 2. Single Fold / Unfold All Toggle Button (Shown in Table View) -->
+        <button class="btn" id="foldToggleBtn" title="Toggle Fold/Unfold All Groups">
+          <span id="foldToggleIcon">▶</span>
+          <span id="foldToggleText">Fold All</span>
+        </button>
+
+        <!-- 3. Light / Dark Theme Button -->
         <button class="btn" id="themeToggleBtn" title="Toggle Light/Dark Theme">
           <span id="themeIcon">☀️</span>
           <span id="themeText">Light</span>
         </button>
 
-        <!-- 3. Export JSON Button -->
+        <!-- 4. Export JSON Button -->
         <button class="btn btn-primary" id="exportBtn">
           <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
           Export
         </button>
 
-        <!-- 4. Table / Board View Switcher -->
+        <!-- 5. Table / Board View Switcher -->
         <div class="view-toggle">
           <button class="view-btn active" id="tableViewBtn">
             <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z"/></svg>
@@ -1185,6 +1191,7 @@
     // User Switcher, Dynamic Theme & 2-Level Collapsible Sets
     let currentUser = "Anton";
     let currentFilter = "ALL";
+    let isAllFolded = false;
     const collapsedLevel1 = new Set();
     const collapsedLevel2 = new Set();
     const userPills = document.querySelectorAll('.user-pill-btn');
@@ -1200,6 +1207,34 @@
         currentUser = pill.getAttribute('data-user');
         applyUserTheme(currentUser);
       });
+    });
+
+    // Single Fold / Unfold All Toggle Handler
+    const foldToggleBtn = document.getElementById('foldToggleBtn');
+    const foldToggleIcon = document.getElementById('foldToggleIcon');
+    const foldToggleText = document.getElementById('foldToggleText');
+
+    foldToggleBtn.addEventListener('click', () => {
+      isAllFolded = !isAllFolded;
+      
+      if (isAllFolded) {
+        dataset.forEach(item => {
+          const parts = item.category.split('>').map(s => s.trim());
+          collapsedLevel1.add(parts[0]);
+          if (parts[1]) {
+            collapsedLevel2.add(`${parts[0]} > ${parts[1]}`);
+          }
+        });
+        foldToggleIcon.textContent = '▼';
+        foldToggleText.textContent = 'Unfold All';
+      } else {
+        collapsedLevel1.clear();
+        collapsedLevel2.clear();
+        foldToggleIcon.textContent = '▶';
+        foldToggleText.textContent = 'Fold All';
+      }
+      
+      renderTableView(getFilteredData());
     });
 
     // Helper functions for Badges
@@ -1466,6 +1501,7 @@
       kanbanBtn.classList.remove('active');
       tableView.style.display = 'block';
       kanbanView.style.display = 'none';
+      foldToggleBtn.style.display = 'inline-flex';
     });
 
     kanbanBtn.addEventListener('click', () => {
@@ -1473,6 +1509,7 @@
       tableBtn.classList.remove('active');
       tableView.style.display = 'none';
       kanbanView.style.display = 'grid';
+      foldToggleBtn.style.display = 'none';
     });
 
     // Theme Toggle Logic

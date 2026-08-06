@@ -321,6 +321,25 @@
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
     }
 
+    /* Editable Status Select Dropdown */
+    .status-select {
+      background: transparent;
+      border: 1px solid transparent;
+      border-radius: 6px;
+      padding: 0.2rem 0.4rem;
+      font-family: inherit;
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .status-select:hover, .status-select:focus {
+      border-color: var(--border-bright);
+      background: var(--bg-card);
+    }
+
     /* Clickable Interactive Stats Cards */
     .stats-grid {
       display: grid;
@@ -383,6 +402,33 @@
     .stat-info .stat-label {
       color: var(--text-muted);
       font-size: 0.8rem;
+    }
+
+    /* Toast Notification Banner */
+    #toast {
+      position: fixed;
+      bottom: 1.5rem;
+      right: 1.5rem;
+      background: #0f172a;
+      color: #ffffff;
+      padding: 0.75rem 1.25rem;
+      border-radius: 10px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      z-index: 1000;
+      opacity: 0;
+      transform: translateY(20px);
+      transition: all 0.3s ease;
+      pointer-events: none;
+    }
+
+    #toast.show {
+      opacity: 1;
+      transform: translateY(0);
     }
 
     /* Views: Table View */
@@ -694,25 +740,30 @@
           </div>
         </div>
 
-        <!-- 2. Single Fold / Unfold All Toggle Button (Shown in Table View) -->
+        <!-- 2. GitHub Token Configuration Button -->
+        <button class="btn" id="githubTokenBtn" title="Set GitHub Token for auto-saving commits">
+          <span>🔑 Sync Repo</span>
+        </button>
+
+        <!-- 3. Fold / Unfold Toggle Button -->
         <button class="btn" id="foldToggleBtn" title="Toggle Fold/Unfold All Groups">
           <span id="foldToggleIcon">▶</span>
           <span id="foldToggleText">Fold All</span>
         </button>
 
-        <!-- 3. Light / Dark Theme Button -->
+        <!-- 4. Light / Dark Theme Button -->
         <button class="btn" id="themeToggleBtn" title="Toggle Light/Dark Theme">
           <span id="themeIcon">☀️</span>
           <span id="themeText">Light</span>
         </button>
 
-        <!-- 4. Export JSON Button -->
+        <!-- 5. Export JSON Button -->
         <button class="btn btn-primary" id="exportBtn">
           <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
           Export
         </button>
 
-        <!-- 5. Table / Board View Switcher -->
+        <!-- 6. Table / Board View Switcher -->
         <div class="view-toggle">
           <button class="view-btn active" id="tableViewBtn">
             <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z"/></svg>
@@ -770,7 +821,7 @@
       <table>
         <thead>
           <tr>
-            <th style="width: 110px;">Status</th>
+            <th style="width: 130px;">Status</th>
             <th style="width: 90px;">Priority</th>
             <th style="width: 70px;">Role</th>
             <th>Issue & Context</th>
@@ -788,8 +839,14 @@
     </div>
   </div>
 
+  <!-- Toast Banner -->
+  <div id="toast">
+    <span id="toastIcon">✨</span>
+    <span id="toastMessage">Notification</span>
+  </div>
+
   <script>
-    const dataset = [
+    let dataset = [
       {
         "category": "Main menu",
         "status": "Fixed",
@@ -1188,13 +1245,26 @@
       }
     ];
 
-    // User Switcher, Dynamic Theme & 2-Level Collapsible Sets
+    // User Switcher, Dynamic Theme & GitHub Sync Setup
     let currentUser = "Anton";
     let currentFilter = "ALL";
     let isAllFolded = false;
     const collapsedLevel1 = new Set();
     const collapsedLevel2 = new Set();
     const userPills = document.querySelectorAll('.user-pill-btn');
+
+    // GitHub Repo Database Info
+    const REPO_OWNER = 'avedevios';
+    const REPO_NAME = 'purchase-request-tracker';
+    const FILE_PATH = 'purchase_requests.json';
+
+    function showToast(message, icon = '✨') {
+      const toast = document.getElementById('toast');
+      document.getElementById('toastIcon').textContent = icon;
+      document.getElementById('toastMessage').textContent = message;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 3500);
+    }
 
     function applyUserTheme(userName) {
       document.documentElement.setAttribute('data-user', userName);
@@ -1208,6 +1278,90 @@
         applyUserTheme(currentUser);
       });
     });
+
+    // GitHub PAT Token Prompt
+    document.getElementById('githubTokenBtn').addEventListener('click', () => {
+      const currentToken = localStorage.getItem('gh_token') || '';
+      const newToken = prompt('Enter your GitHub Personal Access Token (PAT) with repo scope:', currentToken);
+      if (newToken !== null) {
+        localStorage.setItem('gh_token', newToken.trim());
+        if (newToken.trim()) {
+          showToast('GitHub Token saved! Auto-commit enabled.', '🔑');
+          syncFromGitHub();
+        } else {
+          showToast('GitHub Token cleared.', 'ℹ️');
+        }
+      }
+    });
+
+    // Sync dataset FROM GitHub Repo on load
+    async function syncFromGitHub() {
+      try {
+        const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`);
+        if (res.ok) {
+          const data = await res.json();
+          const decodedContent = decodeURIComponent(escape(atob(data.content)));
+          dataset = JSON.parse(decodedContent);
+          render();
+          showToast('Synced latest data from GitHub repository!', '⚡');
+        }
+      } catch (err) {
+        console.warn('GitHub fetch failed, using local dataset fallback', err);
+      }
+    }
+
+    // Save dataset TO GitHub Repo (Auto-Commit)
+    async function saveToGitHub(commitMessage) {
+      const token = localStorage.getItem('gh_token');
+      if (!token) {
+        showToast('Set GitHub Token via "🔑 Sync Repo" to save edits back to GitHub!', '💡');
+        return;
+      }
+
+      showToast('Committing update to GitHub repository...', '⏳');
+
+      try {
+        // 1. Fetch current file SHA hash
+        const getRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+          headers: { 'Authorization': `token ${token}` }
+        });
+
+        if (!getRes.ok) throw new Error('Could not fetch file SHA');
+        const fileInfo = await getRes.json();
+        const sha = fileInfo.sha;
+
+        // 2. Base64 encode UTF-8 content
+        const jsonString = JSON.stringify(dataset, null, 2);
+        const encodedContent = btoa(unescape(encodeURIComponent(jsonString)));
+
+        // 3. Commit PUT request
+        const putRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
+          method: 'PUT',
+          headers: {
+            'Authorization': `token ${token}`,
+            'Content-Type': 'application/json',
+            'Accept': 'application/vnd.github.v3+json'
+          },
+          body: JSON.stringify({
+            message: `${commitMessage} (by ${currentUser})`,
+            content: encodedContent,
+            sha: sha,
+            branch: 'main'
+          })
+        });
+
+        if (putRes.ok) {
+          const result = await putRes.json();
+          showToast(`Saved & committed to GitHub! (${result.commit.sha.substring(0, 7)})`, '✅');
+        } else {
+          const errData = await putRes.json();
+          showToast(`GitHub Save Error: ${errData.message}`, '❌');
+        }
+      } catch (err) {
+        console.error(err);
+        showToast(`Commit failed: ${err.message}`, '❌');
+      }
+    }
 
     // Single Fold / Unfold All Toggle Handler
     const foldToggleBtn = document.getElementById('foldToggleBtn');
@@ -1272,6 +1426,14 @@
       return dataset.filter(item => item.status === currentFilter);
     }
 
+    // Update Status of an Item
+    function updateItemStatus(itemRef, newStatus) {
+      const oldStatus = itemRef.status;
+      itemRef.status = newStatus;
+      render();
+      saveToGitHub(`Update status of "${itemRef.issue.substring(0, 30)}..." from ${oldStatus} to ${newStatus}`);
+    }
+
     // Render Table View with 2-Level Nested Collapsible Categories
     function renderTableView(data) {
       const tbody = document.getElementById('tableBody');
@@ -1282,7 +1444,7 @@
         return;
       }
 
-      // Build 2-Level Nested Hierarchy Map: Level1 -> Level2 -> Items
+      // Build 2-Level Nested Hierarchy Map
       const hierarchy = new Map();
 
       data.forEach(item => {
@@ -1303,7 +1465,6 @@
 
       // Render Hierarchy
       hierarchy.forEach((level2Map, level1Name) => {
-        // Calculate total items under Level 1
         let level1TotalItems = 0;
         level2Map.forEach(items => { level1TotalItems += items.length; });
 
@@ -1334,10 +1495,9 @@
 
         tbody.appendChild(l1Row);
 
-        // If Level 1 is expanded, render Level 2 subcategories
+        // Render Level 2 subcategories if Level 1 expanded
         if (!isL1Collapsed) {
           level2Map.forEach((items, level2Name) => {
-            // Case A: Has a Level 2 subcategory
             if (level2Name) {
               const l2Key = `${level1Name} > ${level2Name}`;
               const isL2Collapsed = collapsedLevel2.has(l2Key);
@@ -1367,13 +1527,19 @@
 
               tbody.appendChild(l2Row);
 
-              // Render data rows under Level 2 if not collapsed
               if (!isL2Collapsed) {
                 items.forEach(item => {
                   const tr = document.createElement('tr');
                   tr.className = 'item-row level2-item-row';
                   tr.innerHTML = `
-                    <td>${getStatusBadge(item.status)}</td>
+                    <td>
+                      <select class="status-select" data-issue="${encodeURIComponent(item.issue)}">
+                        <option value="Fixed" ${item.status === 'Fixed' ? 'selected' : ''}>Fixed</option>
+                        <option value="To Do" ${item.status === 'To Do' ? 'selected' : ''}>To Do</option>
+                        <option value="Backlog" ${item.status === 'Backlog' ? 'selected' : ''}>Backlog</option>
+                        <option value="Deprecated" ${item.status === 'Deprecated' ? 'selected' : ''}>Deprecated</option>
+                      </select>
+                    </td>
                     <td>${getPriorityBadge(item.priority)}</td>
                     <td>${item.role ? `<span class="role-tag">${item.role}</span>` : '<span style="color: var(--text-dim); font-size: 0.75rem;">—</span>'}</td>
                     <td style="font-weight: 500; color: var(--text-main);">${item.issue || ''}</td>
@@ -1383,16 +1549,28 @@
                       ${!item.response && !item.notes ? '<span style="color: var(--text-dim); font-size: 0.75rem;">—</span>' : ''}
                     </td>
                   `;
+
+                  const select = tr.querySelector('.status-select');
+                  select.addEventListener('change', (e) => {
+                    updateItemStatus(item, e.target.value);
+                  });
+
                   tbody.appendChild(tr);
                 });
               }
             } else {
-              // Case B: Directly under Level 1 (no level 2 name)
               items.forEach(item => {
                 const tr = document.createElement('tr');
                 tr.className = 'item-row';
                 tr.innerHTML = `
-                  <td>${getStatusBadge(item.status)}</td>
+                  <td>
+                    <select class="status-select">
+                      <option value="Fixed" ${item.status === 'Fixed' ? 'selected' : ''}>Fixed</option>
+                      <option value="To Do" ${item.status === 'To Do' ? 'selected' : ''}>To Do</option>
+                      <option value="Backlog" ${item.status === 'Backlog' ? 'selected' : ''}>Backlog</option>
+                      <option value="Deprecated" ${item.status === 'Deprecated' ? 'selected' : ''}>Deprecated</option>
+                    </select>
+                  </td>
                   <td>${getPriorityBadge(item.priority)}</td>
                   <td>${item.role ? `<span class="role-tag">${item.role}</span>` : '<span style="color: var(--text-dim); font-size: 0.75rem;">—</span>'}</td>
                   <td style="font-weight: 500; color: var(--text-main);">${item.issue || ''}</td>
@@ -1402,6 +1580,12 @@
                     ${!item.response && !item.notes ? '<span style="color: var(--text-dim); font-size: 0.75rem;">—</span>' : ''}
                   </td>
                 `;
+
+                const select = tr.querySelector('.status-select');
+                select.addEventListener('change', (e) => {
+                  updateItemStatus(item, e.target.value);
+                });
+
                 tbody.appendChild(tr);
               });
             }
@@ -1436,14 +1620,22 @@
           </div>
           <div class="kanban-cards">
             ${colData.length === 0 ? '<div style="color: var(--text-dim); font-size: 0.8rem; text-align: center; padding: 1.5rem 0;">No items</div>' : ''}
-            ${colData.map(item => `
+            ${colData.map((item, idx) => `
               <div class="kanban-card">
                 <div class="card-meta">
                   <span class="card-category">${item.category}</span>
                   ${getPriorityBadge(item.priority)}
                 </div>
                 <div class="card-issue">${item.issue}</div>
-                ${item.role ? `<div><span class="role-tag">${item.role}</span></div>` : ''}
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 0.2rem;">
+                  ${item.role ? `<span class="role-tag">${item.role}</span>` : '<span></span>'}
+                  <select class="status-select kanban-status-select" data-index="${idx}" data-status="${item.status}">
+                    <option value="Fixed" ${item.status === 'Fixed' ? 'selected' : ''}>Fixed</option>
+                    <option value="To Do" ${item.status === 'To Do' ? 'selected' : ''}>To Do</option>
+                    <option value="Backlog" ${item.status === 'Backlog' ? 'selected' : ''}>Backlog</option>
+                    <option value="Deprecated" ${item.status === 'Deprecated' ? 'selected' : ''}>Deprecated</option>
+                  </select>
+                </div>
                 ${item.response || item.notes ? `
                   <div class="detail-box">
                     ${item.response ? `<div style="font-size: 0.8rem; color: var(--text-main); font-weight: 500;">${item.response}</div>` : ''}
@@ -1454,6 +1646,12 @@
             `).join('')}
           </div>
         `;
+
+        colEl.querySelectorAll('.kanban-status-select').forEach((sel, i) => {
+          sel.addEventListener('change', (e) => {
+            updateItemStatus(colData[i], e.target.value);
+          });
+        });
 
         kanbanGrid.appendChild(colEl);
       });
@@ -1548,8 +1746,9 @@
       URL.revokeObjectURL(url);
     });
 
-    // Initial render & theme setup
+    // Initial render, theme & GitHub sync
     applyUserTheme(currentUser);
+    syncFromGitHub();
     render();
   </script>
 </body>

@@ -353,6 +353,15 @@
       gap: 0.35rem;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
       margin-bottom: 0.2rem;
+      max-width: 100%;
+      text-align: left;
+    }
+
+    .btn-response-action span.response-btn-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 220px;
     }
 
     .btn-response-action:hover {
@@ -725,6 +734,175 @@
       font-style: italic;
     }
 
+    /* Response Chat Modal Dialog */
+    .modal-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 2000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .modal-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-bright);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 620px;
+      max-height: 85vh;
+      display: flex;
+      flex-direction: column;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+      animation: modalSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalSlideUp {
+      from { opacity: 0; transform: translateY(18px) scale(0.98); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    .modal-header {
+      padding: 1rem 1.25rem;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title h3 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .modal-subtitle {
+      font-size: 0.775rem;
+      color: var(--text-muted);
+      max-width: 480px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .modal-close-btn {
+      background: transparent;
+      border: none;
+      font-size: 1.5rem;
+      line-height: 1;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+    }
+    .modal-close-btn:hover {
+      background: var(--bg-subtle);
+      color: var(--text-main);
+    }
+
+    .modal-body {
+      padding: 1.25rem;
+      overflow-y: auto;
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      min-height: 250px;
+      max-height: 450px;
+    }
+
+    .chat-bubble {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      max-width: 82%;
+    }
+
+    .chat-bubble.own {
+      align-self: flex-end;
+    }
+
+    .chat-bubble.other {
+      align-self: flex-start;
+    }
+
+    .chat-bubble-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-size: 0.725rem;
+      color: var(--text-muted);
+    }
+
+    .chat-bubble.own .chat-bubble-meta {
+      justify-content: flex-end;
+    }
+
+    .chat-bubble-user {
+      font-weight: 700;
+      color: var(--text-main);
+    }
+
+    .chat-bubble-content {
+      padding: 0.65rem 0.9rem;
+      border-radius: 12px;
+      font-size: 0.85rem;
+      line-height: 1.4;
+      word-break: break-word;
+      white-space: pre-wrap;
+    }
+
+    .chat-bubble.own .chat-bubble-content {
+      background: var(--primary);
+      color: #ffffff;
+      border-bottom-right-radius: 2px;
+    }
+
+    .chat-bubble.other .chat-bubble-content {
+      background: var(--bg-subtle);
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+      border-bottom-left-radius: 2px;
+    }
+
+    .modal-footer {
+      padding: 0.9rem 1.25rem;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .chat-input-wrapper {
+      display: flex;
+      gap: 0.6rem;
+      align-items: flex-end;
+    }
+
+    .chat-input-wrapper textarea {
+      flex: 1;
+      background: var(--bg-subtle);
+      border: 1px solid var(--border-bright);
+      color: var(--text-main);
+      border-radius: 10px;
+      padding: 0.6rem 0.8rem;
+      font-family: inherit;
+      font-size: 0.85rem;
+      outline: none;
+      resize: none;
+      line-height: 1.4;
+    }
+
+    .chat-input-wrapper textarea:focus {
+      border-color: var(--primary);
+      background: var(--bg-card);
+      box-shadow: 0 0 0 2px var(--primary-glow);
+    }
+
     /* Views: Kanban Board */
     .kanban-grid {
       display: grid;
@@ -961,6 +1139,28 @@
     </div>
   </div>
 
+  <!-- Interactive Response Chat Modal -->
+  <div id="chatModal" class="modal-overlay" style="display: none;">
+    <div class="modal-card">
+      <div class="modal-header">
+        <div class="modal-title">
+          <h3>💬 Response Discussion</h3>
+          <p id="chatIssueSubtitle" class="modal-subtitle">Issue details...</p>
+        </div>
+        <button class="modal-close-btn" id="closeChatModalBtn">&times;</button>
+      </div>
+      <div class="modal-body" id="chatThreadContainer">
+        <!-- Chat bubbles rendered dynamically -->
+      </div>
+      <div class="modal-footer">
+        <div class="chat-input-wrapper">
+          <textarea id="chatInput" placeholder="Type a response or resolution update..." rows="2"></textarea>
+          <button id="sendChatBtn" class="btn btn-primary">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Banner -->
   <div id="toast">
     <span id="toastIcon">✨</span>
@@ -1020,7 +1220,7 @@
         "notes": null
       },
       {
-        "ball": null,
+        "ball": "Adonis",
         "category": "Purchase Request Form > Purchase Request Form Behavior",
         "status": "Fixed",
         "priority": "Must",
@@ -1150,7 +1350,7 @@
         "notes": null
       },
       {
-        "ball": null,
+        "ball": "Adonis",
         "category": "PR Roles List > PR Roles List Form",
         "status": "Deprecated",
         "priority": null,
@@ -1230,7 +1430,7 @@
         "notes": null
       },
       {
-        "ball": null,
+        "ball": "Adonis",
         "category": "WorkFlow > DM Stage",
         "status": "Fixed",
         "priority": "Must",
@@ -1240,7 +1440,7 @@
         "notes": "Fixed"
       },
       {
-        "ball": null,
+        "ball": "Adonis",
         "category": "WorkFlow > DM Stage",
         "status": "Fixed",
         "priority": "Could",
@@ -1250,7 +1450,7 @@
         "notes": "Fixed"
       },
       {
-        "ball": null,
+        "ball": "Adonis",
         "category": "WorkFlow > DM Stage",
         "status": "To Do",
         "priority": "Must",
@@ -1260,7 +1460,7 @@
         "notes": "Still there"
       },
       {
-        "ball": null,
+        "ball": "Adonis",
         "category": "WorkFlow > DM Stage",
         "status": "To Do",
         "priority": "Must",
@@ -1270,7 +1470,7 @@
         "notes": "You're saying about Confirm extra budget, but I said about Approve. Also Confirm extra budget unavailable"
       },
       {
-        "ball": null,
+        "ball": "Adonis",
         "category": "WorkFlow > PM Stage",
         "status": "Fixed",
         "priority": "Must",
@@ -1280,7 +1480,7 @@
         "notes": "Fixed"
       },
       {
-        "ball": null,
+        "ball": "Adonis",
         "category": "WorkFlow > PM Stage",
         "status": "To Do",
         "priority": "Must",
@@ -1290,7 +1490,7 @@
         "notes": "I see error, process blocked. But also I see popup that all ok and it kicks me to the list"
       },
       {
-        "ball": null,
+        "ball": "Adonis",
         "category": "WorkFlow > PM Stage",
         "status": "Fixed",
         "priority": "Must",
@@ -1300,7 +1500,7 @@
         "notes": "Fixed"
       },
       {
-        "ball": null,
+        "ball": "Adonis",
         "category": "WorkFlow > PM Stage",
         "status": "Fixed",
         "priority": "Must",
@@ -1330,7 +1530,7 @@
         "notes": null
       },
       {
-        "ball": null,
+        "ball": "Adonis",
         "category": "WorkFlow > PO Stage",
         "status": "Fixed",
         "priority": "Must",
@@ -1380,7 +1580,7 @@
         "notes": null
       },
       {
-        "ball": null,
+        "ball": "Adonis",
         "category": "WorkFlow > PM Stage After PO Approval",
         "status": "To Do",
         "priority": "Should",
@@ -1390,7 +1590,7 @@
         "notes": null
       },
       {
-        "ball": null,
+        "ball": "Adonis",
         "category": "WorkFlow > GM Stage",
         "status": "To Do",
         "priority": "Must",
@@ -1400,7 +1600,7 @@
         "notes": "I tried on overbudget PR"
       },
       {
-        "ball": null,
+        "ball": "Adonis",
         "category": "WorkFlow > GM Stage",
         "status": "To Do",
         "priority": "Must",
@@ -1415,6 +1615,7 @@
     let currentUser = "Anton";
     let currentFilter = "ALL";
     let activeDataSource = "local"; // "local" or "github"
+    let activeChatItem = null;
     let isAllFolded = false;
     const collapsedLevel1 = new Set();
     const collapsedLevel2 = new Set();
@@ -1469,12 +1670,25 @@
       syncFromGitHub();
     });
 
+    // Automatically sync "Where is ball" owner to the author of the last response message
+    function syncBallToLastMessageAuthor(itemsList) {
+      itemsList.forEach(item => {
+        if (item.comments && item.comments.length > 0) {
+          const lastMsg = item.comments[item.comments.length - 1];
+          if (lastMsg.author && ['Anton', 'Adonis'].includes(lastMsg.author)) {
+            item.ball = lastMsg.author;
+          }
+        }
+      });
+    }
+
     // Load Local purchase_requests.json dataset with localStorage persistence
     async function loadLocalJson() {
       const savedLocal = localStorage.getItem('local_dataset');
       if (savedLocal) {
         try {
           dataset = JSON.parse(savedLocal);
+          syncBallToLastMessageAuthor(dataset);
           render();
           showToast('Loaded local saved dataset!', '📄');
           return;
@@ -1485,6 +1699,7 @@
         const res = await fetch('./purchase_requests.json');
         if (res.ok) {
           dataset = await res.json();
+          syncBallToLastMessageAuthor(dataset);
           localStorage.setItem('local_dataset', JSON.stringify(dataset));
           render();
           showToast('Loaded data from local purchase_requests.json', '📄');
@@ -1494,6 +1709,7 @@
         console.warn('File protocol or CORS restriction, using local dataset memory fallback', err);
       }
       dataset = JSON.parse(JSON.stringify(defaultLocalData));
+      syncBallToLastMessageAuthor(dataset);
       localStorage.setItem('local_dataset', JSON.stringify(dataset));
       render();
       showToast('Loaded local dataset!', '📄');
@@ -1507,6 +1723,7 @@
           const data = await res.json();
           const decodedContent = decodeURIComponent(escape(atob(data.content)));
           dataset = JSON.parse(decodedContent);
+          syncBallToLastMessageAuthor(dataset);
           render();
           showToast('Synced latest data from GitHub repository!', '⚡');
         }
@@ -1582,16 +1799,103 @@
       }
     }
 
-    // Response Button Click Handler Placeholder
-    function handleResponseBtnClick(item) {
-      const currentResp = item.response || '';
-      const newResponse = prompt('Enter response / resolution details:', currentResp);
-      if (newResponse !== null && newResponse.trim() !== currentResp) {
-        item.response = newResponse.trim() || null;
-        render();
-        saveChanges(`Updated response for "${item.issue.substring(0, 20)}..."`);
+    // Response Chat Modal Controls
+    const chatModal = document.getElementById('chatModal');
+    const closeChatModalBtn = document.getElementById('closeChatModalBtn');
+    const chatThreadContainer = document.getElementById('chatThreadContainer');
+    const chatInput = document.getElementById('chatInput');
+    const sendChatBtn = document.getElementById('sendChatBtn');
+    const chatIssueSubtitle = document.getElementById('chatIssueSubtitle');
+
+    function openChatModal(item) {
+      activeChatItem = item;
+      chatIssueSubtitle.textContent = item.issue || 'Issue response thread';
+      
+      // Migration for legacy string response
+      if (!item.comments) item.comments = [];
+      if (item.response && item.comments.length === 0) {
+        item.comments.push({
+          author: item.ball || "Adonis",
+          time: "Earlier",
+          text: item.response
+        });
       }
+
+      renderChatThread();
+      chatModal.style.display = 'flex';
+      setTimeout(() => chatInput.focus(), 100);
     }
+
+    function renderChatThread() {
+      chatThreadContainer.innerHTML = '';
+      if (!activeChatItem || !activeChatItem.comments || activeChatItem.comments.length === 0) {
+        chatThreadContainer.innerHTML = `<div style="text-align: center; color: var(--text-dim); margin: auto; font-size: 0.85rem;">No messages in this response discussion yet.<br>Be the first to post a message below!</div>`;
+        return;
+      }
+
+      activeChatItem.comments.forEach(msg => {
+        const isOwn = msg.author === currentUser;
+        const bubble = document.createElement('div');
+        bubble.className = `chat-bubble ${isOwn ? 'own' : 'other'}`;
+        bubble.innerHTML = `
+          <div class="chat-bubble-meta">
+            <span class="chat-bubble-user">${msg.author}</span>
+            <span>•</span>
+            <span>${msg.time}</span>
+          </div>
+          <div class="chat-bubble-content">${msg.text}</div>
+        `;
+        chatThreadContainer.appendChild(bubble);
+      });
+
+      chatThreadContainer.scrollTop = chatThreadContainer.scrollHeight;
+    }
+
+    function postNewChatMessage() {
+      const text = chatInput.value.trim();
+      if (!text || !activeChatItem) return;
+
+      const now = new Date();
+      const timeStr = now.toLocaleDateString([], { month: 'short', day: 'numeric' }) + ' ' + now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      if (!activeChatItem.comments) activeChatItem.comments = [];
+      activeChatItem.comments.push({
+        author: currentUser,
+        time: timeStr,
+        text: text
+      });
+
+      // Update latest response string for quick summary display
+      activeChatItem.response = text;
+
+      // AUTOMATICALLY PASS THE BALL TO THE AUTHOR OF THE LATEST MESSAGE!
+      activeChatItem.ball = currentUser;
+
+      chatInput.value = '';
+      renderChatThread();
+      render();
+      saveChanges(`Added response & passed ball to ${currentUser} for "${activeChatItem.issue.substring(0, 20)}..."`);
+    }
+
+    sendChatBtn.addEventListener('click', postNewChatMessage);
+    chatInput.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' && !e.shiftKey) {
+        e.preventDefault();
+        postNewChatMessage();
+      }
+    });
+
+    closeChatModalBtn.addEventListener('click', () => {
+      chatModal.style.display = 'none';
+      activeChatItem = null;
+    });
+
+    chatModal.addEventListener('click', (e) => {
+      if (e.target === chatModal) {
+        chatModal.style.display = 'none';
+        activeChatItem = null;
+      }
+    });
 
     // Single Fold / Unfold Toggle Handler
     const foldToggleBtn = document.getElementById('foldToggleBtn');
@@ -1693,7 +1997,18 @@
       });
     }
 
-    // Render Table View with Theme-Aware "Where is ball" Dropdown Badges
+    function getResponseButtonLabel(item) {
+      if (item.comments && item.comments.length > 0) {
+        const lastMsg = item.comments[item.comments.length - 1];
+        return `💬 (${item.comments.length}) ${lastMsg.text}`;
+      }
+      if (item.response) {
+        return `💬 ${item.response}`;
+      }
+      return `💬 + Add Response`;
+    }
+
+    // Render Table View with Dynamic "Where is ball" Transfer
     function renderTableView(data) {
       const tbody = document.getElementById('tableBody');
       tbody.innerHTML = '';
@@ -1814,8 +2129,7 @@
                     <td>
                       <div>
                         <button class="btn-response-action">
-                          <span>💬</span>
-                          <span>${item.response ? item.response : '+ Add Response'}</span>
+                          <span class="response-btn-text">${getResponseButtonLabel(item)}</span>
                         </button>
                       </div>
                       ${item.notes ? `<div class="editable-text text-notes" contenteditable="true" title="Click to edit notes">💬 ${item.notes}</div>` : ''}
@@ -1826,7 +2140,7 @@
                   tr.querySelector('.status-select').addEventListener('change', (e) => updateItemProperty(item, 'status', e.target.value));
                   tr.querySelector('.prio-select').addEventListener('change', (e) => updateItemProperty(item, 'priority', e.target.value));
                   tr.querySelector('.role-select').addEventListener('change', (e) => updateItemProperty(item, 'role', e.target.value));
-                  tr.querySelector('.btn-response-action').addEventListener('click', () => handleResponseBtnClick(item));
+                  tr.querySelector('.btn-response-action').addEventListener('click', () => openChatModal(item));
 
                   setupEditableText(tr.querySelector('.issue-text'), item, 'issue');
                   setupEditableText(tr.querySelector('.text-notes'), item, 'notes');
@@ -1878,8 +2192,7 @@
                   <td>
                     <div>
                       <button class="btn-response-action">
-                        <span>💬</span>
-                        <span>${item.response ? item.response : '+ Add Response'}</span>
+                        <span class="response-btn-text">${getResponseButtonLabel(item)}</span>
                       </button>
                     </div>
                     ${item.notes ? `<div class="editable-text text-notes" contenteditable="true" title="Click to edit notes">💬 ${item.notes}</div>` : ''}
@@ -1890,7 +2203,7 @@
                 tr.querySelector('.status-select').addEventListener('change', (e) => updateItemProperty(item, 'status', e.target.value));
                 tr.querySelector('.prio-select').addEventListener('change', (e) => updateItemProperty(item, 'priority', e.target.value));
                 tr.querySelector('.role-select').addEventListener('change', (e) => updateItemProperty(item, 'role', e.target.value));
-                tr.querySelector('.btn-response-action').addEventListener('click', () => handleResponseBtnClick(item));
+                tr.querySelector('.btn-response-action').addEventListener('click', () => openChatModal(item));
 
                 setupEditableText(tr.querySelector('.issue-text'), item, 'issue');
                 setupEditableText(tr.querySelector('.text-notes'), item, 'notes');
@@ -1964,8 +2277,7 @@
                 </div>
                 <div class="detail-box">
                   <button class="btn-response-action kanban-response-btn">
-                    <span>💬</span>
-                    <span>${item.response ? item.response : '+ Add Response'}</span>
+                    <span class="response-btn-text">${getResponseButtonLabel(item)}</span>
                   </button>
                   ${item.notes ? `<div class="editable-text" contenteditable="true" style="font-size: 0.75rem; color: var(--text-muted); font-style: italic; margin-top: 2px;">💬 ${item.notes}</div>` : ''}
                 </div>
@@ -1980,7 +2292,7 @@
           cardEl.querySelector('.kanban-status-select').addEventListener('change', (e) => updateItemProperty(item, 'status', e.target.value));
           cardEl.querySelector('.kanban-prio-select').addEventListener('change', (e) => updateItemProperty(item, 'priority', e.target.value));
           cardEl.querySelector('.kanban-role-select').addEventListener('change', (e) => updateItemProperty(item, 'role', e.target.value));
-          cardEl.querySelector('.kanban-response-btn').addEventListener('click', () => handleResponseBtnClick(item));
+          cardEl.querySelector('.kanban-response-btn').addEventListener('click', () => openChatModal(item));
           setupEditableText(cardEl.querySelector('.card-issue'), item, 'issue');
         });
 

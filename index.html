@@ -253,6 +253,38 @@
       background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     }
 
+    /* View Switcher Toggle (Compact) */
+    .view-toggle {
+      display: flex;
+      background: var(--switcher-bg);
+      border: 1px solid var(--border-bright);
+      border-radius: 30px;
+      padding: 3px;
+      gap: 2px;
+      box-shadow: var(--card-shadow);
+    }
+
+    .view-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 0.4rem 0.85rem;
+      border-radius: 24px;
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      transition: all 0.2s ease;
+    }
+
+    .view-btn.active {
+      background: var(--bg-card);
+      color: var(--text-main);
+      box-shadow: 0 2px 5px rgba(0, 0, 0, 0.12);
+    }
+
     .btn {
       background: var(--bg-card);
       color: var(--text-main);
@@ -290,7 +322,7 @@
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 1rem;
-      margin-bottom: 1.5rem;
+      margin-bottom: 2rem;
     }
 
     .stat-card {
@@ -333,57 +365,6 @@
     .stat-info .stat-label {
       color: var(--text-muted);
       font-size: 0.85rem;
-    }
-
-    /* Toolbar Area Card (Original spot between stats & table) */
-    .control-card-area {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      border-radius: 12px;
-      padding: 0.75rem 1rem;
-      margin-bottom: 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      box-shadow: var(--card-shadow);
-    }
-
-    .control-area-title {
-      font-weight: 600;
-      font-size: 0.875rem;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-    }
-
-    .view-toggle {
-      display: flex;
-      background: var(--bg-subtle);
-      border: 1px solid var(--border-color);
-      border-radius: 8px;
-      padding: 2px;
-    }
-
-    .view-btn {
-      background: transparent;
-      border: none;
-      color: var(--text-muted);
-      padding: 0.45rem 0.95rem;
-      border-radius: 6px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 0.4rem;
-      transition: all 0.2s ease;
-    }
-
-    .view-btn.active {
-      background: var(--bg-card);
-      color: var(--text-main);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     }
 
     /* Views: Table View */
@@ -631,7 +612,7 @@
         <p>Comprehensive overview & audit log of feature requests, bugs, and system workflow stages</p>
       </div>
       <div class="header-actions">
-        <!-- Segmented User Switcher -->
+        <!-- 1. Segmented User Switcher -->
         <div class="user-switcher-container">
           <span class="user-switcher-label">User</span>
           <div class="user-pills">
@@ -646,15 +627,29 @@
           </div>
         </div>
 
+        <!-- 2. Light Mode Toggle -->
         <button class="btn" id="themeToggleBtn" title="Toggle Light/Dark Theme">
           <span id="themeIcon">☀️</span>
           <span id="themeText">Light Mode</span>
         </button>
 
+        <!-- 3. Export JSON -->
         <button class="btn btn-primary" id="exportBtn">
           <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
           Export JSON
         </button>
+
+        <!-- 4. View Switcher (Table vs Board) positioned to the RIGHT of Export JSON -->
+        <div class="view-toggle">
+          <button class="view-btn active" id="tableViewBtn">
+            <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z"/></svg>
+            <span>Table</span>
+          </button>
+          <button class="view-btn" id="kanbanViewBtn">
+            <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h4v16H4V4zm6 0h4v16h-4V4zm6 0h4v16h-4V4z"/></svg>
+            <span>Board</span>
+          </button>
+        </div>
       </div>
     </header>
 
@@ -694,23 +689,6 @@
           <div class="stat-value" id="statDeprecated">0</div>
           <div class="stat-label">Deprecated</div>
         </div>
-      </div>
-    </div>
-
-    <!-- Control Area Card (In the original spot between stats grid and dataset) -->
-    <div class="control-card-area">
-      <div class="control-area-title">
-        <span>Display Mode</span>
-      </div>
-      <div class="view-toggle">
-        <button class="view-btn active" id="tableViewBtn">
-          <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z"/></svg>
-          <span>Table</span>
-        </button>
-        <button class="view-btn" id="kanbanViewBtn">
-          <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h4v16H4V4zm6 0h4v16h-4V4zm6 0h4v16h-4V4z"/></svg>
-          <span>Board</span>
-        </button>
       </div>
     </div>
 

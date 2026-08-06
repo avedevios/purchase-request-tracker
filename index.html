@@ -145,7 +145,7 @@
       margin: 0 auto;
     }
 
-    /* Streamlined Header - Single Row Fit */
+    /* Streamlined Header */
     header {
       margin-bottom: 1.5rem;
       display: flex;
@@ -313,7 +313,7 @@
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.12);
     }
 
-    /* Stats Grid */
+    /* Clickable Interactive Stats Cards */
     .stats-grid {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
@@ -332,12 +332,21 @@
       position: relative;
       overflow: hidden;
       box-shadow: var(--card-shadow);
-      transition: transform 0.2s ease, border-color 0.2s ease;
+      cursor: pointer;
+      user-select: none;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
     }
 
     .stat-card:hover {
       transform: translateY(-2px);
-      border-color: var(--border-bright);
+      border-color: var(--primary);
+      box-shadow: 0 6px 12px -2px rgba(0, 0, 0, 0.08);
+    }
+
+    .stat-card.active {
+      border-color: var(--primary);
+      background: var(--bg-card-hover);
+      box-shadow: 0 0 0 2px var(--primary-glow), var(--card-shadow);
     }
 
     .stat-icon {
@@ -349,6 +358,11 @@
       justify-content: center;
       font-size: 1.15rem;
       flex-shrink: 0;
+      transition: transform 0.2s ease;
+    }
+
+    .stat-card:hover .stat-icon {
+      transform: scale(1.08);
     }
 
     .stat-info .stat-value {
@@ -600,7 +614,7 @@
 </head>
 <body>
   <div class="container">
-    <!-- Streamlined Header -->
+    <!-- Header -->
     <header>
       <div class="title-area">
         <h1>Purchase Request Tracker</h1>
@@ -646,37 +660,37 @@
       </div>
     </header>
 
-    <!-- Stats Cards -->
+    <!-- Clickable Interactive Stats Cards -->
     <div class="stats-grid">
-      <div class="stat-card">
+      <div class="stat-card active" data-filter="ALL" id="cardTotal">
         <div class="stat-icon" style="background: var(--role-bg); color: var(--primary);">📋</div>
         <div class="stat-info">
           <div class="stat-value" id="statTotal">0</div>
           <div class="stat-label">Total Items</div>
         </div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card" data-filter="Fixed" id="cardFixed">
         <div class="stat-icon" style="background: var(--status-fixed-bg); color: var(--status-fixed-text);">✅</div>
         <div class="stat-info">
           <div class="stat-value" id="statFixed">0</div>
           <div class="stat-label">Fixed</div>
         </div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card" data-filter="To Do" id="cardTodo">
         <div class="stat-icon" style="background: var(--status-todo-bg); color: var(--status-todo-text);">📌</div>
         <div class="stat-info">
           <div class="stat-value" id="statTodo">0</div>
           <div class="stat-label">To Do</div>
         </div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card" data-filter="Backlog" id="cardBacklog">
         <div class="stat-icon" style="background: var(--status-backlog-bg); color: var(--status-backlog-text);">⏳</div>
         <div class="stat-info">
           <div class="stat-value" id="statBacklog">0</div>
           <div class="stat-label">Backlog</div>
         </div>
       </div>
-      <div class="stat-card">
+      <div class="stat-card" data-filter="Deprecated" id="cardDeprecated">
         <div class="stat-icon" style="background: var(--status-deprecated-bg); color: var(--status-deprecated-text);">🚫</div>
         <div class="stat-info">
           <div class="stat-value" id="statDeprecated">0</div>
@@ -1110,6 +1124,7 @@
 
     // User Switcher & Dynamic Theme Setup
     let currentUser = "Anton";
+    let currentFilter = "ALL";
     const userPills = document.querySelectorAll('.user-pill-btn');
 
     function applyUserTheme(userName) {
@@ -1154,10 +1169,21 @@
       document.getElementById('statDeprecated').textContent = data.filter(d => d.status === 'Deprecated').length;
     }
 
+    // Get Filtered Dataset
+    function getFilteredData() {
+      if (currentFilter === 'ALL') return dataset;
+      return dataset.filter(item => item.status === currentFilter);
+    }
+
     // Render Table View
     function renderTableView(data) {
       const tbody = document.getElementById('tableBody');
       tbody.innerHTML = '';
+
+      if (data.length === 0) {
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align: center; padding: 2rem; color: var(--text-muted);">No items match the selected filter.</td></tr>`;
+        return;
+      }
 
       let currentCategory = '';
       data.forEach(item => {
@@ -1190,7 +1216,9 @@
       const kanbanGrid = document.getElementById('kanbanView');
       kanbanGrid.innerHTML = '';
 
-      const columns = ['Fixed', 'To Do', 'Backlog', 'Deprecated'];
+      const columns = currentFilter === 'ALL' 
+        ? ['Fixed', 'To Do', 'Backlog', 'Deprecated'] 
+        : [currentFilter];
       
       columns.forEach(colStatus => {
         const colData = data.filter(d => d.status === colStatus);
@@ -1234,9 +1262,36 @@
 
     function render() {
       updateStats(dataset);
-      renderTableView(dataset);
-      renderKanbanView(dataset);
+      const filtered = getFilteredData();
+      renderTableView(filtered);
+      renderKanbanView(filtered);
     }
+
+    // Stat Cards Interactive Filtering
+    const statCards = document.querySelectorAll('.stat-card');
+    statCards.forEach(card => {
+      card.addEventListener('click', () => {
+        const targetFilter = card.getAttribute('data-filter');
+        
+        // If clicking already active filter card (except Total), reset to ALL
+        if (currentFilter === targetFilter && targetFilter !== 'ALL') {
+          currentFilter = 'ALL';
+        } else {
+          currentFilter = targetFilter;
+        }
+
+        // Highlight active stat card
+        statCards.forEach(c => {
+          if (c.getAttribute('data-filter') === currentFilter) {
+            c.classList.add('active');
+          } else {
+            c.classList.remove('active');
+          }
+        });
+
+        render();
+      });
+    });
 
     // View Switcher (Table vs Board)
     const tableBtn = document.getElementById('tableViewBtn');
@@ -1281,14 +1336,15 @@
     document.getElementById('exportBtn').addEventListener('click', () => {
       const exportObject = {
         currentUser: currentUser,
+        activeFilter: currentFilter,
         exportedAt: new Date().toISOString(),
-        items: dataset
+        items: getFilteredData()
       };
       const blob = new Blob([JSON.stringify(exportObject, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
-      a.download = `purchase_requests_${currentUser.toLowerCase()}.json`;
+      a.download = `purchase_requests_${currentUser.toLowerCase()}_${currentFilter.toLowerCase()}.json`;
       a.click();
       URL.revokeObjectURL(url);
     });

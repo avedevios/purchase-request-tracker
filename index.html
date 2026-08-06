@@ -1624,6 +1624,9 @@
     let activeDataSource = "local"; // "local" or "github"
     let activeChatItem = null;
     let isAllFolded = false;
+    let lastKnownSha = null;
+    let ghPollInterval = null;
+
     const collapsedLevel1 = new Set();
     const collapsedLevel2 = new Set();
     const userPills = document.querySelectorAll('.user-switcher-container .segmented-pill-btn');
@@ -1632,6 +1635,53 @@
     const REPO_OWNER = 'avedevios';
     const REPO_NAME = 'purchase-request-tracker';
     const FILE_PATH = 'purchase_requests.json';
+
+    // BroadcastChannel for instant 0ms cross-tab real-time sync
+    const syncChannel = window.BroadcastChannel ? new BroadcastChannel('pr_tracker_sync') : null;
+
+    function broadcastLocalChange() {
+      localStorage.setItem('local_dataset', JSON.stringify(dataset));
+      if (syncChannel) {
+        syncChannel.postMessage({ type: 'DATASET_UPDATED', dataset: dataset, timestamp: Date.now() });
+      }
+    }
+
+    if (syncChannel) {
+      syncChannel.onmessage = (event) => {
+        if (event.data && event.data.type === 'DATASET_UPDATED') {
+          dataset = event.data.dataset;
+          syncBallToLastMessageAuthor(dataset);
+          render();
+          if (activeChatItem) {
+            const updatedItem = dataset.find(d => d.issue === activeChatItem.issue);
+            if (updatedItem) {
+              activeChatItem = updatedItem;
+              renderChatThread();
+            }
+          }
+          showToast('Real-time message received from another tab!', '💬');
+        }
+      };
+    }
+
+    // Storage event listener fallback for cross-tab sync
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'local_dataset' && e.newValue) {
+        try {
+          dataset = JSON.parse(e.newValue);
+          syncBallToLastMessageAuthor(dataset);
+          render();
+          if (activeChatItem) {
+            const updatedItem = dataset.find(d => d.issue === activeChatItem.issue);
+            if (updatedItem) {
+              activeChatItem = updatedItem;
+              renderChatThread();
+            }
+          }
+          showToast('Real-time message received!', '💬');
+        } catch (err) {}
+      }
+    });
 
     function showToast(message, icon = '✨') {
       const toast = document.getElementById('toast');
@@ -1648,6 +1698,11 @@
     function updateDataSourceAttribute(source) {
       activeDataSource = source;
       document.documentElement.setAttribute('data-source', source);
+      if (source === 'github') {
+        startGitHubPolling();
+      } else if (ghPollInterval) {
+        clearInterval(ghPollInterval);
+      }
     }
 
     userPills.forEach(pill => {
@@ -1725,9 +1780,10 @@
     // Sync dataset FROM GitHub Repo
     async function syncFromGitHub() {
       try {
-        const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`);
+        const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}?cb=${Date.now()}`);
         if (res.ok) {
           const data = await res.json();
+          lastKnownSha = data.sha;
           const decodedContent = decodeURIComponent(escape(atob(data.content)));
           dataset = JSON.parse(decodedContent);
           syncBallToLastMessageAuthor(dataset);
@@ -1740,13 +1796,46 @@
       }
     }
 
+    // Real-time background poller for GitHub remote commits
+    async function checkGitHubForUpdates() {
+      if (activeDataSource !== 'github') return;
+      try {
+        const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}?cb=${Date.now()}`);
+        if (res.ok) {
+          const data = await res.json();
+          if (lastKnownSha && data.sha !== lastKnownSha) {
+            lastKnownSha = data.sha;
+            const decodedContent = decodeURIComponent(escape(atob(data.content)));
+            dataset = JSON.parse(decodedContent);
+            syncBallToLastMessageAuthor(dataset);
+            render();
+            if (activeChatItem) {
+              const updatedItem = dataset.find(d => d.issue === activeChatItem.issue);
+              if (updatedItem) {
+                activeChatItem = updatedItem;
+                renderChatThread();
+              }
+            }
+            showToast('New remote message received from GitHub!', '⚡');
+          } else {
+            lastKnownSha = data.sha;
+          }
+        }
+      } catch (e) {}
+    }
+
+    function startGitHubPolling() {
+      if (ghPollInterval) clearInterval(ghPollInterval);
+      ghPollInterval = setInterval(checkGitHubForUpdates, 6000);
+    }
+
     // Save changes: In GitHub Mode commits to API if token exists; In Local Mode saves in localStorage
     function saveChanges(commitMessage) {
       if (activeDataSource === 'github') {
         saveToGitHub(commitMessage);
       } else {
-        localStorage.setItem('local_dataset', JSON.stringify(dataset));
-        showToast('Saved locally in browser memory! Use "Export" to download JSON file.', '💾');
+        broadcastLocalChange();
+        showToast('Saved locally & synced across tabs! Use "Export" to download JSON file.', '💾');
       }
     }
 
@@ -1795,6 +1884,8 @@
 
         if (putRes.ok) {
           const result = await putRes.json();
+          lastKnownSha = result.content.sha;
+          broadcastLocalChange();
           showToast(`Saved & committed to GitHub! (${result.commit.sha.substring(0, 7)})`, '✅');
         } else {
           const errData = await putRes.json();

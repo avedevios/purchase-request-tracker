@@ -53,6 +53,7 @@
       --category-text: #312e81;
       --card-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
       --switcher-bg: #e2e8f0;
+      --control-height: 36px;
     }
 
     :root[data-theme="dark"] {
@@ -100,6 +101,7 @@
       --category-text: #a5b4fc;
       --card-shadow: none;
       --switcher-bg: #1f293d;
+      --control-height: 36px;
     }
 
     /* Dynamic User Background Color Tints */
@@ -169,11 +171,18 @@
       flex-wrap: nowrap;
     }
 
-    /* Compact Segmented User Switcher */
+    /* Uniform Heights across controls */
+    .user-switcher-container,
+    .view-toggle,
+    .btn {
+      height: var(--control-height);
+      box-sizing: border-box;
+    }
+
+    /* Segmented User Switcher */
     .user-switcher-container {
       display: flex;
       align-items: center;
-      gap: 0.3rem;
       background: var(--bg-card);
       border: 1px solid var(--border-bright);
       padding: 3px;
@@ -183,8 +192,9 @@
 
     .user-pills {
       display: flex;
+      height: 100%;
       background: var(--switcher-bg);
-      border-radius: 26px;
+      border-radius: 24px;
       padding: 2px;
       gap: 2px;
     }
@@ -193,7 +203,8 @@
       display: flex;
       align-items: center;
       gap: 0.35rem;
-      padding: 0.3rem 0.65rem;
+      padding: 0 0.65rem;
+      height: 100%;
       border-radius: 20px;
       border: none;
       background: transparent;
@@ -234,13 +245,13 @@
       background: linear-gradient(135deg, #10b981 0%, #059669 100%);
     }
 
-    /* Compact Buttons */
+    /* Buttons */
     .btn {
       background: var(--bg-card);
       color: var(--text-main);
       border: 1px solid var(--border-bright);
-      padding: 0.45rem 0.85rem;
-      border-radius: 8px;
+      padding: 0 0.85rem;
+      border-radius: 20px;
       font-size: 0.8rem;
       font-weight: 600;
       cursor: pointer;
@@ -268,17 +279,14 @@
       background: var(--primary-hover);
     }
 
-    .icon-btn {
-      padding: 0.45rem 0.65rem;
-    }
-
-    /* View Switcher Toggle (Compact) */
+    /* View Switcher Toggle */
     .view-toggle {
       display: flex;
+      align-items: center;
       background: var(--switcher-bg);
       border: 1px solid var(--border-bright);
-      border-radius: 26px;
-      padding: 2px;
+      border-radius: 30px;
+      padding: 3px;
       gap: 2px;
       box-shadow: var(--card-shadow);
     }
@@ -287,7 +295,8 @@
       background: transparent;
       border: none;
       color: var(--text-muted);
-      padding: 0.35rem 0.75rem;
+      padding: 0 0.75rem;
+      height: 100%;
       border-radius: 20px;
       font-size: 0.8rem;
       font-weight: 600;
@@ -597,7 +606,7 @@
         <h1>Purchase Request Tracker</h1>
       </div>
       <div class="header-actions">
-        <!-- 1. Compact User Switcher -->
+        <!-- 1. User Switcher -->
         <div class="user-switcher-container">
           <div class="user-pills">
             <button class="user-pill-btn active" data-user="Anton">
@@ -612,7 +621,7 @@
         </div>
 
         <!-- 2. Light / Dark Theme Button -->
-        <button class="btn icon-btn" id="themeToggleBtn" title="Toggle Light/Dark Theme">
+        <button class="btn" id="themeToggleBtn" title="Toggle Light/Dark Theme">
           <span id="themeIcon">☀️</span>
           <span id="themeText">Light</span>
         </button>

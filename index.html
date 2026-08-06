@@ -147,6 +147,31 @@
       --bg-gradient-accent: rgba(16, 185, 129, 0.1);
     }
 
+    /* Status-Dependent Table Row Background Colors */
+    /* ✅ FIXED Row Colors (Green) */
+    :root[data-theme="light"] tr.item-row.row-status-fixed td { background-color: #f0fdf4; }
+    :root[data-theme="light"] tr.item-row.row-status-fixed:hover td { background-color: #dcfce7; }
+    :root[data-theme="dark"] tr.item-row.row-status-fixed td { background-color: #062016; }
+    :root[data-theme="dark"] tr.item-row.row-status-fixed:hover td { background-color: #0b3323; }
+
+    /* 📌 TO DO Row Colors (Amber / Yellow) */
+    :root[data-theme="light"] tr.item-row.row-status-todo td { background-color: #fffbeb; }
+    :root[data-theme="light"] tr.item-row.row-status-todo:hover td { background-color: #fef3c7; }
+    :root[data-theme="dark"] tr.item-row.row-status-todo td { background-color: #241a06; }
+    :root[data-theme="dark"] tr.item-row.row-status-todo:hover td { background-color: #38280a; }
+
+    /* ⏳ BACKLOG Row Colors (Blue) */
+    :root[data-theme="light"] tr.item-row.row-status-backlog td { background-color: #eff6ff; }
+    :root[data-theme="light"] tr.item-row.row-status-backlog:hover td { background-color: #dbeafe; }
+    :root[data-theme="dark"] tr.item-row.row-status-backlog td { background-color: #091830; }
+    :root[data-theme="dark"] tr.item-row.row-status-backlog:hover td { background-color: #0f264a; }
+
+    /* 🚫 DEPRECATED Row Colors (Neutral Slate / Gray) */
+    :root[data-theme="light"] tr.item-row.row-status-deprecated td { background-color: #f8fafc; }
+    :root[data-theme="light"] tr.item-row.row-status-deprecated:hover td { background-color: #f1f5f9; }
+    :root[data-theme="dark"] tr.item-row.row-status-deprecated td { background-color: #131924; }
+    :root[data-theme="dark"] tr.item-row.row-status-deprecated:hover td { background-color: #1c2536; }
+
     * {
       box-sizing: border-box;
       margin: 0;
@@ -1110,8 +1135,8 @@
       <table>
         <thead>
           <tr>
-            <th style="width: 120px;">Where is ball</th>
             <th style="width: 125px;">Status</th>
+            <th style="width: 120px;">Where is ball</th>
             <th style="width: 105px;">Priority</th>
             <th style="width: 85px;">Role</th>
             <th>Issue & Context</th>
@@ -2044,6 +2069,15 @@
       return role ? 'role-badge' : 'role-none';
     }
 
+    function getRowStatusClass(status) {
+      if (!status) return 'row-status-deprecated';
+      const s = status.toLowerCase().replace(/\s+/g, '');
+      if (s === 'fixed') return 'row-status-fixed';
+      if (s === 'todo') return 'row-status-todo';
+      if (s === 'backlog') return 'row-status-backlog';
+      return 'row-status-deprecated';
+    }
+
     function updateStats(data) {
       document.getElementById('statTotal').textContent = data.length;
       document.getElementById('statFixed').textContent = data.filter(d => d.status === 'Fixed').length;
@@ -2092,7 +2126,7 @@
       return `+ Add Response`;
     }
 
-    // Render Table View with Clickable Response Text
+    // Render Table View with Switched Columns (Status 1st, Where is ball 2nd)
     function renderTableView(data) {
       const tbody = document.getElementById('tableBody');
       tbody.innerHTML = '';
@@ -2173,21 +2207,21 @@
                 items.forEach(item => {
                   const hasResponse = (item.comments && item.comments.length > 0) || item.response;
                   const tr = document.createElement('tr');
-                  tr.className = 'item-row level2-item-row';
+                  tr.className = `item-row level2-item-row ${getRowStatusClass(item.status)}`;
                   tr.innerHTML = `
-                    <td>
-                      <select class="badge-select ${getBallClass(item.ball)} ball-select">
-                        <option value="" ${!item.ball ? 'selected' : ''}>— None —</option>
-                        <option value="Anton" ${item.ball === 'Anton' ? 'selected' : ''}>Anton</option>
-                        <option value="Adonis" ${item.ball === 'Adonis' ? 'selected' : ''}>Adonis</option>
-                      </select>
-                    </td>
                     <td>
                       <select class="badge-select ${getStatusClass(item.status)} status-select">
                         <option value="Fixed" ${item.status === 'Fixed' ? 'selected' : ''}>Fixed</option>
                         <option value="To Do" ${item.status === 'To Do' ? 'selected' : ''}>To Do</option>
                         <option value="Backlog" ${item.status === 'Backlog' ? 'selected' : ''}>Backlog</option>
                         <option value="Deprecated" ${item.status === 'Deprecated' ? 'selected' : ''}>Deprecated</option>
+                      </select>
+                    </td>
+                    <td>
+                      <select class="badge-select ${getBallClass(item.ball)} ball-select">
+                        <option value="" ${!item.ball ? 'selected' : ''}>— None —</option>
+                        <option value="Anton" ${item.ball === 'Anton' ? 'selected' : ''}>Anton</option>
+                        <option value="Adonis" ${item.ball === 'Adonis' ? 'selected' : ''}>Adonis</option>
                       </select>
                     </td>
                     <td>
@@ -2221,8 +2255,8 @@
                     </td>
                   `;
 
-                  tr.querySelector('.ball-select').addEventListener('change', (e) => updateItemProperty(item, 'ball', e.target.value));
                   tr.querySelector('.status-select').addEventListener('change', (e) => updateItemProperty(item, 'status', e.target.value));
+                  tr.querySelector('.ball-select').addEventListener('change', (e) => updateItemProperty(item, 'ball', e.target.value));
                   tr.querySelector('.prio-select').addEventListener('change', (e) => updateItemProperty(item, 'priority', e.target.value));
                   tr.querySelector('.role-select').addEventListener('change', (e) => updateItemProperty(item, 'role', e.target.value));
                   tr.querySelector('.btn-response-action').addEventListener('click', () => openChatModal(item));
@@ -2237,21 +2271,21 @@
               items.forEach(item => {
                 const hasResponse = (item.comments && item.comments.length > 0) || item.response;
                 const tr = document.createElement('tr');
-                tr.className = 'item-row';
+                tr.className = `item-row ${getRowStatusClass(item.status)}`;
                 tr.innerHTML = `
-                  <td>
-                    <select class="badge-select ${getBallClass(item.ball)} ball-select">
-                      <option value="" ${!item.ball ? 'selected' : ''}>— None —</option>
-                      <option value="Anton" ${item.ball === 'Anton' ? 'selected' : ''}>Anton</option>
-                      <option value="Adonis" ${item.ball === 'Adonis' ? 'selected' : ''}>Adonis</option>
-                    </select>
-                  </td>
                   <td>
                     <select class="badge-select ${getStatusClass(item.status)} status-select">
                       <option value="Fixed" ${item.status === 'Fixed' ? 'selected' : ''}>Fixed</option>
                       <option value="To Do" ${item.status === 'To Do' ? 'selected' : ''}>To Do</option>
                       <option value="Backlog" ${item.status === 'Backlog' ? 'selected' : ''}>Backlog</option>
                       <option value="Deprecated" ${item.status === 'Deprecated' ? 'selected' : ''}>Deprecated</option>
+                    </select>
+                  </td>
+                  <td>
+                    <select class="badge-select ${getBallClass(item.ball)} ball-select">
+                      <option value="" ${!item.ball ? 'selected' : ''}>— None —</option>
+                      <option value="Anton" ${item.ball === 'Anton' ? 'selected' : ''}>Anton</option>
+                      <option value="Adonis" ${item.ball === 'Adonis' ? 'selected' : ''}>Adonis</option>
                     </select>
                   </td>
                   <td>
@@ -2285,8 +2319,8 @@
                   </td>
                 `;
 
-                tr.querySelector('.ball-select').addEventListener('change', (e) => updateItemProperty(item, 'ball', e.target.value));
                 tr.querySelector('.status-select').addEventListener('change', (e) => updateItemProperty(item, 'status', e.target.value));
+                tr.querySelector('.ball-select').addEventListener('change', (e) => updateItemProperty(item, 'ball', e.target.value));
                 tr.querySelector('.prio-select').addEventListener('change', (e) => updateItemProperty(item, 'priority', e.target.value));
                 tr.querySelector('.role-select').addEventListener('change', (e) => updateItemProperty(item, 'role', e.target.value));
                 tr.querySelector('.btn-response-action').addEventListener('click', () => openChatModal(item));

@@ -284,6 +284,11 @@
       box-shadow: var(--card-shadow);
     }
 
+    /* Hide source switcher when running on live site (GitHub Pages) */
+    body.is-live-site .source-switcher-container {
+      display: none !important;
+    }
+
     .segmented-pills {
       display: flex;
       align-items: center;
@@ -1238,6 +1243,15 @@
   </div>
 
   <script>
+    // AUTOMATIC LIVE ENVIRONMENT DETECTION:
+    // When running hosted live (GitHub Pages or remote web server), lock to GitHub Repo Mode & hide switcher!
+    const isLiveEnvironment = window.location.hostname.includes('github.io') || 
+      (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && window.location.protocol !== 'file:');
+
+    if (isLiveEnvironment) {
+      document.body.classList.add('is-live-site');
+    }
+
     const defaultLocalData = [
       {
         "ball": null,
@@ -1641,7 +1655,7 @@
     
     // PERSIST USER SELECTION & DATA SOURCE SELECTION ACROSS PAGE REFRESHES!
     let currentUser = localStorage.getItem('active_user') || 'Anton';
-    let activeDataSource = localStorage.getItem('active_source') || 'local';
+    let activeDataSource = isLiveEnvironment ? 'github' : (localStorage.getItem('active_source') || 'local');
     
     let currentFilter = "ALL";
     let activeChatItem = null;

@@ -312,10 +312,8 @@
     }
 
     .user-switcher-container {
-      background: var(--bg-card);
-      border: 1px solid var(--border-color);
-      padding: 2px;
-      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
     }
 
     .segmented-pills {
@@ -323,6 +321,7 @@
       align-items: center;
       height: 100%;
       background: var(--switcher-bg);
+      border: 1px solid var(--border-color);
       border-radius: var(--radius-sm);
       padding: 2px;
       gap: 2px;
@@ -1181,18 +1180,16 @@
         </h1>
       </div>
       <div class="header-actions">
-        <!-- 1. User Switcher -->
-        <div class="user-switcher-container">
-          <div class="segmented-pills">
-            <button class="segmented-pill-btn" data-user="Anton">
-              <span class="user-avatar-circle avatar-anton">An</span>
-              <span>Anton</span>
-            </button>
-            <button class="segmented-pill-btn" data-user="Adonis">
-              <span class="user-avatar-circle avatar-adonis">Ad</span>
-              <span>Adonis</span>
-            </button>
-          </div>
+        <!-- 1. User Switcher (Single Clean Segmented Container) -->
+        <div class="segmented-pills">
+          <button class="segmented-pill-btn" data-user="Anton">
+            <span class="user-avatar-circle avatar-anton">An</span>
+            <span>Anton</span>
+          </button>
+          <button class="segmented-pill-btn" data-user="Adonis">
+            <span class="user-avatar-circle avatar-adonis">Ad</span>
+            <span>Adonis</span>
+          </button>
         </div>
 
         <!-- 2. Minimal Icon-Only: Cloudflare Worker Database URL Configuration Button -->
@@ -1792,7 +1789,7 @@
 
     const collapsedLevel1 = new Set();
     const collapsedLevel2 = new Set();
-    const userPills = document.querySelectorAll('.user-switcher-container .segmented-pill-btn');
+    const userPills = document.querySelectorAll('.segmented-pills .segmented-pill-btn');
 
     // Minimal SVG icons
     const SVG_ADD_SUBCAT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path><line x1="12" y1="10" x2="12" y2="16"></line><line x1="9" y1="13" x2="15" y2="13"></line></svg>`;
@@ -3027,7 +3024,7 @@
     document.getElementById('exportBtn').addEventListener('click', () => {
       const exportObject = getFilteredData();
       const blob = new Blob([JSON.stringify(exportObject, null, 2)], { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
+      const url = URL.callObjectURL(blob);
       const a = document.createElement('a');
       a.href = url;
       a.download = `purchase_requests.json`;

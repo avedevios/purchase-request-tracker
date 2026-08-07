@@ -385,38 +385,54 @@
       background: #047857;
     }
 
-    /* Standardized Sharp Buttons */
+    /* Standardized Sharp Icon-Only Buttons */
     .btn {
       background: var(--bg-card);
       color: var(--text-main);
       border: 1px solid var(--border-color);
-      padding: 0 0.75rem;
+      width: var(--control-height);
+      height: var(--control-height);
+      padding: 0;
       border-radius: var(--radius-sm);
-      font-size: 0.775rem;
-      font-weight: 600;
       cursor: pointer;
       justify-content: center;
-      gap: 0.35rem;
+      align-items: center;
       transition: all 0.15s ease;
-      white-space: nowrap;
+      display: inline-flex;
+    }
+
+    .btn svg {
+      width: 15px;
+      height: 15px;
+      stroke: var(--text-main);
+      transition: stroke 0.15s ease;
     }
 
     .btn:hover {
-      background: var(--bg-card-hover);
-      border-color: var(--border-bright);
+      background: var(--text-main);
+      border-color: var(--text-main);
+    }
+
+    .btn:hover svg {
+      stroke: var(--bg-card);
     }
 
     .btn-primary {
       background: var(--header-accent-bar);
-      color: #ffffff;
-      border: 1px solid var(--header-accent-bar);
+      border-color: var(--header-accent-bar);
+    }
+
+    .btn-primary svg {
+      stroke: #ffffff;
     }
 
     .btn-primary:hover {
       opacity: 0.9;
+      background: var(--text-main);
+      border-color: var(--text-main);
     }
 
-    /* Black & White Minimal SVG Action Buttons */
+    /* Black & White Minimal SVG Action Buttons for Group Rows */
     .group-actions-wrapper {
       margin-left: auto;
       display: flex;
@@ -525,23 +541,31 @@
       background: transparent;
       border: none;
       color: var(--text-muted);
-      padding: 0 0.65rem;
+      width: 30px;
       height: 100%;
+      padding: 0;
       border-radius: var(--radius-sm);
-      font-size: 0.775rem;
-      font-weight: 600;
       cursor: pointer;
-      display: flex;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 0.25rem;
       transition: all 0.15s ease;
+    }
+
+    .view-btn svg {
+      width: 14px;
+      height: 14px;
+      stroke: var(--text-muted);
+      transition: stroke 0.15s ease;
     }
 
     .view-btn.active {
       background: var(--bg-card);
-      color: var(--text-main);
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
+    }
+
+    .view-btn.active svg {
+      stroke: var(--text-main);
     }
 
     /* Elegant Custom Muted Badge Dropdown Selectors */
@@ -1179,38 +1203,37 @@
           </div>
         </div>
 
-        <!-- 2. Cloudflare Worker Database URL Configuration Button -->
+        <!-- 2. Minimal Icon-Only: Cloudflare Worker Database URL Configuration Button -->
         <button class="btn" id="dbSettingsBtn" title="Set Cloudflare Worker Database URL">
-          <span>⚡ DB URL</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg>
         </button>
 
-        <!-- 3. Fold / Unfold Toggle Button -->
+        <!-- 3. Minimal Icon-Only: Fold / Unfold Toggle Button -->
         <button class="btn" id="foldToggleBtn" title="Toggle Fold/Unfold All Groups">
-          <span id="foldToggleIcon">▶</span>
-          <span id="foldToggleText">Fold All</span>
+          <span id="foldToggleSvg">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 14 10 14 10 20"></polyline><polyline points="20 10 14 10 14 4"></polyline><line x1="14" y1="10" x2="21" y2="3"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>
+          </span>
         </button>
 
-        <!-- 4. Light / Dark Theme Button -->
+        <!-- 4. Minimal Icon-Only: Light / Dark Theme Button -->
         <button class="btn" id="themeToggleBtn" title="Toggle Light/Dark Theme">
-          <span id="themeIcon">☀️</span>
-          <span id="themeText">Light</span>
+          <span id="themeToggleSvg">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>
+          </span>
         </button>
 
-        <!-- 5. Export JSON Button -->
-        <button class="btn btn-primary" id="exportBtn">
-          <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>
-          Export
+        <!-- 5. Minimal Icon-Only: Export JSON Button -->
+        <button class="btn btn-primary" id="exportBtn" title="Export JSON Data">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
         </button>
 
-        <!-- 6. Table / Board View Switcher -->
+        <!-- 6. Minimal Icon-Only: Table / Board View Switcher -->
         <div class="view-toggle">
-          <button class="view-btn active" id="tableViewBtn">
-            <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M3 4h18v2H3V4zm0 7h18v2H3v-2zm0 7h18v2H3v-2z"/></svg>
-            <span>Table</span>
+          <button class="view-btn active" id="tableViewBtn" title="Switch to Table View">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="3" y1="6" x2="21" y2="6"></line><line x1="3" y1="12" x2="21" y2="12"></line><line x1="3" y1="18" x2="21" y2="18"></line></svg>
           </button>
-          <button class="view-btn" id="kanbanViewBtn">
-            <svg width="13" height="13" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h4v16H4V4zm6 0h4v16h-4V4zm6 0h4v16h-4V4z"/></svg>
-            <span>Board</span>
+          <button class="view-btn" id="kanbanViewBtn" title="Switch to Board View">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="18" rx="1"></rect><rect x="14" y="3" width="7" height="18" rx="1"></rect></svg>
           </button>
         </div>
       </div>
@@ -1782,6 +1805,10 @@
     // Minimal SVG icons
     const SVG_ADD_SUBCAT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path><line x1="12" y1="10" x2="12" y2="16"></line><line x1="9" y1="13" x2="15" y2="13"></line></svg>`;
     const SVG_ADD_ITEM = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>`;
+    const SVG_FOLD_ALL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="4 14 10 14 10 20"></polyline><polyline points="20 10 14 10 14 4"></polyline><line x1="14" y1="10" x2="21" y2="3"></line><line x1="3" y1="21" x2="10" y2="14"></line></svg>`;
+    const SVG_UNFOLD_ALL = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 8 21 8 21 2"></polyline><polyline points="9 16 3 16 3 22"></polyline><line x1="21" y1="8" x2="14" y2="15"></line><line x1="3" y1="16" x2="10" y2="9"></line></svg>`;
+    const SVG_SUN = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"></circle><line x1="12" y1="1" x2="12" y2="3"></line><line x1="12" y1="21" x2="12" y2="23"></line><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"></line><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"></line><line x1="1" y1="12" x2="3" y2="12"></line><line x1="21" y1="12" x2="23" y2="12"></line><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"></line><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"></line></svg>`;
+    const SVG_MOON = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"></path></svg>`;
 
     // Helper to get normalized category & subcategory from an item
     function getItemCategoryInfo(item) {
@@ -2472,8 +2499,7 @@
 
     // Single Fold / Unfold Toggle Handler
     const foldToggleBtn = document.getElementById('foldToggleBtn');
-    const foldToggleIcon = document.getElementById('foldToggleIcon');
-    const foldToggleText = document.getElementById('foldToggleText');
+    const foldToggleSvg = document.getElementById('foldToggleSvg');
 
     foldToggleBtn.addEventListener('click', () => {
       isAllFolded = !isAllFolded;
@@ -2485,13 +2511,13 @@
             collapsedLevel2.add(`${category} > ${subcategory}`);
           }
         });
-        foldToggleIcon.textContent = '▼';
-        foldToggleText.textContent = 'Unfold All';
+        foldToggleSvg.innerHTML = SVG_UNFOLD_ALL;
+        foldToggleBtn.title = 'Unfold All Groups';
       } else {
         collapsedLevel1.clear();
         collapsedLevel2.clear();
-        foldToggleIcon.textContent = '▶';
-        foldToggleText.textContent = 'Fold All';
+        foldToggleSvg.innerHTML = SVG_FOLD_ALL;
+        foldToggleBtn.title = 'Fold All Groups';
       }
       renderTableView(getFilteredData());
     });
@@ -2989,8 +3015,7 @@
 
     // Theme Toggle Logic
     const themeBtn = document.getElementById('themeToggleBtn');
-    const themeIcon = document.getElementById('themeIcon');
-    const themeText = document.getElementById('themeText');
+    const themeToggleSvg = document.getElementById('themeToggleSvg');
 
     themeBtn.addEventListener('click', () => {
       const currentTheme = document.documentElement.getAttribute('data-theme');
@@ -2998,11 +3023,11 @@
       document.documentElement.setAttribute('data-theme', newTheme);
 
       if (newTheme === 'dark') {
-        themeIcon.textContent = '🌙';
-        themeText.textContent = 'Dark';
+        themeToggleSvg.innerHTML = SVG_MOON;
+        themeBtn.title = 'Switch to Light Theme';
       } else {
-        themeIcon.textContent = '☀️';
-        themeText.textContent = 'Light';
+        themeToggleSvg.innerHTML = SVG_SUN;
+        themeBtn.title = 'Switch to Dark Theme';
       }
     });
 

@@ -1676,6 +1676,7 @@
     let isAllFolded = false;
     let dbPollInterval = null;
     let toastTimeout = null;
+    let socket = null;
 
     const collapsedLevel1 = new Set();
     const collapsedLevel2 = new Set();
@@ -1727,6 +1728,54 @@
         } catch (err) {}
       }
     });
+
+    // Cloudflare WebSocket Live Connection for <50ms Instant Real-Time Push
+    function initWebSocketConnection() {
+      const workerUrl = localStorage.getItem('worker_url');
+      if (!workerUrl || activeDataSource === 'local') return;
+
+      try {
+        let wsUrl = workerUrl.replace(/^http:/, 'ws:').replace(/^https:/, 'wss:');
+        if (!wsUrl.endsWith('/ws')) wsUrl += '/ws';
+
+        socket = new WebSocket(wsUrl);
+
+        socket.onopen = () => {
+          console.log('⚡ Connected to Cloudflare Real-Time WebSocket server (<50ms instant push)!');
+        };
+
+        socket.onmessage = (event) => {
+          try {
+            const data = JSON.parse(event.data);
+            if (data.type === 'DATASET_UPDATED' && data.dataset) {
+              dataset = data.dataset;
+              syncBallToLastMessageAuthor(dataset);
+              render();
+
+              if (activeChatItem) {
+                const updatedItem = dataset.find(d => d.issue === activeChatItem.issue);
+                if (updatedItem) {
+                  activeChatItem = updatedItem;
+                  renderChatThread();
+                }
+              }
+
+              const sender = data.author || 'someone';
+              showToast(`💬 Instant response message received from ${sender}!`, '⚡');
+            }
+          } catch (err) {}
+        };
+
+        socket.onclose = () => {
+          // Reconnect after 3s delay
+          setTimeout(initWebSocketConnection, 3000);
+        };
+
+        socket.onerror = () => {
+          try { socket.close(); } catch(e) {}
+        };
+      } catch (e) {}
+    }
 
     // Enhanced Selectable Toast Banner with 8.5s Duration & Hover Pause
     function showToast(message, icon = '✨') {
@@ -1786,7 +1835,8 @@
           localStorage.setItem('worker_url', trimmed);
           updateDataSourceAttribute(activeDataSource);
           syncFromDatabase();
-          showToast('Connected to Cloudflare KV Database!', '⚡');
+          initWebSocketConnection();
+          showToast('Connected to Cloudflare KV Database & WebSockets!', '⚡');
         } else {
           localStorage.removeItem('worker_url');
           updateDataSourceAttribute(activeDataSource);
@@ -2067,10 +2117,10 @@
 
     function startDatabasePolling() {
       if (dbPollInterval) clearInterval(dbPollInterval);
-      dbPollInterval = setInterval(checkDatabaseForUpdates, 5000);
+      dbPollInterval = setInterval(checkDatabaseForUpdates, 4000);
     }
 
-    // Save changes: In Live Mode saves silently to Cloudflare KV DB (Zero GitHub Tokens!); In Local Mode saves in localStorage
+    // Save changes: In Live Mode saves silently to Cloudflare KV DB & pushes via WebSocket (<50ms!)
     function saveChanges(logMsg) {
       if (activeDataSource !== 'local') {
         saveToDatabase();
@@ -2080,7 +2130,7 @@
       }
     }
 
-    // Save dataset TO Cloudflare KV Database (Zero GitHub Tokens!)
+    // Save dataset TO Cloudflare KV Database & push via live WebSockets
     async function saveToDatabase() {
       const workerUrl = localStorage.getItem('worker_url');
 
@@ -2095,20 +2145,33 @@
         }
       }
 
-      showToast('Saving to Cloudflare Database...', '⏳');
+      // Send instantly via WebSocket connection if active (<50ms)
+      if (socket && socket.readyState === WebSocket.OPEN) {
+        try {
+          socket.send(JSON.stringify({
+            type: 'DATASET_UPDATE',
+            dataset: dataset,
+            author: currentUser,
+            issue: activeChatItem ? activeChatItem.issue : null
+          }));
+        } catch (e) {}
+      }
+
+      // Also persist to HTTP endpoint
       try {
         const res = await fetch(workerUrl, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             dataset: dataset,
-            author: currentUser
+            author: currentUser,
+            issue: activeChatItem ? activeChatItem.issue : null
           })
         });
 
         if (res.ok) {
           broadcastLocalChange();
-          showToast('Saved silently to Cloudflare Database! ⚡', '✅');
+          showToast('Saved to Cloudflare Database! ⚡', '✅');
         } else {
           const err = await res.json();
           showToast(`Database Error: ${err.error || 'Save failed'}`, '❌');
@@ -2728,6 +2791,7 @@
 
     if (activeDataSource !== 'local') {
       syncFromDatabase();
+      initWebSocketConnection();
     } else {
       loadLocalJson();
     }

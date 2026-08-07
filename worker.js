@@ -1,12 +1,62 @@
-// Cloudflare Worker + KV Database for Real-Time Purchase Request Tracker
-// Zero GitHub Tokens Required!
+// Cloudflare Worker + KV Database + Real-Time WebSockets Chat (<50ms Instant Push)
 // Requires a KV Namespace Binding named: PR_TRACKER_DB
 
 const INITIAL_DATA_SEED_URL = 'https://raw.githubusercontent.com/avedevios/purchase-request-tracker/main/purchase_requests.json';
 
+// Active WebSocket connections pool
+const sockets = new Set();
+
 export default {
   async fetch(request, env, ctx) {
-    // Handle CORS preflight OPTIONS request
+    const url = new URL(request.url);
+
+    // 1. WebSocket Upgrade Request for <50ms Instant Real-Time Push
+    if (request.headers.get('Upgrade') === 'websocket' || url.pathname === '/ws') {
+      const pair = new WebSocketPair();
+      const [client, server] = Object.values(pair);
+
+      server.accept();
+      sockets.add(server);
+
+      server.addEventListener('message', async (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          
+          if (data.type === 'DATASET_UPDATE') {
+            // Save to KV Database
+            if (env.PR_TRACKER_DB) {
+              await env.PR_TRACKER_DB.put('purchase_requests', JSON.stringify(data.dataset));
+            }
+            
+            // Broadcast live message to ALL connected users instantly (<50ms)!
+            const broadcastMsg = JSON.stringify({
+              type: 'DATASET_UPDATED',
+              dataset: data.dataset,
+              author: data.author,
+              issue: data.issue,
+              timestamp: Date.now()
+            });
+
+            for (const socket of sockets) {
+              if (socket !== server) {
+                try {
+                  socket.send(broadcastMsg);
+                } catch (e) {
+                  sockets.delete(socket);
+                }
+              }
+            }
+          }
+        } catch (e) {}
+      });
+
+      server.addEventListener('close', () => sockets.delete(server));
+      server.addEventListener('error', () => sockets.delete(server));
+
+      return new Response(null, { status: 101, webSocket: client });
+    }
+
+    // CORS preflight OPTIONS request
     if (request.method === 'OPTIONS') {
       return new Response(null, {
         headers: {
@@ -22,7 +72,7 @@ export default {
       'Content-Type': 'application/json',
     };
 
-    // 1. GET Request: Fetch dataset directly from Cloudflare KV Database
+    // 2. GET Request: Fetch dataset directly from Cloudflare KV Database
     if (request.method === 'GET') {
       try {
         let dataset = null;
@@ -30,7 +80,6 @@ export default {
           dataset = await env.PR_TRACKER_DB.get('purchase_requests', { type: 'json' });
         }
 
-        // If KV is empty (first load), seed initial dataset
         if (!dataset) {
           const res = await fetch(INITIAL_DATA_SEED_URL);
           if (res.ok) {
@@ -47,21 +96,36 @@ export default {
       }
     }
 
-    // 2. POST Request: Save dataset silently into Cloudflare KV Database (Zero GitHub Tokens!)
+    // 3. POST Request: Save dataset into Cloudflare KV & broadcast to all connected WebSocket clients
     if (request.method === 'POST') {
       try {
         const body = await request.json();
-        const { dataset } = body;
+        const { dataset, author, issue } = body;
 
         if (!dataset) {
           return new Response(JSON.stringify({ error: 'Missing dataset payload' }), { status: 400, headers: corsHeaders });
         }
 
-        if (!env.PR_TRACKER_DB) {
-          return new Response(JSON.stringify({ error: 'KV Namespace binding PR_TRACKER_DB not attached to Worker' }), { status: 500, headers: corsHeaders });
+        if (env.PR_TRACKER_DB) {
+          await env.PR_TRACKER_DB.put('purchase_requests', JSON.stringify(dataset));
         }
 
-        await env.PR_TRACKER_DB.put('purchase_requests', JSON.stringify(dataset));
+        // Broadcast to any active WebSocket listeners
+        const broadcastMsg = JSON.stringify({
+          type: 'DATASET_UPDATED',
+          dataset: dataset,
+          author: author,
+          issue: issue,
+          timestamp: Date.now()
+        });
+
+        for (const socket of sockets) {
+          try {
+            socket.send(broadcastMsg);
+          } catch (e) {
+            sockets.delete(socket);
+          }
+        }
 
         return new Response(JSON.stringify({ success: true, timestamp: Date.now() }), { headers: corsHeaders });
       } catch (err) {

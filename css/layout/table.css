@@ -1,0 +1,86 @@
+/* Table View Layout */
+.table-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--card-shadow);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.825rem;
+}
+
+th {
+  background: var(--bg-subtle);
+  padding: 0.5rem 0.65rem;
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 0.725rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid var(--border-color);
+}
+
+td {
+  padding: 0.4rem 0.65rem;
+  border-bottom: 1px solid var(--border-color);
+  vertical-align: top;
+  transition: background-color 0.15s ease;
+}
+
+tr:last-child td { border-bottom: none; }
+
+tr.level1-row td {
+  background: var(--bg-level1);
+  font-weight: 700;
+  font-size: 0.825rem;
+  color: var(--category-text);
+  border-top: 1px solid var(--border-bright);
+  border-bottom: 1px solid var(--border-bright);
+  padding: 0.35rem 0.65rem;
+  cursor: pointer;
+  user-select: none;
+}
+tr.level1-row:hover td { background: var(--bg-level1-hover); }
+
+tr.level2-row td {
+  background: var(--bg-level2);
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: var(--subcategory-text);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0.3rem 0.65rem 0.3rem 1.75rem;
+  cursor: pointer;
+  user-select: none;
+}
+tr.level2-row:hover td { background: var(--bg-level2-hover); }
+
+tr.level2-item-row td:first-child { padding-left: 1.25rem; }
+
+.group-header-content {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  width: 100%;
+}
+
+.fold-arrow {
+  display: inline-block;
+  font-size: 0.7rem;
+  width: 12px;
+  text-align: center;
+}
+
+.category-count-badge {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  background: var(--bg-card);
+  padding: 0.05rem 0.35rem;
+  border-radius: var(--radius-sm);
+  margin-left: 0.2rem;
+}

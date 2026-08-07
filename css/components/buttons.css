@@ -1,0 +1,190 @@
+/* User Switcher Segmented Pill */
+.user-switcher-group {
+  display: inline-flex;
+  align-items: center;
+  background: var(--bg-card);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+  gap: 2px;
+}
+
+.user-btn {
+  background: transparent;
+  color: var(--text-muted);
+  border: none;
+  height: 100%;
+  padding: 0 0.75rem;
+  border-radius: calc(var(--radius-sm) - 1px);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+  white-space: nowrap;
+}
+
+.user-btn:hover { color: var(--text-main); }
+.user-btn.active {
+  background: var(--user-theme-bg);
+  color: var(--user-theme-color);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+/* Icon Buttons */
+.btn {
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  width: var(--control-height);
+  height: var(--control-height);
+  padding: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  justify-content: center;
+  align-items: center;
+  transition: all 0.15s ease;
+  display: inline-flex;
+}
+
+.btn svg {
+  width: 15px;
+  height: 15px;
+  stroke: var(--text-main);
+  transition: stroke 0.15s ease;
+  pointer-events: none;
+}
+
+.btn:hover {
+  background: var(--text-main);
+  border-color: var(--text-main);
+}
+.btn:hover svg { stroke: var(--bg-card); }
+
+.btn-primary {
+  background: var(--header-accent-bar);
+  border-color: var(--header-accent-bar);
+}
+.btn-primary svg { stroke: #ffffff; }
+.btn-primary:hover {
+  opacity: 0.9;
+  background: var(--text-main);
+  border-color: var(--text-main);
+}
+
+/* Group Action Icons */
+.group-actions-wrapper {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.group-icon-btn {
+  background: var(--bg-card);
+  color: var(--text-main);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.group-icon-btn svg {
+  width: 13px;
+  height: 13px;
+  stroke: var(--text-main);
+  transition: stroke 0.15s ease;
+}
+
+.group-icon-btn:hover {
+  background: var(--text-main);
+  border-color: var(--text-main);
+  transform: translateY(-1px);
+}
+.group-icon-btn:hover svg { stroke: var(--bg-card); }
+
+.btn-delete-item {
+  background: transparent;
+  border: none;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  cursor: pointer;
+  padding: 0.1rem 0.25rem;
+  border-radius: var(--radius-sm);
+  transition: all 0.15s ease;
+  opacity: 0.4;
+}
+
+.btn-delete-item:hover {
+  color: #be123c;
+  background: rgba(225, 29, 72, 0.1);
+  opacity: 1;
+}
+
+/* Response Action */
+.btn-response-action {
+  background: transparent;
+  border: none;
+  color: var(--text-main);
+  padding: 0.15rem 0.25rem;
+  border-radius: var(--radius-sm);
+  font-size: 0.8rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 0.3rem;
+  width: 100%;
+  text-align: left;
+  line-height: 1.35;
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+
+.btn-response-action:hover {
+  background: var(--bg-subtle);
+  color: var(--header-accent-bar);
+}
+.btn-response-action.empty-response {
+  color: var(--text-dim);
+  font-style: italic;
+}
+
+/* View Toggle */
+.view-toggle {
+  background: var(--switcher-bg);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  padding: 2px;
+  gap: 2px;
+}
+
+.view-btn {
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
+  width: 30px;
+  height: 100%;
+  padding: 0;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.view-btn svg { width: 14px; height: 14px; stroke: var(--text-muted); transition: stroke 0.15s ease; }
+.view-btn.active { background: var(--bg-card); box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08); }
+.view-btn.active svg { stroke: var(--text-main); }

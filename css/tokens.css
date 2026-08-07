@@ -1,0 +1,172 @@
+:root[data-theme="light"] {
+  --bg-main: #f8fafc;
+  --bg-gradient-accent: rgba(71, 85, 105, 0.03);
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8fafc;
+  --bg-subtle: #f1f5f9;
+  --bg-level1: #e2e8f0;
+  --bg-level1-hover: #cbd5e1;
+  --bg-level2: #f8fafc;
+  --bg-level2-hover: #f1f5f9;
+  --border-color: #e2e8f0;
+  --border-bright: #cbd5e1;
+  --text-main: #1e293b;
+  --text-muted: #64748b;
+  --text-dim: #94a3b8;
+  
+  --primary: #334155;
+  --primary-hover: #1e293b;
+  --primary-glow: rgba(51, 65, 85, 0.12);
+  
+  --status-fixed-bg: #f0fdf4;
+  --status-fixed-text: #166534;
+  --status-fixed-border: #bbf7d0;
+
+  --status-todo-bg: #fffbeb;
+  --status-todo-text: #92400e;
+  --status-todo-border: #fef08a;
+
+  --status-backlog-bg: #f0f9ff;
+  --status-backlog-text: #075985;
+  --status-backlog-border: #e0f2fe;
+
+  --status-deprecated-bg: #f1f5f9;
+  --status-deprecated-text: #475569;
+  --status-deprecated-border: #e2e8f0;
+
+  --prio-must-bg: #fff1f2;
+  --prio-must-text: #9f1239;
+
+  --prio-should-bg: #fff7ed;
+  --prio-should-text: #9a3412;
+
+  --prio-could-bg: #f0fdf4;
+  --prio-could-text: #166534;
+
+  --ball-anton-bg: #e0e7ff;
+  --ball-anton-text: #3730a3;
+  --ball-anton-border: #c7d2fe;
+
+  --ball-adonis-bg: #dcfce7;
+  --ball-adonis-text: #166534;
+  --ball-adonis-border: #bbf7d0;
+
+  --role-bg: #e2e8f0;
+  --role-text: #334155;
+  --category-text: #1e293b;
+  --subcategory-text: #334155;
+  --card-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+  --switcher-bg: #e2e8f0;
+  --control-height: 34px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+}
+
+:root[data-theme="dark"] {
+  --bg-main: #0f172a;
+  --bg-gradient-accent: rgba(148, 163, 184, 0.03);
+  --bg-card: #1e293b;
+  --bg-card-hover: #243147;
+  --bg-subtle: #172033;
+  --bg-level1: #334155;
+  --bg-level1-hover: #475569;
+  --bg-level2: #1e293b;
+  --bg-level2-hover: #28354a;
+  --border-color: #334155;
+  --border-bright: #475569;
+  --text-main: #f1f5f9;
+  --text-muted: #9ca3af;
+  --text-dim: #64748b;
+  
+  --primary: #475569;
+  --primary-hover: #64748b;
+  --primary-glow: rgba(71, 85, 105, 0.25);
+  
+  --status-fixed-bg: rgba(22, 101, 52, 0.2);
+  --status-fixed-text: #86efac;
+  --status-fixed-border: rgba(134, 239, 172, 0.2);
+
+  --status-todo-bg: rgba(146, 64, 14, 0.2);
+  --status-todo-text: #fde047;
+  --status-todo-border: rgba(253, 224, 71, 0.2);
+
+  --status-backlog-bg: rgba(7, 89, 133, 0.2);
+  --status-backlog-text: #7dd3fc;
+  --status-backlog-border: rgba(125, 211, 252, 0.2);
+
+  --status-deprecated-bg: rgba(71, 85, 105, 0.2);
+  --status-deprecated-text: #cbd5e1;
+  --status-deprecated-border: rgba(203, 213, 225, 0.2);
+
+  --prio-must-bg: rgba(159, 18, 57, 0.2);
+  --prio-must-text: #fca5a5;
+
+  --prio-should-bg: rgba(154, 52, 18, 0.2);
+  --prio-should-text: #fdba74;
+
+  --prio-could-bg: rgba(22, 101, 52, 0.2);
+  --prio-could-text: #86efac;
+
+  --ball-anton-bg: rgba(67, 56, 202, 0.25);
+  --ball-anton-text: #c7d2fe;
+  --ball-anton-border: rgba(199, 210, 254, 0.25);
+
+  --ball-adonis-bg: rgba(22, 101, 52, 0.25);
+  --ball-adonis-text: #86efac;
+  --ball-adonis-border: rgba(134, 239, 172, 0.25);
+
+  --role-bg: rgba(255, 255, 255, 0.08);
+  --role-text: #e2e8f0;
+  --category-text: #f1f5f9;
+  --subcategory-text: #cbd5e1;
+  --card-shadow: none;
+  --switcher-bg: #334155;
+  --control-height: 34px;
+  --radius-sm: 4px;
+  --radius-md: 6px;
+}
+
+/* Distinct Duty Color Codes & Backgrounds: ANTON (Indigo) vs ADONIS (Emerald Green) */
+:root[data-user="Anton"][data-theme="light"] {
+  --bg-main: #f4f6fc;
+  --user-theme-color: #3730a3;
+  --user-theme-bg: #e0e7ff;
+  --user-theme-border: #c7d2fe;
+  --header-accent-bar: #4f46e5;
+}
+:root[data-user="Anton"][data-theme="dark"] {
+  --bg-main: #0c1020;
+  --user-theme-color: #c7d2fe;
+  --user-theme-bg: rgba(67, 56, 202, 0.35);
+  --user-theme-border: rgba(199, 210, 254, 0.4);
+  --header-accent-bar: #6366f1;
+}
+
+:root[data-user="Adonis"][data-theme="light"] {
+  --bg-main: #f2faf6;
+  --user-theme-color: #065f46;
+  --user-theme-bg: #d1fae5;
+  --user-theme-border: #a7f3d0;
+  --header-accent-bar: #10b981;
+}
+:root[data-user="Adonis"][data-theme="dark"] {
+  --bg-main: #061712;
+  --user-theme-color: #a7f3d0;
+  --user-theme-bg: rgba(6, 95, 70, 0.35);
+  --user-theme-border: rgba(167, 243, 208, 0.4);
+  --header-accent-bar: #10b981;
+}
+
+/* Top Accent Duty Stripe */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 3px;
+  background: var(--header-accent-bar);
+  z-index: 10000;
+  transition: background-color 0.3s ease;
+  pointer-events: none;
+}

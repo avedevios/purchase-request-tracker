@@ -5,7 +5,9 @@
   "description": "Purchase Request Tracker & Issue Dashboard Automated Test Suite",
   "main": "index.html",
   "scripts": {
-    "test": "node --test tests/*.test.js"
+    "dev": "npx --yes serve . -l 3000",
+    "test": "node --test tests/*.test.js",
+    "test:watch": "node --test --watch tests/*.test.js"
   },
   "keywords": [],
   "author": "",

@@ -77,24 +77,27 @@ describe('Category & Subcategory Parsing', () => {
   });
 });
 
-// --- SUITE 2: REUSABLE SELECT TEMPLATE GENERATORS ---
-describe('Reusable Select Template Generators', () => {
-  it('should generate status select string with active selected option', () => {
+// --- SUITE 2: REUSABLE BADGE BUTTON TRIGGER GENERATORS ---
+describe('Reusable Badge Button Trigger Generators', () => {
+  it('should generate status badge trigger button string', () => {
     const html = renderStatusSelect('Fixed');
-    assert.ok(html.includes('<select class="badge-select status-fixed status-select">'));
-    assert.ok(html.includes('<option value="Fixed" selected>Fixed</option>'));
+    assert.ok(html.includes('status-cloud-btn'));
+    assert.ok(html.includes('status-fixed'));
+    assert.ok(html.includes('Fixed'));
   });
 
-  it('should generate ball select string with selected active user', () => {
+  it('should generate ball badge trigger button string', () => {
     const html = renderBallSelect('Anton');
+    assert.ok(html.includes('ball-cloud-btn'));
     assert.ok(html.includes('ball-anton'));
-    assert.ok(html.includes('<option value="Anton" selected>Anton</option>'));
+    assert.ok(html.includes('Anton'));
   });
 
-  it('should generate role select string', () => {
+  it('should generate role badge trigger button string', () => {
     const html = renderRoleSelect('PM');
+    assert.ok(html.includes('role-cloud-btn'));
     assert.ok(html.includes('role-badge'));
-    assert.ok(html.includes('<option value="PM" selected>PM</option>'));
+    assert.ok(html.includes('PM'));
   });
 });
 

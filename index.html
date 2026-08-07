@@ -180,23 +180,42 @@
       transition: background-color 0.3s ease;
     }
 
-    /* Prominent Duty Badge in Header */
+    /* Standardized Equal Height (24px) for Header Badges Next to Title */
+    .source-title-badge,
     .duty-badge {
+      height: 24px;
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
-      padding: 0.2rem 0.65rem;
+      padding: 0 0.6rem;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      border-radius: var(--radius-sm);
+      margin-left: 0.5rem;
+      line-height: 1;
+      box-sizing: border-box;
+      vertical-align: middle;
+      transition: all 0.3s ease;
+    }
+
+    .source-title-badge.badge-local {
+      background: #15803d;
+      color: #ffffff;
+      border: 1px solid #166534;
+    }
+
+    .source-title-badge.badge-database {
+      background: #475569;
+      color: #ffffff;
+      border: 1px solid #334155;
+    }
+
+    .duty-badge {
       background: var(--user-theme-bg);
       color: var(--user-theme-color);
       border: 1px solid var(--user-theme-border);
-      border-radius: var(--radius-sm);
-      font-size: 0.775rem;
-      font-weight: 700;
-      letter-spacing: 0.03em;
-      text-transform: uppercase;
-      margin-left: 0.75rem;
-      line-height: 1.1;
-      transition: all 0.3s ease;
     }
 
     .duty-badge-dot {
@@ -273,33 +292,6 @@
     /* Settings button visible ONLY when in Database mode */
     :root[data-source="local"] #dbSettingsBtn {
       display: none !important;
-    }
-
-    /* Muted Sharp Title Badge */
-    .source-title-badge {
-      display: inline-block;
-      vertical-align: middle;
-      font-size: 0.9rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      padding: 0.2rem 0.6rem;
-      border-radius: var(--radius-sm);
-      margin-left: 0.5rem;
-      text-transform: uppercase;
-      line-height: 1.1;
-      transition: all 0.2s ease;
-    }
-
-    .source-title-badge.badge-local {
-      background: #15803d;
-      color: #ffffff;
-      border: 1px solid #166534;
-    }
-
-    .source-title-badge.badge-database {
-      background: #475569;
-      color: #ffffff;
-      border: 1px solid #334155;
     }
 
     .header-actions {

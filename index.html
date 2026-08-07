@@ -282,7 +282,7 @@
       box-shadow: var(--card-shadow);
     }
 
-    /* Token button visible ONLY when in GitHub mode */
+    /* Settings button visible ONLY when in GitHub mode */
     :root[data-source="local"] #resetTokenBtn {
       display: none !important;
     }
@@ -1134,9 +1134,9 @@
           </div>
         </div>
 
-        <!-- 2. Reset GitHub Token Button (Visible only on live GitHub environment) -->
-        <button class="btn" id="resetTokenBtn" title="Reset or change saved GitHub Personal Access Token">
-          <span>🔑 Token</span>
+        <!-- 2. Settings & Proxy / Token Button (Visible only on live GitHub environment) -->
+        <button class="btn" id="resetTokenBtn" title="Set Cloudflare Worker Proxy URL or GitHub Access Token">
+          <span>⚙️ Settings</span>
         </button>
 
         <!-- 3. Fold / Unfold Toggle Button -->
@@ -1164,7 +1164,7 @@
             <span>Table</span>
           </button>
           <button class="view-btn" id="kanbanViewBtn">
-            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h4v16H4V4zm6 0h4v16h-4V4zm6 0h4v16h-4V4z"/></svg>
+            <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M4 4h4v16H4V4zm6 0h4v16h-4V4z"/></svg>
             <span>Board</span>
           </button>
         </div>
@@ -1782,17 +1782,37 @@
       });
     }
 
-    // Reset GitHub Token Button Handler
+    // Settings Button Handler (Configure Worker Proxy URL or Personal Access Token)
     const resetTokenBtn = document.getElementById('resetTokenBtn');
     if (resetTokenBtn) {
       resetTokenBtn.addEventListener('click', () => {
-        localStorage.removeItem('gh_token');
-        const newToken = prompt('Enter your new GitHub Personal Access Token (PAT) with "repo" access:');
-        if (newToken && newToken.trim()) {
-          localStorage.setItem('gh_token', newToken.trim());
-          showToast('GitHub Token updated successfully!', '🔑');
+        const currentWorker = localStorage.getItem('worker_url') || '';
+        const currentToken = localStorage.getItem('gh_token') || '';
+
+        const choice = prompt(
+          '⚙️ Live Commit Settings:\n\n' +
+          '1. Paste Cloudflare Worker Proxy URL (Recommended - 0ms Token Prompts!)\n' +
+          '2. Paste GitHub Personal Access Token (PAT)\n\n' +
+          'Current Worker URL: ' + (currentWorker ? currentWorker : 'Not set') + '\n' +
+          'Current Token: ' + (currentToken ? 'Set (ghp_***)' : 'Not set') + '\n\n' +
+          'Paste your Worker URL or Token below (or leave blank to clear):',
+          currentWorker || currentToken
+        );
+
+        if (choice === null) return;
+
+        const val = choice.trim();
+        if (val.startsWith('http://') || val.startsWith('https://')) {
+          localStorage.setItem('worker_url', val);
+          showToast('Worker Proxy URL saved! Auto-commits active.', '⚡');
+        } else if (val.length > 5) {
+          localStorage.setItem('gh_token', val);
+          localStorage.removeItem('worker_url');
+          showToast('GitHub PAT saved successfully!', '🔑');
         } else {
-          showToast('Saved token cleared.', '💡');
+          localStorage.removeItem('worker_url');
+          localStorage.removeItem('gh_token');
+          showToast('Live commit credentials cleared.', '💡');
         }
       });
     }
@@ -2058,7 +2078,7 @@
       ghPollInterval = setInterval(checkGitHubForUpdates, 6000);
     }
 
-    // Save changes: In GitHub Mode commits to API if token exists; In Local Mode saves in localStorage
+    // Save changes: In GitHub Mode commits to API or Proxy Worker; In Local Mode saves in localStorage
     function saveChanges(commitMessage) {
       if (activeDataSource === 'github') {
         saveToGitHub(commitMessage);
@@ -2068,16 +2088,55 @@
       }
     }
 
-    // Save dataset TO GitHub Repo (Auto-Commit with token validation & error recovery)
+    // Save dataset TO GitHub Repo (Auto-Commit via Cloudflare Worker Proxy or Direct PAT fallback)
     async function saveToGitHub(commitMessage) {
+      const workerUrl = localStorage.getItem('worker_url');
+
+      // 1. Try Cloudflare Proxy Worker first if configured!
+      if (workerUrl) {
+        showToast('Committing update to GitHub via Cloudflare Worker...', '⏳');
+        try {
+          const res = await fetch(workerUrl, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              dataset: dataset,
+              commitMessage: commitMessage,
+              author: currentUser
+            })
+          });
+
+          if (res.ok) {
+            const data = await res.json();
+            if (data.sha) lastKnownSha = data.sha;
+            broadcastLocalChange();
+            showToast(`Saved & committed to GitHub! (${(data.commitSha || '').substring(0, 7)})`, '✅');
+            return;
+          } else {
+            const err = await res.json();
+            showToast(`Proxy Worker Error: ${err.error || 'Request failed'}`, '❌');
+          }
+        } catch (err) {
+          console.error(err);
+          showToast(`Proxy Worker Connection Failed: ${err.message}`, '❌');
+        }
+      }
+
+      // 2. Direct PAT token fallback if Worker Proxy is not configured
       let token = localStorage.getItem('gh_token');
       if (!token) {
-        const userToken = prompt('Enter your GitHub Personal Access Token (PAT) with "repo" write access:');
-        if (userToken && userToken.trim()) {
-          token = userToken.trim();
-          localStorage.setItem('gh_token', token);
+        const choice = prompt('Enter your Cloudflare Worker URL or GitHub PAT Token:');
+        if (choice && choice.trim()) {
+          const val = choice.trim();
+          if (val.startsWith('http://') || val.startsWith('https://')) {
+            localStorage.setItem('worker_url', val);
+            return saveToGitHub(commitMessage);
+          } else {
+            token = val;
+            localStorage.setItem('gh_token', token);
+          }
         } else {
-          showToast('GitHub Token required to commit changes to GitHub!', '💡');
+          showToast('Worker URL or Token required to commit changes live!', '💡');
           return;
         }
       }
@@ -2093,7 +2152,7 @@
         if (!getRes.ok) {
           if (getRes.status === 403 || getRes.status === 401) {
             localStorage.removeItem('gh_token');
-            showToast('GitHub Token invalid or lacks write access. Saved token cleared. Please re-enter a token with "repo" access.', '❌');
+            showToast('GitHub Token invalid or lacks write access. Saved token cleared.', '❌');
             return;
           }
           throw new Error('Could not fetch file SHA');
@@ -2110,7 +2169,8 @@
           headers: {
             'Authorization': `token ${currentToken}`,
             'Content-Type': 'application/json',
-            'Accept': 'application/vnd.github.v3+json'
+            'Accept': 'application/vnd.github.v3+json',
+            'User-Agent': 'PR-Tracker-App'
           },
           body: JSON.stringify({
             message: `${commitMessage} (by ${currentUser})`,
@@ -2129,7 +2189,7 @@
           const errData = await putRes.json();
           if (putRes.status === 403 || putRes.status === 404 || (errData.message && errData.message.includes('Resource not accessible'))) {
             localStorage.removeItem('gh_token');
-            showToast('GitHub Save Error: Token lacks repo write permissions! Cleared saved token. Please create a token with "repo" access.', '❌');
+            showToast('GitHub Token lacks write access! Cleared token.', '❌');
           } else {
             showToast(`GitHub Save Error: ${errData.message}`, '❌');
           }

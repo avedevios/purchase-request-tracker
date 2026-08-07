@@ -266,7 +266,6 @@
 
     /* Perfectly Uniform 36px Height & Alignment */
     .user-switcher-container,
-    .source-switcher-container,
     .view-toggle,
     .btn {
       height: 36px !important;
@@ -275,8 +274,7 @@
       align-items: center;
     }
 
-    .user-switcher-container,
-    .source-switcher-container {
+    .user-switcher-container {
       background: var(--bg-card);
       border: 1px solid var(--border-bright);
       padding: 2px;
@@ -284,8 +282,8 @@
       box-shadow: var(--card-shadow);
     }
 
-    /* Hide source switcher when running on live site (GitHub Pages) */
-    body.is-live-site .source-switcher-container {
+    /* Token button visible ONLY when in GitHub mode */
+    :root[data-source="local"] #resetTokenBtn {
       display: none !important;
     }
 
@@ -653,31 +651,60 @@
       font-size: 0.8rem;
     }
 
-    /* Toast Notification Banner */
+    /* Toast Notification Banner - Interactive, Selectable & Longer Duration */
     #toast {
       position: fixed;
       bottom: 1.5rem;
       right: 1.5rem;
       background: #0f172a;
       color: #ffffff;
-      padding: 0.75rem 1.25rem;
-      border-radius: 10px;
+      padding: 0.85rem 1.25rem;
+      border-radius: 12px;
       font-size: 0.85rem;
       font-weight: 500;
-      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
+      box-shadow: 0 12px 30px -5px rgba(0,0,0,0.4);
       display: flex;
       align-items: center;
-      gap: 0.6rem;
-      z-index: 1000;
+      gap: 0.75rem;
+      z-index: 9000;
       opacity: 0;
       transform: translateY(20px);
       transition: all 0.3s ease;
       pointer-events: none;
+      max-width: 450px;
+      user-select: text;
+      -webkit-user-select: text;
     }
 
     #toast.show {
       opacity: 1;
       transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    #toastMessage {
+      flex: 1;
+      user-select: text;
+      -webkit-user-select: text;
+      cursor: text;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+
+    .toast-close-btn {
+      background: transparent;
+      border: none;
+      color: #94a3b8;
+      font-size: 1.25rem;
+      line-height: 1;
+      cursor: pointer;
+      padding: 0 0.2rem;
+      border-radius: 4px;
+      transition: color 0.2s ease;
+    }
+
+    .toast-close-btn:hover {
+      color: #ffffff;
     }
 
     /* Views: Table View */
@@ -1107,17 +1134,10 @@
           </div>
         </div>
 
-        <!-- 2. Data Source Switcher -->
-        <div class="source-switcher-container">
-          <div class="segmented-pills">
-            <button class="segmented-pill-btn active" id="srcLocalBtn" data-source="local" title="Load dataset from local memory">
-              <span>📄 Local JSON</span>
-            </button>
-            <button class="segmented-pill-btn" id="srcGithubBtn" data-source="github" title="Load dataset live from GitHub repository">
-              <span>⚡ GitHub Repo</span>
-            </button>
-          </div>
-        </div>
+        <!-- 2. Reset GitHub Token Button (Visible only on live GitHub environment) -->
+        <button class="btn" id="resetTokenBtn" title="Reset or change saved GitHub Personal Access Token">
+          <span>🔑 Token</span>
+        </button>
 
         <!-- 3. Fold / Unfold Toggle Button -->
         <button class="btn" id="foldToggleBtn" title="Toggle Fold/Unfold All Groups">
@@ -1236,21 +1256,19 @@
     </div>
   </div>
 
-  <!-- Toast Banner -->
+  <!-- Interactive Selectable Toast Banner -->
   <div id="toast">
     <span id="toastIcon">✨</span>
     <span id="toastMessage">Notification</span>
+    <button class="toast-close-btn" id="closeToastBtn" title="Close notification">&times;</button>
   </div>
 
   <script>
-    // AUTOMATIC LIVE ENVIRONMENT DETECTION:
-    // When running hosted live (GitHub Pages or remote web server), lock to GitHub Repo Mode & hide switcher!
+    // AUTOMATIC STRICT ENVIRONMENT MODE SELECTION:
+    // 1. Live Web / GitHub Pages -> Exclusively GITHUB Repo mode!
+    // 2. Local PC (file:// or localhost) -> Exclusively LOCAL JSON mode!
     const isLiveEnvironment = window.location.hostname.includes('github.io') || 
       (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && window.location.protocol !== 'file:');
-
-    if (isLiveEnvironment) {
-      document.body.classList.add('is-live-site');
-    }
 
     const defaultLocalData = [
       {
@@ -1653,15 +1671,20 @@
 
     let dataset = JSON.parse(JSON.stringify(defaultLocalData));
     
-    // PERSIST USER SELECTION & DATA SOURCE SELECTION ACROSS PAGE REFRESHES!
+    // PERSIST USER SELECTION
     let currentUser = localStorage.getItem('active_user') || 'Anton';
-    let activeDataSource = isLiveEnvironment ? 'github' : (localStorage.getItem('active_source') || 'local');
+    
+    // STRICT MODE ASSIGNMENT:
+    // Live hosted site -> 'github'
+    // Local PC -> 'local'
+    let activeDataSource = isLiveEnvironment ? 'github' : 'local';
     
     let currentFilter = "ALL";
     let activeChatItem = null;
     let isAllFolded = false;
     let lastKnownSha = null;
     let ghPollInterval = null;
+    let toastTimeout = null;
 
     const collapsedLevel1 = new Set();
     const collapsedLevel2 = new Set();
@@ -1719,12 +1742,59 @@
       }
     });
 
+    // Enhanced Selectable Toast Banner with 8.5s Duration & Hover Pause
     function showToast(message, icon = '✨') {
       const toast = document.getElementById('toast');
-      document.getElementById('toastIcon').textContent = icon;
-      document.getElementById('toastMessage').textContent = message;
+      const toastIcon = document.getElementById('toastIcon');
+      const toastMessage = document.getElementById('toastMessage');
+
+      toastIcon.textContent = icon;
+      toastMessage.textContent = message;
+
+      if (toastTimeout) clearTimeout(toastTimeout);
       toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 3500);
+
+      // Stay visible for 8.5 seconds (long enough to read & copy)
+      toastTimeout = setTimeout(() => {
+        toast.classList.remove('show');
+      }, 8500);
+    }
+
+    const toastEl = document.getElementById('toast');
+    if (toastEl) {
+      // Pause hide timer when mouse hovers over toast (making it easy to select/copy text)
+      toastEl.addEventListener('mouseenter', () => {
+        if (toastTimeout) clearTimeout(toastTimeout);
+      });
+      // Resume hide timer when mouse leaves toast
+      toastEl.addEventListener('mouseleave', () => {
+        if (toastEl.classList.contains('show')) {
+          toastTimeout = setTimeout(() => toastEl.classList.remove('show'), 4000);
+        }
+      });
+    }
+
+    const closeToastBtn = document.getElementById('closeToastBtn');
+    if (closeToastBtn) {
+      closeToastBtn.addEventListener('click', () => {
+        if (toastTimeout) clearTimeout(toastTimeout);
+        toastEl.classList.remove('show');
+      });
+    }
+
+    // Reset GitHub Token Button Handler
+    const resetTokenBtn = document.getElementById('resetTokenBtn');
+    if (resetTokenBtn) {
+      resetTokenBtn.addEventListener('click', () => {
+        localStorage.removeItem('gh_token');
+        const newToken = prompt('Enter your new GitHub Personal Access Token (PAT) with "repo" access:');
+        if (newToken && newToken.trim()) {
+          localStorage.setItem('gh_token', newToken.trim());
+          showToast('GitHub Token updated successfully!', '🔑');
+        } else {
+          showToast('Saved token cleared.', '💡');
+        }
+      });
     }
 
     // Celebratory Fireworks Animation Engine for FIXED
@@ -1854,7 +1924,6 @@
 
     function updateDataSourceAttribute(source) {
       activeDataSource = source;
-      localStorage.setItem('active_source', source);
       document.documentElement.setAttribute('data-source', source);
       
       const titleBadge = document.getElementById('sourceTitleBadge');
@@ -1891,26 +1960,6 @@
         applyUserTheme(currentUser);
       });
     });
-
-    // Data Source Switcher (Local JSON vs GitHub Repo)
-    const srcLocalBtn = document.getElementById('srcLocalBtn');
-    const srcGithubBtn = document.getElementById('srcGithubBtn');
-
-    if (srcLocalBtn && srcGithubBtn) {
-      srcLocalBtn.addEventListener('click', () => {
-        srcLocalBtn.classList.add('active');
-        srcGithubBtn.classList.remove('active');
-        updateDataSourceAttribute('local');
-        loadLocalJson();
-      });
-
-      srcGithubBtn.addEventListener('click', () => {
-        srcGithubBtn.classList.add('active');
-        srcLocalBtn.classList.remove('active');
-        updateDataSourceAttribute('github');
-        syncFromGitHub();
-      });
-    }
 
     // Automatically sync "Where is ball" owner to the author of the last response message
     function syncBallToLastMessageAuthor(itemsList) {
@@ -2019,13 +2068,14 @@
       }
     }
 
-    // Save dataset TO GitHub Repo (Auto-Commit)
+    // Save dataset TO GitHub Repo (Auto-Commit with token validation & error recovery)
     async function saveToGitHub(commitMessage) {
-      const token = localStorage.getItem('gh_token');
+      let token = localStorage.getItem('gh_token');
       if (!token) {
-        const userToken = prompt('Enter your GitHub Personal Access Token (PAT) to commit changes back to GitHub:');
+        const userToken = prompt('Enter your GitHub Personal Access Token (PAT) with "repo" write access:');
         if (userToken && userToken.trim()) {
-          localStorage.setItem('gh_token', userToken.trim());
+          token = userToken.trim();
+          localStorage.setItem('gh_token', token);
         } else {
           showToast('GitHub Token required to commit changes to GitHub!', '💡');
           return;
@@ -2040,7 +2090,15 @@
           headers: { 'Authorization': `token ${currentToken}` }
         });
 
-        if (!getRes.ok) throw new Error('Could not fetch file SHA');
+        if (!getRes.ok) {
+          if (getRes.status === 403 || getRes.status === 401) {
+            localStorage.removeItem('gh_token');
+            showToast('GitHub Token invalid or lacks write access. Saved token cleared. Please re-enter a token with "repo" access.', '❌');
+            return;
+          }
+          throw new Error('Could not fetch file SHA');
+        }
+
         const fileInfo = await getRes.json();
         const sha = fileInfo.sha;
 
@@ -2069,7 +2127,12 @@
           showToast(`Saved & committed to GitHub! (${result.commit.sha.substring(0, 7)})`, '✅');
         } else {
           const errData = await putRes.json();
-          showToast(`GitHub Save Error: ${errData.message}`, '❌');
+          if (putRes.status === 403 || putRes.status === 404 || (errData.message && errData.message.includes('Resource not accessible'))) {
+            localStorage.removeItem('gh_token');
+            showToast('GitHub Save Error: Token lacks repo write permissions! Cleared saved token. Please create a token with "repo" access.', '❌');
+          } else {
+            showToast(`GitHub Save Error: ${errData.message}`, '❌');
+          }
         }
       } catch (err) {
         console.error(err);
@@ -2680,21 +2743,13 @@
       URL.revokeObjectURL(url);
     });
 
-    // Initial render & load dataset based on saved user preference
+    // Initial render & load dataset strictly based on environment
     applyUserTheme(currentUser);
     updateDataSourceAttribute(activeDataSource);
 
     if (activeDataSource === 'github') {
-      if (srcGithubBtn && srcLocalBtn) {
-        srcGithubBtn.classList.add('active');
-        srcLocalBtn.classList.remove('active');
-      }
       syncFromGitHub();
     } else {
-      if (srcLocalBtn && srcGithubBtn) {
-        srcLocalBtn.classList.add('active');
-        srcGithubBtn.classList.remove('active');
-      }
       loadLocalJson();
     }
   </script>

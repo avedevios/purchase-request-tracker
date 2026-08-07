@@ -103,7 +103,7 @@
   },
   {
     "category": "Main menu",
-    "status": "To Do",
+    "status": "Fixed",
     "priority": "Could",
     "role": null,
     "issue": "Title screen is list, not a button",

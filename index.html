@@ -302,7 +302,7 @@
     }
 
     /* Sharp Uniform 34px Height */
-    .user-switcher-container,
+    .user-switcher-group,
     .view-toggle,
     .btn {
       height: var(--control-height) !important;
@@ -311,69 +311,44 @@
       align-items: center;
     }
 
-    .user-switcher-container {
+    /* Clean Segmented Pill Switcher (Single outer border, no double nested boxes) */
+    .user-switcher-group {
       display: inline-flex;
       align-items: center;
-    }
-
-    .segmented-pills {
-      display: flex;
-      align-items: center;
-      height: 100%;
-      background: var(--switcher-bg);
+      background: var(--bg-card);
       border: 1px solid var(--border-color);
       border-radius: var(--radius-sm);
       padding: 2px;
       gap: 2px;
     }
 
-    .segmented-pill-btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.35rem;
-      padding: 0 0.55rem;
-      height: 100%;
-      border-radius: var(--radius-sm);
-      border: none;
+    .user-btn {
       background: transparent;
       color: var(--text-muted);
-      font-size: 0.775rem;
-      font-weight: 600;
+      border: none;
+      height: 100%;
+      padding: 0 0.75rem;
+      border-radius: calc(var(--radius-sm) - 1px);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
       cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       transition: all 0.15s ease;
       white-space: nowrap;
     }
 
-    .segmented-pill-btn:hover {
+    .user-btn:hover {
       color: var(--text-main);
     }
 
-    .segmented-pill-btn.active {
+    .user-btn.active {
       background: var(--user-theme-bg);
       color: var(--user-theme-color);
-      border: 1px solid var(--user-theme-border);
-      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
-    }
-
-    .user-avatar-circle {
-      width: 16px;
-      height: 16px;
-      border-radius: 3px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 0.6rem;
-      font-weight: 700;
-      color: #ffffff;
-    }
-
-    .avatar-anton {
-      background: #4338ca;
-    }
-
-    .avatar-adonis {
-      background: #047857;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
     }
 
     /* Standardized Sharp Icon-Only Buttons */
@@ -1180,16 +1155,10 @@
         </h1>
       </div>
       <div class="header-actions">
-        <!-- 1. User Switcher (Single Clean Segmented Container) -->
-        <div class="segmented-pills">
-          <button class="segmented-pill-btn" data-user="Anton">
-            <span class="user-avatar-circle avatar-anton">An</span>
-            <span>Anton</span>
-          </button>
-          <button class="segmented-pill-btn" data-user="Adonis">
-            <span class="user-avatar-circle avatar-adonis">Ad</span>
-            <span>Adonis</span>
-          </button>
+        <!-- 1. Unified Segmented Control User Duty Switcher Container -->
+        <div class="user-switcher-group">
+          <button class="user-btn" data-user="Anton">ANTON</button>
+          <button class="user-btn" data-user="Adonis">ADONIS</button>
         </div>
 
         <!-- 2. Minimal Icon-Only: Cloudflare Worker Database URL Configuration Button -->
@@ -1374,7 +1343,7 @@
         "status": "Backlog",
         "priority": "Could",
         "role": null,
-        "issue": "Could we show short form for default and chekbox for full form?",
+        "issue": "Could we show show form for default and chekbox for full form?",
         "response": null,
         "ball": null
       },
@@ -1789,7 +1758,7 @@
 
     const collapsedLevel1 = new Set();
     const collapsedLevel2 = new Set();
-    const userPills = document.querySelectorAll('.segmented-pills .segmented-pill-btn');
+    const userButtons = document.querySelectorAll('.user-switcher-group .user-btn');
 
     // Minimal SVG icons
     const SVG_ADD_SUBCAT = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"></path><line x1="12" y1="10" x2="12" y2="16"></line><line x1="9" y1="13" x2="15" y2="13"></line></svg>`;
@@ -2188,18 +2157,18 @@
       }
     }
 
-    userPills.forEach(pill => {
-      const pillUser = pill.getAttribute('data-user');
-      if (pillUser === currentUser) {
-        pill.classList.add('active');
+    userButtons.forEach(btn => {
+      const btnUser = btn.getAttribute('data-user');
+      if (btnUser === currentUser) {
+        btn.classList.add('active');
       } else {
-        pill.classList.remove('active');
+        btn.classList.remove('active');
       }
 
-      pill.addEventListener('click', () => {
-        userPills.forEach(p => p.classList.remove('active'));
-        pill.classList.add('active');
-        currentUser = pill.getAttribute('data-user');
+      btn.addEventListener('click', () => {
+        userButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentUser = btn.getAttribute('data-user');
         localStorage.setItem('active_user', currentUser);
         applyUserTheme(currentUser);
         showToast(`Switched active user to ${currentUser}!`, '👤');
@@ -2949,6 +2918,7 @@
       });
     }
 
+    // Main render caller
     function render() {
       updateStats(dataset);
       const filtered = getFilteredData();

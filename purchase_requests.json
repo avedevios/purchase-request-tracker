@@ -5,9 +5,9 @@
     "priority": "Should",
     "role": "Emp",
     "issue": "Title screen is list, in list are buttons: add, edit, delete (if needs)dfsgfd",
-    "response": "jadslkfja",
+    "response": "kjaklsd;fa",
     "notes": null,
-    "ball": "Adonis",
+    "ball": "Anton",
     "comments": [
       {
         "author": "Adonis",
@@ -103,6 +103,11 @@
         "author": "Adonis",
         "time": "Aug 7 08:32 a.m.",
         "text": "jadslkfja"
+      },
+      {
+        "author": "Anton",
+        "time": "Aug 7 08:32 a.m.",
+        "text": "kjaklsd;fa"
       }
     ]
   },

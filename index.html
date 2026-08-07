@@ -1097,7 +1097,7 @@
         <!-- 1. User Switcher -->
         <div class="user-switcher-container">
           <div class="segmented-pills">
-            <button class="segmented-pill-btn active" data-user="Anton">
+            <button class="segmented-pill-btn" data-user="Anton">
               <span class="user-avatar-circle avatar-anton">An</span>
               <span>Anton</span>
             </button>
@@ -1108,7 +1108,7 @@
           </div>
         </div>
 
-        <!-- 2. Data Source Switcher (Local JSON vs GitHub Repo) -->
+        <!-- 2. Data Source Switcher -->
         <div class="source-switcher-container">
           <div class="segmented-pills">
             <button class="segmented-pill-btn active" id="srcLocalBtn" data-source="local" title="Load dataset from local memory">
@@ -1688,9 +1688,12 @@
     ];
 
     let dataset = JSON.parse(JSON.stringify(defaultLocalData));
-    let currentUser = "Anton";
+    
+    // PERSIST USER SELECTION & DATA SOURCE SELECTION ACROSS PAGE REFRESHES!
+    let currentUser = localStorage.getItem('active_user') || 'Anton';
+    let activeDataSource = localStorage.getItem('active_source') || 'local';
+    
     let currentFilter = "ALL";
-    let activeDataSource = "local"; // "local" or "github"
     let activeChatItem = null;
     let isAllFolded = false;
     let lastKnownSha = null;
@@ -1887,7 +1890,9 @@
 
     function updateDataSourceAttribute(source) {
       activeDataSource = source;
+      localStorage.setItem('active_source', source);
       document.documentElement.setAttribute('data-source', source);
+      
       const titleBadge = document.getElementById('sourceTitleBadge');
       if (titleBadge) {
         if (source === 'local') {
@@ -1898,6 +1903,7 @@
           titleBadge.className = 'source-title-badge badge-github';
         }
       }
+      
       if (source === 'github') {
         startGitHubPolling();
       } else if (ghPollInterval) {
@@ -1906,10 +1912,18 @@
     }
 
     userPills.forEach(pill => {
+      const pillUser = pill.getAttribute('data-user');
+      if (pillUser === currentUser) {
+        pill.classList.add('active');
+      } else {
+        pill.classList.remove('active');
+      }
+
       pill.addEventListener('click', () => {
         userPills.forEach(p => p.classList.remove('active'));
         pill.classList.add('active');
         currentUser = pill.getAttribute('data-user');
+        localStorage.setItem('active_user', currentUser);
         applyUserTheme(currentUser);
       });
     });
@@ -1918,19 +1932,21 @@
     const srcLocalBtn = document.getElementById('srcLocalBtn');
     const srcGithubBtn = document.getElementById('srcGithubBtn');
 
-    srcLocalBtn.addEventListener('click', () => {
-      srcLocalBtn.classList.add('active');
-      srcGithubBtn.classList.remove('active');
-      updateDataSourceAttribute('local');
-      loadLocalJson();
-    });
+    if (srcLocalBtn && srcGithubBtn) {
+      srcLocalBtn.addEventListener('click', () => {
+        srcLocalBtn.classList.add('active');
+        srcGithubBtn.classList.remove('active');
+        updateDataSourceAttribute('local');
+        loadLocalJson();
+      });
 
-    srcGithubBtn.addEventListener('click', () => {
-      srcGithubBtn.classList.add('active');
-      srcLocalBtn.classList.remove('active');
-      updateDataSourceAttribute('github');
-      syncFromGitHub();
-    });
+      srcGithubBtn.addEventListener('click', () => {
+        srcGithubBtn.classList.add('active');
+        srcLocalBtn.classList.remove('active');
+        updateDataSourceAttribute('github');
+        syncFromGitHub();
+      });
+    }
 
     // Automatically sync "Where is ball" owner to the author of the last response message
     function syncBallToLastMessageAuthor(itemsList) {
@@ -1988,10 +2004,10 @@
           dataset = JSON.parse(decodedContent);
           syncBallToLastMessageAuthor(dataset);
           render();
-          showToast('Synced latest data from GitHub repository!', '⚡');
+          showToast('Synced latest data live from GitHub!', '⚡');
         }
       } catch (err) {
-        console.warn('GitHub fetch failed, loading local dataset', err);
+        console.warn('GitHub fetch failed, loading local dataset fallback', err);
         loadLocalJson();
       }
     }
@@ -2708,10 +2724,23 @@
       URL.revokeObjectURL(url);
     });
 
-    // Initial render, theme & load dataset
+    // Initial render & load dataset based on saved user preference
     applyUserTheme(currentUser);
     updateDataSourceAttribute(activeDataSource);
-    loadLocalJson();
+
+    if (activeDataSource === 'github') {
+      if (srcGithubBtn && srcLocalBtn) {
+        srcGithubBtn.classList.add('active');
+        srcLocalBtn.classList.remove('active');
+      }
+      syncFromGitHub();
+    } else {
+      if (srcLocalBtn && srcGithubBtn) {
+        srcLocalBtn.classList.add('active');
+        srcGithubBtn.classList.remove('active');
+      }
+      loadLocalJson();
+    }
   </script>
 </body>
 </html>

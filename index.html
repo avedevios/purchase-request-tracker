@@ -215,6 +215,11 @@
       align-items: center;
     }
 
+    /* Settings button visible ONLY when in Database mode */
+    :root[data-source="local"] #dbSettingsBtn {
+      display: none !important;
+    }
+
     /* Prominent & Extra Large Source Title Badge */
     .source-title-badge {
       display: inline-block;

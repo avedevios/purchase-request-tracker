@@ -1,6 +1,5 @@
-const STATUSES = ['Fixed', 'To Do', 'Backlog', 'Deprecated'];
-const BALLS = ['', 'Anton', 'Adonis'];
-const ROLES = ['', 'Emp', 'DM', 'PM', 'PO', 'GM'];
+/** @module components — HTML string generators and DOM event binders for table rows, cards, and controls. */
+import { STATUSES, BALLS, ROLES } from './constants.js';
 
 // EDSL Tag & Element Builders
 export const tag = (t, c, inner, attrs = '') => `<${t}${c ? ` class="${c}"` : ''}${attrs ? ` ${attrs}` : ''}>${inner}</${t}>`;

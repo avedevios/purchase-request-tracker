@@ -12,9 +12,8 @@ import {
   renderResponseBtn
 } from '../js/components.js';
 
-import { defaultLocalData } from '../js/config.js';
 
-// --- SUITE 6: EDSL HTML BUILDER HELPERS ---
+
 describe('EDSL HTML Builder Helpers', () => {
   it('should construct valid HTML tag with attributes', () => {
     const html = tag('div', 'my-class', 'Hello World', 'id="box"');
@@ -81,15 +80,4 @@ describe('Response Button Rendering', () => {
   });
 });
 
-// --- SUITE 9: DEFAULT LOCAL DATASET INTEGRITY ---
-describe('Default Local Dataset Integrity', () => {
-  it('should contain defaultLocalData array with essential issue properties', () => {
-    assert.ok(Array.isArray(defaultLocalData));
-    assert.ok(defaultLocalData.length > 0);
-    
-    const first = defaultLocalData[0];
-    assert.ok('category' in first);
-    assert.ok('status' in first);
-    assert.ok('issue' in first);
-  });
-});
+

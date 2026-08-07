@@ -1,8 +1,6 @@
 // Cloudflare Worker + KV Database + Real-Time WebSockets Chat (<50ms Instant Push)
 // Requires a KV Namespace Binding named: PR_TRACKER_DB
 
-const INITIAL_DATA_SEED_URL = 'https://raw.githubusercontent.com/avedevios/purchase-request-tracker/main/purchase_requests.json';
-
 // Active WebSocket connections pool
 const sockets = new Set();
 
@@ -79,17 +77,6 @@ export default {
         if (env.PR_TRACKER_DB) {
           dataset = await env.PR_TRACKER_DB.get('purchase_requests', { type: 'json' });
         }
-
-        if (!dataset) {
-          const res = await fetch(INITIAL_DATA_SEED_URL);
-          if (res.ok) {
-            dataset = await res.json();
-            if (env.PR_TRACKER_DB) {
-              await env.PR_TRACKER_DB.put('purchase_requests', JSON.stringify(dataset));
-            }
-          }
-        }
-
         return new Response(JSON.stringify(dataset || []), { headers: corsHeaders });
       } catch (err) {
         return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: corsHeaders });

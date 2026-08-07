@@ -1,23 +1,35 @@
-import { defaultLocalData } from './config.js';
+/** @module api — Cloudflare KV fetch/save, WebSocket real-time push, and localStorage fallback sync. */
+
 import { showToast } from './ui/toast.js';
 
+/** @type {import('./types.js').IssueItem[]} Live in-memory dataset — mutated directly by actions. */
 export let dataset = [];
+
+/** @type {WebSocket|null} Active WebSocket connection to Cloudflare Worker. */
 export let socket = null;
+
 let dbPollInterval = null;
 let renderCallback = null;
 let chatUpdateCallback = null;
 
 const syncChannel = typeof window !== 'undefined' && window.BroadcastChannel ? new BroadcastChannel('pr_tracker_sync') : null;
 
+/** @param {function} cb — Called after any dataset update to re-render the UI. */
 export function setRenderCallback(cb) { renderCallback = cb; }
+
+/** @param {function} cb — Called after dataset update to refresh the open chat thread. */
 export function setChatUpdateCallback(cb) { chatUpdateCallback = cb; }
+
+/** @param {import('./types.js').IssueItem[]} newDataset — Replaces the live dataset (used by deleteItem). */
 export function setDataset(newDataset) { dataset = newDataset; }
 
+/** Writes dataset to localStorage and notifies other tabs via BroadcastChannel. */
 export function broadcastLocalChange() {
   localStorage.setItem('kv_dataset_cache', JSON.stringify(dataset));
   if (syncChannel) syncChannel.postMessage({ type: 'DATASET_UPDATED', dataset: dataset, timestamp: Date.now() });
 }
 
+/** Listens for dataset changes from other tabs (BroadcastChannel + storage event). */
 export function initSyncListeners() {
   if (syncChannel) {
     syncChannel.onmessage = (event) => {
@@ -42,6 +54,7 @@ export function initSyncListeners() {
   });
 }
 
+/** Opens a WebSocket to the Cloudflare Worker for <50ms live push. Auto-reconnects on close. */
 export function initWebSocketConnection() {
   const workerUrl = localStorage.getItem('worker_url');
   if (!workerUrl) return;
@@ -69,6 +82,10 @@ export function initWebSocketConnection() {
   } catch (e) {}
 }
 
+/**
+ * Loads data in priority order: Cloudflare KV → localStorage cache → empty array.
+ * Calls renderCallback() after loading.
+ */
 export async function syncFromDatabase() {
   const workerUrl = localStorage.getItem('worker_url');
   if (workerUrl) {
@@ -96,12 +113,12 @@ export async function syncFromDatabase() {
     } catch (e) {}
   }
 
-  dataset = JSON.parse(JSON.stringify(defaultLocalData));
-  localStorage.setItem('kv_dataset_cache', JSON.stringify(dataset));
+  dataset = [];
   renderCallback?.();
-  showToast('Loaded initial tracker dataset!', '📄');
+  showToast('No database connected. Add your Cloudflare Worker URL via the DB button.', '💡');
 }
 
+/** Polls KV for changes and re-renders only if data has changed. */
 export async function checkDatabaseForUpdates() {
   const workerUrl = localStorage.getItem('worker_url');
   if (!workerUrl) return;
@@ -122,15 +139,22 @@ export async function checkDatabaseForUpdates() {
   } catch (e) {}
 }
 
+/** Starts polling Cloudflare KV for updates every 4 seconds. */
 export function startDatabasePolling() {
   if (dbPollInterval) clearInterval(dbPollInterval);
   dbPollInterval = setInterval(checkDatabaseForUpdates, 4000);
 }
 
+/** @param {string} currentUser @param {import('./types.js').IssueItem|null} activeChatItem */
 export function saveChanges(currentUser, activeChatItem) {
   saveToDatabase(currentUser, activeChatItem);
 }
 
+/**
+ * POSTs dataset to Cloudflare Worker KV. Also pushes via WebSocket if connected.
+ * Prompts for Worker URL if not yet configured. Falls back to localStorage on error.
+ * @param {string} currentUser @param {import('./types.js').IssueItem|null} activeChatItem
+ */
 export async function saveToDatabase(currentUser, activeChatItem) {
   const workerUrl = localStorage.getItem('worker_url');
   if (!workerUrl) {

@@ -1,0 +1,13 @@
+{
+  "name": "purchase-request-tracker",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Purchase Request Tracker & Issue Dashboard Automated Test Suite",
+  "main": "index.html",
+  "scripts": {
+    "test": "node --test tests/*.test.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}

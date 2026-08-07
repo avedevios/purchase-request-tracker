@@ -5,8 +5,7 @@
     "priority": "Should",
     "role": "Emp",
     "issue": "Title screen is list, in list are buttons: add, edit, delete (if needs)",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "Main menu",
@@ -14,8 +13,7 @@
     "priority": "Could",
     "role": null,
     "issue": "Title screen is list, not a button",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "Purchase Request Form > Purchase Request Form Fields",
@@ -23,8 +21,7 @@
     "priority": null,
     "role": null,
     "issue": "Could we not allow negative sum?",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "Purchase Request Form > Purchase Request Form Fields",
@@ -32,8 +29,7 @@
     "priority": "Should",
     "role": null,
     "issue": "Could we autofill employee name and make this field not editable for role Employee",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "Purchase Request Form > Purchase Request Form Fields",
@@ -41,8 +37,7 @@
     "priority": "Could",
     "role": null,
     "issue": "Could we show short form for default and chekbox for full form?",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "Purchase Request Form > Purchase Request Form Behavior",
@@ -50,8 +45,7 @@
     "priority": "Must",
     "role": null,
     "issue": "After Submit it showes popup that everything alright and 1 button \"Return\". Should return to the list",
-    "response": "Ready for testing",
-    "notes": "Fixed"
+    "response": "Ready for testing"
   },
   {
     "category": "Purchase Request Form > Purchase Request Form Behavior",
@@ -59,8 +53,7 @@
     "priority": "Should",
     "role": null,
     "issue": "Button Cancel clear the form, but do we need separate button for that? Maybe better remove this button or move there Home button (to List)",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "Purchase Request Form > Purchase Request Form Behavior",
@@ -68,8 +61,7 @@
     "priority": "Could",
     "role": null,
     "issue": "Maybe it will be convinient to Save form before submitting. But it should be well highlighted to understand which PR isn't submitted",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "Purchase Request List",
@@ -77,8 +69,7 @@
     "priority": "Must",
     "role": null,
     "issue": "PR Status in List doesn't fiil out",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "Manage Purchase Request Form",
@@ -86,8 +77,7 @@
     "priority": null,
     "role": null,
     "issue": "UI of the list of stages, could naming be clearer, using some similar entities? ",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "Manage Purchase Request Form",
@@ -95,8 +85,7 @@
     "priority": null,
     "role": null,
     "issue": "Could we clearer see timeline? What stage is right now? Maybe using some colors",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "Manage Purchase Request Form",
@@ -104,8 +93,7 @@
     "priority": null,
     "role": null,
     "issue": "Current stage should be bright, all other - grey, to understand where we are now?",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "Manage Purchase Request Form",
@@ -113,8 +101,7 @@
     "priority": null,
     "role": null,
     "issue": "UX of stages, do we need all that amount of fields? Seems like many of them dublicate each other",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "Manage Purchase Request Form",
@@ -122,8 +109,7 @@
     "priority": null,
     "role": null,
     "issue": "Too many entities, validate and approve? What the difference? Maybe use just less terms for easiness?",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "Manage Purchase Request Form",
@@ -131,8 +117,7 @@
     "priority": "Must",
     "role": null,
     "issue": "In finished PR all dots white again",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "Manage Purchase Request Form",
@@ -140,8 +125,7 @@
     "priority": "Should",
     "role": null,
     "issue": "In finished PR some dots are green. GM dot is white. Could we highligh somehow that PR is closed, colors doesn't matter?",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "Notifications",
@@ -149,8 +133,7 @@
     "priority": null,
     "role": null,
     "issue": "Email notification coming twice",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "Notifications",
@@ -158,8 +141,7 @@
     "priority": "Should",
     "role": null,
     "issue": "Sender of notification should be common 365 account, not Adonis (e.g. donotrespond@mtmmachines.ca) ",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "PR Roles List > PR Roles List Form",
@@ -167,8 +149,7 @@
     "priority": null,
     "role": null,
     "issue": "Do we need columns: Title, Approval, Attachments? ",
-    "response": "Column \"Title\" and \"Attachments\" come automatically, they can be hidden if we don't use. Attachments is currently used.",
-    "notes": null
+    "response": "Column \"Title\" and \"Attachments\" come automatically, they can be hidden if we don't use. Attachments is currently used."
   },
   {
     "category": "PR Roles List > PR Roles List Behavior",
@@ -176,8 +157,7 @@
     "priority": "Should",
     "role": null,
     "issue": "Glitch with clicking rows. If cursor on it you can't open it. Maybe restrict open that way and add some button \"Open\"",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "PR Roles List > PR Roles List Behavior",
@@ -185,8 +165,7 @@
     "priority": null,
     "role": null,
     "issue": "Finding role works for email column instead of 365 account",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "PR Roles List > PR Roles List Behavior",
@@ -194,8 +173,7 @@
     "priority": null,
     "role": "GM",
     "issue": "At Stage 1 it should ask DM approval, but I entered as GM and I have ability to make a GM approval (before DM approval, before budget checking) ",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "PR Roles List > PR Roles List Behavior",
@@ -203,8 +181,7 @@
     "priority": null,
     "role": "DM",
     "issue": "When I entered like DM of department of PR (Quality), I'm not able to validate anything - everything is grey ",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "Deprtment Lead List",
@@ -212,8 +189,7 @@
     "priority": "Could",
     "role": null,
     "issue": "Could we deprecate this table and use just PR Roles?",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "Deprtment Lead List",
@@ -221,8 +197,7 @@
     "priority": "Must",
     "role": null,
     "issue": "Number of PR appear with delay, we have enogh time for a few approval, refusal to go on. So we will have notifications with empty number",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "Deprtment Lead List",
@@ -230,8 +205,7 @@
     "priority": "Should",
     "role": null,
     "issue": "We need to prevent any actions BEFORE number appear",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "WorkFlow > DM Stage",
@@ -239,8 +213,7 @@
     "priority": "Must",
     "role": "PM",
     "issue": "After DM rejection PR doesn't close. PM could enter, change reason of rejection and reject again",
-    "response": "Ready for testing",
-    "notes": "Fixed"
+    "response": "Ready for testing"
   },
   {
     "category": "WorkFlow > DM Stage",
@@ -248,8 +221,7 @@
     "priority": "Could",
     "role": "DM",
     "issue": "DM don't need Officer PR adjustment refusal reason in the list of reasons",
-    "response": "The user is notified abot selecting the right choise",
-    "notes": "Fixed"
+    "response": "The user is notified abot selecting the right choise"
   },
   {
     "category": "WorkFlow > DM Stage",
@@ -257,8 +229,14 @@
     "priority": "Must",
     "role": "DM",
     "issue": "Can approve as DM without DM Role, checking just Dep Lead List and doesn't check PR Roles. Should it? Or Dep Lead List is enough?",
-    "response": "Ready for testing",
-    "notes": "Still there"
+    "response": "Still there",
+    "comments": [
+      {
+        "author": "Anton",
+        "time": "Earlier",
+        "text": "Still there"
+      }
+    ]
   },
   {
     "category": "WorkFlow > DM Stage",
@@ -266,8 +244,14 @@
     "priority": "Must",
     "role": "DM",
     "issue": "DM Stage if budget exceed. I can Approve, should I? Anyway Confirm extra budget unavalable",
-    "response": "You can approve the request, then it is sent to the GM to validate",
-    "notes": "You're saying about Confirm extra budget, but I said about Approve. Also Confirm extra budget unavailable"
+    "response": "You're saying about Confirm extra budget, but I said about Approve. Also Confirm extra budget unavailable",
+    "comments": [
+      {
+        "author": "Anton",
+        "time": "Earlier",
+        "text": "You're saying about Confirm extra budget, but I said about Approve. Also Confirm extra budget unavailable"
+      }
+    ]
   },
   {
     "category": "WorkFlow > PM Stage",
@@ -275,8 +259,7 @@
     "priority": "Must",
     "role": "PM",
     "issue": "PM click reject - nothing happens, no popup. But process is going on. If I close PR and open it again, all dots are white like its new PR",
-    "response": "Ready for testing",
-    "notes": "Fixed"
+    "response": "Ready for testing"
   },
   {
     "category": "WorkFlow > PM Stage",
@@ -284,8 +267,14 @@
     "priority": "Must",
     "role": "PM",
     "issue": "Officer PR adjustment refusal reason could be chosen even if officer didn't assigned yet",
-    "response": "Ready for testing",
-    "notes": "I see error, process blocked. But also I see popup that all ok and it kicks me to the list"
+    "response": "I see error, process blocked. But also I see popup that all ok and it kicks me to the list",
+    "comments": [
+      {
+        "author": "Anton",
+        "time": "Earlier",
+        "text": "I see error, process blocked. But also I see popup that all ok and it kicks me to the list"
+      }
+    ]
   },
   {
     "category": "WorkFlow > PM Stage",
@@ -293,8 +282,7 @@
     "priority": "Must",
     "role": "PM",
     "issue": "If Officer PR adjustment refusal reason - PR doesn't go to the officer",
-    "response": "Ready for testing",
-    "notes": "Fixed"
+    "response": "Ready for testing"
   },
   {
     "category": "WorkFlow > PM Stage",
@@ -302,8 +290,7 @@
     "priority": "Must",
     "role": "PM",
     "issue": "I can work as PM even i have only DM role",
-    "response": "Please give time, when switching roles",
-    "notes": "Fixed"
+    "response": "Please give time, when switching roles"
   },
   {
     "category": "WorkFlow > PM Stage",
@@ -311,8 +298,7 @@
     "priority": "Must",
     "role": "PM",
     "issue": "Can't approve as PM even if have PM Role",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "WorkFlow > PM Stage",
@@ -320,8 +306,7 @@
     "priority": "Must",
     "role": "PM",
     "issue": "When I create one more PR, \"Assign to\" equal entry of previous PR (I mean field about PO)",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "WorkFlow > PO Stage",
@@ -329,8 +314,7 @@
     "priority": "Must",
     "role": "PO",
     "issue": "Even I have PO role I can't submit PR after PM",
-    "response": "Ready for testing, give time between roles",
-    "notes": "Fixed"
+    "response": "Ready for testing, give time between roles"
   },
   {
     "category": "WorkFlow > PO Stage",
@@ -338,8 +322,7 @@
     "priority": "Must",
     "role": "PM",
     "issue": "When press Submit - error \"Please load a PR\" and doesn't allow me go forward",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "WorkFlow > PO Stage",
@@ -347,8 +330,7 @@
     "priority": "Must",
     "role": "PM",
     "issue": "Reject unavailable",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "WorkFlow > PO Stage After PM Rejection",
@@ -356,8 +338,7 @@
     "priority": "Must",
     "role": "PM",
     "issue": "DM Stage dot is white. After PM rejection",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "WorkFlow > PO Stage After PM Rejection",
@@ -365,8 +346,7 @@
     "priority": "Must",
     "role": "PM",
     "issue": "I can submit wihout PO Role. Only if it was PM rejection",
-    "response": null,
-    "notes": null
+    "response": null
   },
   {
     "category": "WorkFlow > PM Stage After PO Approval",
@@ -374,8 +354,7 @@
     "priority": "Should",
     "role": "PM",
     "issue": "Last stage when Procurement Manager needs to final confirm, his dot doesn't change to orange from previous green",
-    "response": "Pending",
-    "notes": null
+    "response": "Pending"
   },
   {
     "category": "WorkFlow > GM Stage",
@@ -383,8 +362,14 @@
     "priority": "Must",
     "role": "GM",
     "issue": "I can't approve on GM stage even I have GM Role",
-    "response": "Pending ",
-    "notes": "I tried on overbudget PR"
+    "response": "I tried on overbudget PR",
+    "comments": [
+      {
+        "author": "Anton",
+        "time": "Earlier",
+        "text": "I tried on overbudget PR"
+      }
+    ]
   },
   {
     "category": "WorkFlow > GM Stage",
@@ -392,7 +377,6 @@
     "priority": "Must",
     "role": "GM",
     "issue": "On GM approval stage PM could reject PR",
-    "response": "GM can reject, meaning that the extra budget is not valid, then is sent to DM for dinal Invalidation",
-    "notes": null
+    "response": "GM can reject, meaning that the extra budget is not valid, then is sent to DM for dinal Invalidation"
   }
 ]

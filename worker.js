@@ -1,9 +1,7 @@
-// Cloudflare Worker for Secure Purchase Request GitHub Proxy
-// Secret Environment Variable required in Cloudflare Worker settings: GH_TOKEN
+// Cloudflare Worker + KV Database for Real-Time Purchase Request Tracker
+// Requires a KV Namespace Binding named: PR_TRACKER_DB
 
-const REPO_OWNER = 'avedevios';
-const REPO_NAME = 'purchase-request-tracker';
-const FILE_PATH = 'purchase_requests.json';
+const GITHUB_FALLBACK_URL = 'https://raw.githubusercontent.com/avedevios/purchase-request-tracker/main/purchase_requests.json';
 
 export default {
   async fetch(request, env, ctx) {
@@ -13,7 +11,7 @@ export default {
         headers: {
           'Access-Control-Allow-Origin': '*',
           'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-          'Access-Control-Allow-Headers': 'Content-Type, Authorization',
+          'Access-Control-Allow-Headers': 'Content-Type',
         },
       });
     }
@@ -23,99 +21,53 @@ export default {
       'Content-Type': 'application/json',
     };
 
+    // 1. GET Request: Fetch dataset from Cloudflare KV Database
     if (request.method === 'GET') {
-      return new Response(JSON.stringify({ status: 'ok', message: 'PR Tracker Proxy Worker Active' }), {
-        headers: corsHeaders,
-      });
-    }
-
-    if (request.method !== 'POST') {
-      return new Response(JSON.stringify({ error: 'Method not allowed' }), {
-        status: 405,
-        headers: corsHeaders,
-      });
-    }
-
-    try {
-      const body = await request.json();
-      const { dataset, commitMessage, author } = body;
-
-      if (!dataset || !commitMessage) {
-        return new Response(JSON.stringify({ error: 'Missing dataset or commitMessage' }), {
-          status: 400,
-          headers: corsHeaders,
-        });
-      }
-
-      const token = env.GH_TOKEN;
-      if (!token) {
-        return new Response(JSON.stringify({ error: 'Worker GH_TOKEN secret not configured' }), {
-          status: 500,
-          headers: corsHeaders,
-        });
-      }
-
-      // 1. Fetch latest SHA from GitHub
-      const getRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
-        headers: {
-          'Authorization': `token ${token}`,
-          'User-Agent': 'Cloudflare-Worker-PR-Tracker'
+      try {
+        let dataset = null;
+        if (env.PR_TRACKER_DB) {
+          dataset = await env.PR_TRACKER_DB.get('purchase_requests', { type: 'json' });
         }
-      });
 
-      if (!getRes.ok) {
-        const errText = await getRes.text();
-        return new Response(JSON.stringify({ error: `GitHub fetch error: ${errText}` }), {
-          status: getRes.status,
-          headers: corsHeaders,
-        });
+        // If KV is empty (first load), seed initial dataset from GitHub repository
+        if (!dataset) {
+          const ghRes = await fetch(GITHUB_FALLBACK_URL);
+          if (ghRes.ok) {
+            dataset = await ghRes.json();
+            if (env.PR_TRACKER_DB) {
+              await env.PR_TRACKER_DB.put('purchase_requests', JSON.stringify(dataset));
+            }
+          }
+        }
+
+        return new Response(JSON.stringify(dataset || []), { headers: corsHeaders });
+      } catch (err) {
+        return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: corsHeaders });
       }
-
-      const fileData = await getRes.json();
-      const sha = fileData.sha;
-
-      // 2. Encode dataset to Base64
-      const jsonString = JSON.stringify(dataset, null, 2);
-      const encodedContent = btoa(unescape(encodeURIComponent(jsonString)));
-
-      // 3. Commit back to GitHub
-      const putRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
-        method: 'PUT',
-        headers: {
-          'Authorization': `token ${token}`,
-          'Content-Type': 'application/json',
-          'Accept': 'application/vnd.github.v3+json',
-          'User-Agent': 'Cloudflare-Worker-PR-Tracker'
-        },
-        body: JSON.stringify({
-          message: `${commitMessage} (via Proxy by ${author || 'User'})`,
-          content: encodedContent,
-          sha: sha,
-          branch: 'main'
-        })
-      });
-
-      if (putRes.ok) {
-        const result = await putRes.json();
-        return new Response(JSON.stringify({
-          success: true,
-          sha: result.content.sha,
-          commitSha: result.commit.sha
-        }), {
-          headers: corsHeaders,
-        });
-      } else {
-        const errData = await putRes.json();
-        return new Response(JSON.stringify({ error: errData.message || 'Commit failed' }), {
-          status: putRes.status,
-          headers: corsHeaders,
-        });
-      }
-    } catch (err) {
-      return new Response(JSON.stringify({ error: err.message }), {
-        status: 500,
-        headers: corsHeaders,
-      });
     }
+
+    // 2. POST Request: Save dataset silently into Cloudflare KV Database (ZERO Git commits!)
+    if (request.method === 'POST') {
+      try {
+        const body = await request.json();
+        const { dataset } = body;
+
+        if (!dataset) {
+          return new Response(JSON.stringify({ error: 'Missing dataset payload' }), { status: 400, headers: corsHeaders });
+        }
+
+        if (!env.PR_TRACKER_DB) {
+          return new Response(JSON.stringify({ error: 'KV Namespace binding PR_TRACKER_DB not attached to Worker' }), { status: 500, headers: corsHeaders });
+        }
+
+        await env.PR_TRACKER_DB.put('purchase_requests', JSON.stringify(dataset));
+
+        return new Response(JSON.stringify({ success: true, timestamp: Date.now() }), { headers: corsHeaders });
+      } catch (err) {
+        return new Response(JSON.stringify({ error: err.message }), { status: 500, headers: corsHeaders });
+      }
+    }
+
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), { status: 405, headers: corsHeaders });
   }
 };

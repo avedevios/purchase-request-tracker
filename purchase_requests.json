@@ -103,7 +103,7 @@
   },
   {
     "category": "Main menu",
-    "status": "Backlog",
+    "status": "To Do",
     "priority": "Could",
     "role": null,
     "issue": "Title screen is list, not a button",

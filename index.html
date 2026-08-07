@@ -374,6 +374,66 @@
       background: var(--primary-hover);
     }
 
+    /* Group Header Action Buttons (+ Subcategory & + Add Item) */
+    .group-actions-wrapper {
+      margin-left: auto;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+    }
+
+    .group-add-btn {
+      background: var(--primary-glow);
+      color: var(--primary);
+      border: 1px solid var(--primary);
+      border-radius: 6px;
+      padding: 0.15rem 0.5rem;
+      font-size: 0.725rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      line-height: 1.2;
+    }
+
+    .group-add-btn:hover {
+      background: var(--primary);
+      color: #ffffff;
+      box-shadow: 0 2px 6px var(--primary-glow);
+    }
+
+    .group-add-btn.btn-subcat {
+      background: rgba(16, 185, 129, 0.12);
+      color: #059669;
+      border-color: #10b981;
+    }
+    .group-add-btn.btn-subcat:hover {
+      background: #10b981;
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+    }
+
+    /* Item Delete Button */
+    .btn-delete-item {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      font-size: 0.85rem;
+      cursor: pointer;
+      padding: 0.15rem 0.3rem;
+      border-radius: 4px;
+      transition: all 0.2s ease;
+      opacity: 0.5;
+    }
+
+    .btn-delete-item:hover {
+      color: #be123c;
+      background: #ffe4e6;
+      opacity: 1;
+    }
+
     /* Clickable Text for Response Column with Full Multiline Support */
     .btn-response-action {
       background: transparent;
@@ -781,6 +841,7 @@
       display: flex;
       align-items: center;
       gap: 0.5rem;
+      width: 100%;
     }
 
     .fold-arrow {
@@ -1258,9 +1319,6 @@
   </div>
 
   <script>
-    // Clean up legacy PAT tokens completely from localStorage
-    localStorage.removeItem('gh_token');
-
     // AUTOMATIC STRICT ENVIRONMENT MODE SELECTION:
     // 1. Live Web / GitHub Pages -> Exclusively DATABASE mode!
     // 2. Local PC (file:// or localhost) -> Exclusively LOCAL JSON mode!
@@ -1269,400 +1327,444 @@
 
     const defaultLocalData = [
       {
-        "ball": null,
         "category": "Main menu",
+        "subcategory": null,
         "status": "Fixed",
         "priority": "Should",
         "role": "Emp",
         "issue": "Title screen is list, in list are buttons: add, edit, delete (if needs)",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": null,
         "category": "Main menu",
+        "subcategory": null,
         "status": "Backlog",
         "priority": "Could",
         "role": null,
         "issue": "Title screen is list, not a button",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": null,
-        "category": "Purchase Request Form > Purchase Request Form Fields",
+        "category": "Purchase Request Form",
+        "subcategory": "Purchase Request Form Fields",
         "status": "Fixed",
         "priority": null,
         "role": null,
         "issue": "Could we not allow negative sum?",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": null,
-        "category": "Purchase Request Form > Purchase Request Form Fields",
+        "category": "Purchase Request Form",
+        "subcategory": "Purchase Request Form Fields",
         "status": "Fixed",
         "priority": "Should",
         "role": null,
         "issue": "Could we autofill employee name and make this field not editable for role Employee",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": null,
-        "category": "Purchase Request Form > Purchase Request Form Fields",
+        "category": "Purchase Request Form",
+        "subcategory": "Purchase Request Form Fields",
         "status": "Backlog",
         "priority": "Could",
         "role": null,
         "issue": "Could we show short form for default and chekbox for full form?",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": "Adonis",
-        "category": "Purchase Request Form > Purchase Request Form Behavior",
+        "category": "Purchase Request Form",
+        "subcategory": "Purchase Request Form Behavior",
         "status": "Fixed",
         "priority": "Must",
         "role": null,
         "issue": "After Submit it showes popup that everything alright and 1 button \"Return\". Should return to the list",
-        "response": "Ready for testing"
+        "response": "Ready for testing",
+        "ball": "Adonis"
       },
       {
-        "ball": null,
-        "category": "Purchase Request Form > Purchase Request Form Behavior",
+        "category": "Purchase Request Form",
+        "subcategory": "Purchase Request Form Behavior",
         "status": "Fixed",
         "priority": "Should",
         "role": null,
         "issue": "Button Cancel clear the form, but do we need separate button for that? Maybe better remove this button or move there Home button (to List)",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": null,
-        "category": "Purchase Request Form > Purchase Request Form Behavior",
+        "category": "Purchase Request Form",
+        "subcategory": "Purchase Request Form Behavior",
         "status": "Backlog",
         "priority": "Could",
         "role": null,
         "issue": "Maybe it will be convinient to Save form before submitting. But it should be well highlighted to understand which PR isn't submitted",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": null,
         "category": "Purchase Request List",
+        "subcategory": null,
         "status": "Fixed",
         "priority": "Must",
         "role": null,
         "issue": "PR Status in List doesn't fiil out",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": null,
         "category": "Manage Purchase Request Form",
+        "subcategory": null,
         "status": "Fixed",
         "priority": null,
         "role": null,
         "issue": "UI of the list of stages, could naming be clearer, using some similar entities? ",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": null,
         "category": "Manage Purchase Request Form",
+        "subcategory": null,
         "status": "Fixed",
         "priority": null,
         "role": null,
         "issue": "Could we clearer see timeline? What stage is right now? Maybe using some colors",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": null,
         "category": "Manage Purchase Request Form",
+        "subcategory": null,
         "status": "Fixed",
         "priority": null,
         "role": null,
         "issue": "Current stage should be bright, all other - grey, to understand where we are now?",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": null,
         "category": "Manage Purchase Request Form",
+        "subcategory": null,
         "status": "Deprecated",
         "priority": null,
         "role": null,
         "issue": "UX of stages, do we need all that amount of fields? Seems like many of them dublicate each other",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": null,
         "category": "Manage Purchase Request Form",
+        "subcategory": null,
         "status": "Deprecated",
         "priority": null,
         "role": null,
         "issue": "Too many entities, validate and approve? What the difference? Maybe use just less terms for easiness?",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": null,
         "category": "Manage Purchase Request Form",
+        "subcategory": null,
         "status": "Fixed",
         "priority": "Must",
         "role": null,
         "issue": "In finished PR all dots white again",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": null,
         "category": "Manage Purchase Request Form",
+        "subcategory": null,
         "status": "Backlog",
         "priority": "Should",
         "role": null,
         "issue": "In finished PR some dots are green. GM dot is white. Could we highligh somehow that PR is closed, colors doesn't matter?",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": null,
         "category": "Notifications",
+        "subcategory": null,
         "status": "Fixed",
         "priority": null,
         "role": null,
         "issue": "Email notification coming twice",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": null,
         "category": "Notifications",
+        "subcategory": null,
         "status": "Backlog",
         "priority": "Should",
         "role": null,
         "issue": "Sender of notification should be common 365 account, not Adonis (e.g. donotrespond@mtmmachines.ca) ",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": "Adonis",
-        "category": "PR Roles List > PR Roles List Form",
+        "category": "PR Roles List",
+        "subcategory": "PR Roles List Form",
         "status": "Deprecated",
         "priority": null,
         "role": null,
         "issue": "Do we need columns: Title, Approval, Attachments? ",
-        "response": "Column \"Title\" and \"Attachments\" come automatically, they can be hidden if we don't use. Attachments is currently used."
+        "response": "Column \"Title\" and \"Attachments\" come automatically, they can be hidden if we don't use. Attachments is currently used.",
+        "ball": "Adonis"
       },
       {
-        "ball": null,
-        "category": "PR Roles List > PR Roles List Behavior",
+        "category": "PR Roles List",
+        "subcategory": "PR Roles List Behavior",
         "status": "Backlog",
         "priority": "Should",
         "role": null,
         "issue": "Glitch with clicking rows. If cursor on it you can't open it. Maybe restrict open that way and add some button \"Open\"",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": null,
-        "category": "PR Roles List > PR Roles List Behavior",
+        "category": "PR Roles List",
+        "subcategory": "PR Roles List Behavior",
         "status": "Fixed",
         "priority": null,
         "role": null,
         "issue": "Finding role works for email column instead of 365 account",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": null,
-        "category": "PR Roles List > PR Roles List Behavior",
+        "category": "PR Roles List",
+        "subcategory": "PR Roles List Behavior",
         "status": "Fixed",
         "priority": null,
         "role": "GM",
         "issue": "At Stage 1 it should ask DM approval, but I entered as GM and I have ability to make a GM approval (before DM approval, before budget checking) ",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": null,
-        "category": "PR Roles List > PR Roles List Behavior",
+        "category": "PR Roles List",
+        "subcategory": "PR Roles List Behavior",
         "status": "Fixed",
         "priority": null,
         "role": "DM",
         "issue": "When I entered like DM of department of PR (Quality), I'm not able to validate anything - everything is grey ",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": null,
         "category": "Deprtment Lead List",
+        "subcategory": null,
         "status": "Backlog",
         "priority": "Could",
         "role": null,
         "issue": "Could we deprecate this table and use just PR Roles?",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": null,
         "category": "Deprtment Lead List",
+        "subcategory": null,
         "status": "Fixed",
         "priority": "Must",
         "role": null,
         "issue": "Number of PR appear with delay, we have enogh time for a few approval, refusal to go on. So we will have notifications with empty number",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": null,
         "category": "Deprtment Lead List",
+        "subcategory": null,
         "status": "To Do",
         "priority": "Should",
         "role": null,
         "issue": "We need to prevent any actions BEFORE number appear",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": "Adonis",
-        "category": "WorkFlow > DM Stage",
+        "category": "WorkFlow",
+        "subcategory": "DM Stage",
         "status": "Fixed",
         "priority": "Must",
         "role": "PM",
         "issue": "After DM rejection PR doesn't close. PM could enter, change reason of rejection and reject again",
-        "response": "Ready for testing"
+        "response": "Ready for testing",
+        "ball": "Adonis"
       },
       {
-        "ball": "Adonis",
-        "category": "WorkFlow > DM Stage",
+        "category": "WorkFlow",
+        "subcategory": "DM Stage",
         "status": "Fixed",
         "priority": "Could",
         "role": "DM",
         "issue": "DM don't need Officer PR adjustment refusal reason in the list of reasons",
-        "response": "The user is notified abot selecting the right choise"
+        "response": "The user is notified abot selecting the right choise",
+        "ball": "Adonis"
       },
       {
-        "ball": "Adonis",
-        "category": "WorkFlow > DM Stage",
+        "category": "WorkFlow",
+        "subcategory": "DM Stage",
         "status": "To Do",
         "priority": "Must",
         "role": "DM",
         "issue": "Can approve as DM without DM Role, checking just Dep Lead List and doesn't check PR Roles. Should it? Or Dep Lead List is enough?",
-        "response": "Ready for testing"
+        "response": "Ready for testing",
+        "ball": "Adonis"
       },
       {
-        "ball": "Adonis",
-        "category": "WorkFlow > DM Stage",
+        "category": "WorkFlow",
+        "subcategory": "DM Stage",
         "status": "To Do",
         "priority": "Must",
         "role": "DM",
         "issue": "DM Stage if budget exceed. I can Approve, should I? Anyway Confirm extra budget unavalable",
-        "response": "You're saying about Confirm extra budget, but I said about Approve. Also Confirm extra budget unavailable"
+        "response": "You're saying about Confirm extra budget, but I said about Approve. Also Confirm extra budget unavailable",
+        "ball": "Adonis"
       },
       {
-        "ball": "Adonis",
-        "category": "WorkFlow > PM Stage",
+        "category": "WorkFlow",
+        "subcategory": "PM Stage",
         "status": "Fixed",
         "priority": "Must",
         "role": "PM",
         "issue": "PM click reject - nothing happens, no popup. But process is going on. If I close PR and open it again, all dots are white like its new PR",
-        "response": "Ready for testing"
+        "response": "Ready for testing",
+        "ball": "Adonis"
       },
       {
-        "ball": "Adonis",
-        "category": "WorkFlow > PM Stage",
+        "category": "WorkFlow",
+        "subcategory": "PM Stage",
         "status": "To Do",
         "priority": "Must",
         "role": "PM",
         "issue": "Officer PR adjustment refusal reason could be chosen even if officer didn't assigned yet",
-        "response": "I see error, process blocked. But also I see popup that all ok and it kicks me to the list"
+        "response": "I see error, process blocked. But also I see popup that all ok and it kicks me to the list",
+        "ball": "Adonis"
       },
       {
-        "ball": "Adonis",
-        "category": "WorkFlow > PM Stage",
+        "category": "WorkFlow",
+        "subcategory": "PM Stage",
         "status": "Fixed",
         "priority": "Must",
         "role": "PM",
         "issue": "If Officer PR adjustment refusal reason - PR doesn't go to the officer",
-        "response": "Ready for testing"
+        "response": "Ready for testing",
+        "ball": "Adonis"
       },
       {
-        "ball": "Adonis",
-        "category": "WorkFlow > PM Stage",
+        "category": "WorkFlow",
+        "subcategory": "PM Stage",
         "status": "Fixed",
         "priority": "Must",
         "role": "PM",
         "issue": "I can work as PM even i have only DM role",
-        "response": "Please give time, when switching roles"
+        "response": "Please give time, when switching roles",
+        "ball": "Adonis"
       },
       {
-        "ball": null,
-        "category": "WorkFlow > PM Stage",
+        "category": "WorkFlow",
+        "subcategory": "PM Stage",
         "status": "Fixed",
         "priority": "Must",
         "role": "PM",
         "issue": "Can't approve as PM even if have PM Role",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": null,
-        "category": "WorkFlow > PM Stage",
+        "category": "WorkFlow",
+        "subcategory": "PM Stage",
         "status": "To Do",
         "priority": "Must",
         "role": "PM",
         "issue": "When I create one more PR, \"Assign to\" equal entry of previous PR (I mean field about PO)",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": "Adonis",
-        "category": "WorkFlow > PO Stage",
+        "category": "WorkFlow",
+        "subcategory": "PO Stage",
         "status": "Fixed",
         "priority": "Must",
         "role": "PO",
         "issue": "Even I have PO role I can't submit PR after PM",
-        "response": "Ready for testing, give time between roles"
+        "response": "Ready for testing, give time between roles",
+        "ball": "Adonis"
       },
       {
-        "ball": null,
-        "category": "WorkFlow > PO Stage",
+        "category": "WorkFlow",
+        "subcategory": "PO Stage",
         "status": "To Do",
         "priority": "Must",
         "role": "PM",
         "issue": "When press Submit - error \"Please load a PR\" and doesn't allow me go forward",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": null,
-        "category": "WorkFlow > PO Stage",
+        "category": "WorkFlow",
+        "subcategory": "PO Stage",
         "status": "To Do",
         "priority": "Must",
         "role": "PM",
         "issue": "Reject unavailable",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": null,
-        "category": "WorkFlow > PO Stage After PM Rejection",
+        "category": "WorkFlow",
+        "subcategory": "PO Stage After PM Rejection",
         "status": "To Do",
         "priority": "Must",
         "role": "PM",
         "issue": "DM Stage dot is white. After PM rejection",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": null,
-        "category": "WorkFlow > PO Stage After PM Rejection",
+        "category": "WorkFlow",
+        "subcategory": "PO Stage After PM Rejection",
         "status": "To Do",
         "priority": "Must",
         "role": "PM",
         "issue": "I can submit wihout PO Role. Only if it was PM rejection",
-        "response": null
+        "response": null,
+        "ball": null
       },
       {
-        "ball": "Adonis",
-        "category": "WorkFlow > PM Stage After PO Approval",
+        "category": "WorkFlow",
+        "subcategory": "PM Stage After PO Approval",
         "status": "To Do",
         "priority": "Should",
         "role": "PM",
         "issue": "Last stage when Procurement Manager needs to final confirm, his dot doesn't change to orange from previous green",
-        "response": "Pending"
+        "response": "Pending",
+        "ball": "Adonis"
       },
       {
-        "ball": "Adonis",
-        "category": "WorkFlow > GM Stage",
+        "category": "WorkFlow",
+        "subcategory": "GM Stage",
         "status": "To Do",
         "priority": "Must",
         "role": "GM",
         "issue": "I can't approve on GM stage even I have GM Role",
-        "response": "I tried on overbudget PR"
+        "response": "I tried on overbudget PR",
+        "ball": "Adonis"
       },
       {
-        "ball": "Adonis",
-        "category": "WorkFlow > GM Stage",
+        "category": "WorkFlow",
+        "subcategory": "GM Stage",
         "status": "To Do",
         "priority": "Must",
         "role": "GM",
         "issue": "On GM approval stage PM could reject PR",
-        "response": "GM can reject, meaning that the extra budget is not valid, then is sent to DM for dinal Invalidation"
+        "response": "GM can reject, meaning that the extra budget is not valid, then is sent to DM for dinal Invalidation",
+        "ball": "Adonis"
       }
     ];
 
@@ -1686,6 +1788,85 @@
     const collapsedLevel1 = new Set();
     const collapsedLevel2 = new Set();
     const userPills = document.querySelectorAll('.user-switcher-container .segmented-pill-btn');
+
+    // Helper to get normalized category & subcategory from an item
+    function getItemCategoryInfo(item) {
+      let cat = item.category || 'Uncategorized';
+      let subcat = item.subcategory || null;
+
+      if (cat.includes('>')) {
+        const parts = cat.split('>').map(s => s.trim());
+        cat = parts[0];
+        subcat = parts[1] || null;
+      }
+      return { category: cat, subcategory: subcat };
+    }
+
+    // 1. Create a NEW SUBCATEGORY under a Level 1 Category Group
+    function addNewSubcategoryToCategory(category) {
+      const subcatName = prompt(`Create new subcategory under category "${category}":`);
+      if (!subcatName || !subcatName.trim()) return;
+
+      const trimmedSubcat = subcatName.trim();
+      const newItem = {
+        category: category,
+        subcategory: trimmedSubcat,
+        status: 'To Do',
+        priority: 'Should',
+        role: null,
+        issue: `New item under ${trimmedSubcat}...`,
+        response: null,
+        ball: null,
+        comments: []
+      };
+
+      dataset.unshift(newItem);
+
+      // Expand level 1 category and new level 2 subcategory so user sees it right away
+      collapsedLevel1.delete(category);
+      collapsedLevel2.delete(`${category} > ${trimmedSubcat}`);
+
+      render();
+      saveChanges(`Created new subcategory "${trimmedSubcat}" under "${category}"`);
+      showToast(`Created subcategory "${trimmedSubcat}"!`, '📁');
+    }
+
+    // 2. Create a NEW ITEM inside a Subcategory or Category
+    function addNewItemToCategory(category, subcategory) {
+      const newItem = {
+        category: category,
+        subcategory: subcategory || null,
+        status: 'To Do',
+        priority: 'Should',
+        role: null,
+        issue: subcategory ? `New item under ${subcategory}...` : 'New item issue description...',
+        response: null,
+        ball: null,
+        comments: []
+      };
+
+      dataset.unshift(newItem);
+
+      // Expand category & subcategory so user sees the new row immediately
+      collapsedLevel1.delete(category);
+      if (subcategory) {
+        collapsedLevel2.delete(`${category} > ${subcategory}`);
+      }
+
+      render();
+      saveChanges(`Added new item under ${category}${subcategory ? ' > ' + subcategory : ''}`);
+      showToast(`Added new item under ${category}${subcategory ? ' › ' + subcategory : ''}!`, '➕');
+    }
+
+    // 3. Delete Item
+    function deleteItem(item) {
+      if (!confirm(`Are you sure you want to delete item: "${item.issue}"?`)) return;
+
+      dataset = dataset.filter(d => d !== item);
+      render();
+      saveChanges(`Deleted item "${item.issue.substring(0, 20)}..."`);
+      showToast('Item deleted successfully.', '🗑️');
+    }
 
     // BroadcastChannel for instant 0ms cross-tab real-time sync
     const syncChannel = window.BroadcastChannel ? new BroadcastChannel('pr_tracker_sync') : null;
@@ -1772,7 +1953,6 @@
         };
 
         socket.onclose = () => {
-          // Reconnect after 3s delay
           setTimeout(initWebSocketConnection, 3000);
         };
 
@@ -1802,11 +1982,9 @@
 
     const toastEl = document.getElementById('toast');
     if (toastEl) {
-      // Pause hide timer when mouse hovers over toast (making it easy to select/copy text)
       toastEl.addEventListener('mouseenter', () => {
         if (toastTimeout) clearTimeout(toastTimeout);
       });
-      // Resume hide timer when mouse leaves toast
       toastEl.addEventListener('mouseleave', () => {
         if (toastEl.classList.contains('show')) {
           toastTimeout = setTimeout(() => toastEl.classList.remove('show'), 4000);
@@ -1924,7 +2102,6 @@
       const particles = [];
       const colors = ['#64748b', '#475569', '#334155', '#1e293b', '#0f172a', '#94a3b8', '#cbd5e1'];
 
-      // Spawn falling monochrome rain & drifting ash particles
       for (let i = 0; i < 110; i++) {
         particles.push({
           x: Math.random() * canvas.width,
@@ -2304,10 +2481,10 @@
       isAllFolded = !isAllFolded;
       if (isAllFolded) {
         dataset.forEach(item => {
-          const parts = item.category.split('>').map(s => s.trim());
-          collapsedLevel1.add(parts[0]);
-          if (parts[1]) {
-            collapsedLevel2.add(`${parts[0]} > ${parts[1]}`);
+          const { category, subcategory } = getItemCategoryInfo(item);
+          collapsedLevel1.add(category);
+          if (subcategory) {
+            collapsedLevel2.add(`${category} > ${subcategory}`);
           }
         });
         foldToggleIcon.textContent = '▼';
@@ -2414,7 +2591,7 @@
       return `+ Add Response`;
     }
 
-    // Render Table View with Switched Columns (Status 1st, Where is ball 2nd)
+    // Render Table View with 2 Explicit Action Buttons: 📁+ Subcategory & ➕ Add Item
     function renderTableView(data) {
       const tbody = document.getElementById('tableBody');
       tbody.innerHTML = '';
@@ -2426,9 +2603,7 @@
 
       const hierarchy = new Map();
       data.forEach(item => {
-        const parts = item.category.split('>').map(s => s.trim());
-        const level1 = parts[0];
-        const level2 = parts[1] || null;
+        const { category: level1, subcategory: level2 } = getItemCategoryInfo(item);
 
         if (!hierarchy.has(level1)) hierarchy.set(level1, new Map());
         const level1Map = hierarchy.get(level1);
@@ -2445,15 +2620,47 @@
         const l1Row = document.createElement('tr');
         l1Row.className = 'level1-row';
         l1Row.title = 'Click to fold/unfold main category';
-        l1Row.innerHTML = `
-          <td colspan="6">
-            <div class="group-header-content">
-              <span class="fold-arrow">${isL1Collapsed ? '▶' : '▼'}</span>
-              <span>📁 ${level1Name}</span>
-              <span class="category-count-badge">${level1TotalItems}</span>
-            </div>
-          </td>
+        
+        const l1Cell = document.createElement('td');
+        l1Cell.colSpan = 6;
+
+        const l1HeaderContent = document.createElement('div');
+        l1HeaderContent.className = 'group-header-content';
+        l1HeaderContent.innerHTML = `
+          <span class="fold-arrow">${isL1Collapsed ? '▶' : '▼'}</span>
+          <span>📁 ${level1Name}</span>
+          <span class="category-count-badge">${level1TotalItems}</span>
         `;
+
+        const groupActionsWrapper = document.createElement('div');
+        groupActionsWrapper.className = 'group-actions-wrapper';
+
+        // 1. 📁+ Subcategory Button for Level 1 Category Group
+        const addSubcatBtn = document.createElement('button');
+        addSubcatBtn.className = 'group-add-btn btn-subcat';
+        addSubcatBtn.innerHTML = '<span>📁+ Subcategory</span>';
+        addSubcatBtn.title = `Create new subcategory under category "${level1Name}"`;
+        addSubcatBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          addNewSubcategoryToCategory(level1Name);
+        });
+
+        // 2. ➕ Add Item Button for Level 1 Category Group (direct item row)
+        const addL1ItemBtn = document.createElement('button');
+        addL1ItemBtn.className = 'group-add-btn';
+        addL1ItemBtn.innerHTML = '<span>➕ Add Item</span>';
+        addL1ItemBtn.title = `Add direct item row under category "${level1Name}"`;
+        addL1ItemBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          addNewItemToCategory(level1Name, null);
+        });
+
+        groupActionsWrapper.appendChild(addSubcatBtn);
+        groupActionsWrapper.appendChild(addL1ItemBtn);
+        l1HeaderContent.appendChild(groupActionsWrapper);
+
+        l1Cell.appendChild(l1HeaderContent);
+        l1Row.appendChild(l1Cell);
 
         l1Row.addEventListener('click', () => {
           if (collapsedLevel1.has(level1Name)) collapsedLevel1.delete(level1Name);
@@ -2472,15 +2679,31 @@
               const l2Row = document.createElement('tr');
               l2Row.className = 'level2-row';
               l2Row.title = 'Click to fold/unfold subcategory';
-              l2Row.innerHTML = `
-                <td colspan="6">
-                  <div class="group-header-content">
-                    <span class="fold-arrow">${isL2Collapsed ? '▶' : '▼'}</span>
-                    <span>📄 ${level2Name}</span>
-                    <span class="category-count-badge">${items.length}</span>
-                  </div>
-                </td>
+              
+              const l2Cell = document.createElement('td');
+              l2Cell.colSpan = 6;
+
+              const l2HeaderContent = document.createElement('div');
+              l2HeaderContent.className = 'group-header-content';
+              l2HeaderContent.innerHTML = `
+                <span class="fold-arrow">${isL2Collapsed ? '▶' : '▼'}</span>
+                <span>📄 ${level2Name}</span>
+                <span class="category-count-badge">${items.length}</span>
               `;
+
+              // ➕ Add Item Button for Level 2 Subcategory Group
+              const addL2Btn = document.createElement('button');
+              addL2Btn.className = 'group-add-btn';
+              addL2Btn.innerHTML = '<span>➕ Add Item</span>';
+              addL2Btn.title = `Add new item under subcategory: ${level2Name}`;
+              addL2Btn.addEventListener('click', (e) => {
+                e.stopPropagation();
+                addNewItemToCategory(level1Name, level2Name);
+              });
+
+              l2HeaderContent.appendChild(addL2Btn);
+              l2Cell.appendChild(l2HeaderContent);
+              l2Row.appendChild(l2Cell);
 
               l2Row.addEventListener('click', (e) => {
                 e.stopPropagation();
@@ -2534,10 +2757,11 @@
                       <div class="editable-text issue-text" contenteditable="true" title="Click to edit issue text">${item.issue || ''}</div>
                     </td>
                     <td>
-                      <div>
+                      <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.3rem;">
                         <button class="btn-response-action ${!hasResponse ? 'empty-response' : ''}" title="Click to open discussion thread">
                           <span class="response-btn-text">${getResponseButtonLabel(item)}</span>
                         </button>
+                        <button class="btn-delete-item" title="Delete this issue item">&times;</button>
                       </div>
                     </td>
                   `;
@@ -2547,6 +2771,7 @@
                   tr.querySelector('.prio-select').addEventListener('change', (e) => updateItemProperty(item, 'priority', e.target.value));
                   tr.querySelector('.role-select').addEventListener('change', (e) => updateItemProperty(item, 'role', e.target.value));
                   tr.querySelector('.btn-response-action').addEventListener('click', () => openChatModal(item));
+                  tr.querySelector('.btn-delete-item').addEventListener('click', () => deleteItem(item));
 
                   setupEditableText(tr.querySelector('.issue-text'), item, 'issue');
 
@@ -2596,10 +2821,11 @@
                     <div class="editable-text issue-text" contenteditable="true" title="Click to edit issue text">${item.issue || ''}</div>
                   </td>
                   <td>
-                    <div>
+                    <div style="display: flex; justify-content: space-between; align-items: flex-start; gap: 0.3rem;">
                       <button class="btn-response-action ${!hasResponse ? 'empty-response' : ''}" title="Click to open discussion thread">
                         <span class="response-btn-text">${getResponseButtonLabel(item)}</span>
                       </button>
+                      <button class="btn-delete-item" title="Delete this issue item">&times;</button>
                     </div>
                   </td>
                 `;
@@ -2609,6 +2835,7 @@
                 tr.querySelector('.prio-select').addEventListener('change', (e) => updateItemProperty(item, 'priority', e.target.value));
                 tr.querySelector('.role-select').addEventListener('change', (e) => updateItemProperty(item, 'role', e.target.value));
                 tr.querySelector('.btn-response-action').addEventListener('click', () => openChatModal(item));
+                tr.querySelector('.btn-delete-item').addEventListener('click', () => deleteItem(item));
 
                 setupEditableText(tr.querySelector('.issue-text'), item, 'issue');
 
@@ -2648,10 +2875,13 @@
             ${colData.length === 0 ? '<div style="color: var(--text-dim); font-size: 0.8rem; text-align: center; padding: 1.5rem 0;">No items</div>' : ''}
             ${colData.map((item) => {
               const hasResponse = (item.comments && item.comments.length > 0) || item.response;
+              const { category, subcategory } = getItemCategoryInfo(item);
+              const catDisplay = subcategory ? `${category} › ${subcategory}` : category;
+
               return `
               <div class="kanban-card">
                 <div class="card-meta">
-                  <span class="card-category">${item.category}</span>
+                  <span class="card-category">${catDisplay}</span>
                   <select class="badge-select ${getBallClass(item.ball)} kanban-ball-select">
                     <option value="" ${!item.ball ? 'selected' : ''}>— None —</option>
                     <option value="Anton" ${item.ball === 'Anton' ? 'selected' : ''}>Anton</option>

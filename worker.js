@@ -1,7 +1,8 @@
 // Cloudflare Worker + KV Database for Real-Time Purchase Request Tracker
+// Zero GitHub Tokens Required!
 // Requires a KV Namespace Binding named: PR_TRACKER_DB
 
-const GITHUB_FALLBACK_URL = 'https://raw.githubusercontent.com/avedevios/purchase-request-tracker/main/purchase_requests.json';
+const INITIAL_DATA_SEED_URL = 'https://raw.githubusercontent.com/avedevios/purchase-request-tracker/main/purchase_requests.json';
 
 export default {
   async fetch(request, env, ctx) {
@@ -21,7 +22,7 @@ export default {
       'Content-Type': 'application/json',
     };
 
-    // 1. GET Request: Fetch dataset from Cloudflare KV Database
+    // 1. GET Request: Fetch dataset directly from Cloudflare KV Database
     if (request.method === 'GET') {
       try {
         let dataset = null;
@@ -29,11 +30,11 @@ export default {
           dataset = await env.PR_TRACKER_DB.get('purchase_requests', { type: 'json' });
         }
 
-        // If KV is empty (first load), seed initial dataset from GitHub repository
+        // If KV is empty (first load), seed initial dataset
         if (!dataset) {
-          const ghRes = await fetch(GITHUB_FALLBACK_URL);
-          if (ghRes.ok) {
-            dataset = await ghRes.json();
+          const res = await fetch(INITIAL_DATA_SEED_URL);
+          if (res.ok) {
+            dataset = await res.json();
             if (env.PR_TRACKER_DB) {
               await env.PR_TRACKER_DB.put('purchase_requests', JSON.stringify(dataset));
             }
@@ -46,7 +47,7 @@ export default {
       }
     }
 
-    // 2. POST Request: Save dataset silently into Cloudflare KV Database (ZERO Git commits!)
+    // 2. POST Request: Save dataset silently into Cloudflare KV Database (Zero GitHub Tokens!)
     if (request.method === 'POST') {
       try {
         const body = await request.json();

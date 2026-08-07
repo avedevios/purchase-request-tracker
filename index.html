@@ -251,19 +251,6 @@
       box-shadow: 0 4px 14px rgba(124, 58, 237, 0.4);
     }
 
-    .source-title-badge.badge-github {
-      background: #ea580c;
-      color: #ffffff;
-      border: 2px solid #f97316;
-      box-shadow: 0 4px 14px rgba(234, 88, 12, 0.35);
-    }
-    :root[data-theme="dark"] .source-title-badge.badge-github {
-      background: #d97706;
-      color: #ffffff;
-      border: 2px solid #f59e0b;
-      box-shadow: 0 4px 14px rgba(245, 158, 11, 0.45);
-    }
-
     .header-actions {
       display: flex;
       align-items: center;
@@ -287,11 +274,6 @@
       padding: 2px;
       border-radius: 30px;
       box-shadow: var(--card-shadow);
-    }
-
-    /* Settings button visible ONLY when in GitHub mode */
-    :root[data-source="local"] #resetTokenBtn {
-      display: none !important;
     }
 
     .segmented-pills {
@@ -1141,9 +1123,9 @@
           </div>
         </div>
 
-        <!-- 2. Settings & Database / Token Button (Visible only on live GitHub environment) -->
-        <button class="btn" id="resetTokenBtn" title="Set Cloudflare Worker KV Database URL or GitHub Access Token">
-          <span>⚙️ Settings</span>
+        <!-- 2. Cloudflare Worker Database URL Configuration Button -->
+        <button class="btn" id="dbSettingsBtn" title="Set Cloudflare Worker Database URL">
+          <span>⚡ DB URL</span>
         </button>
 
         <!-- 3. Fold / Unfold Toggle Button -->
@@ -1271,8 +1253,11 @@
   </div>
 
   <script>
+    // Clean up legacy PAT tokens completely from localStorage
+    localStorage.removeItem('gh_token');
+
     // AUTOMATIC STRICT ENVIRONMENT MODE SELECTION:
-    // 1. Live Web / GitHub Pages -> Exclusively GITHUB / DATABASE mode!
+    // 1. Live Web / GitHub Pages -> Exclusively DATABASE mode!
     // 2. Local PC (file:// or localhost) -> Exclusively LOCAL JSON mode!
     const isLiveEnvironment = window.location.hostname.includes('github.io') || 
       (window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1' && window.location.protocol !== 'file:');
@@ -1682,25 +1667,19 @@
     let currentUser = localStorage.getItem('active_user') || 'Anton';
     
     // STRICT MODE ASSIGNMENT:
-    // Live hosted site -> 'github'
+    // Live hosted site -> 'database'
     // Local PC -> 'local'
-    let activeDataSource = isLiveEnvironment ? 'github' : 'local';
+    let activeDataSource = isLiveEnvironment ? 'database' : 'local';
     
     let currentFilter = "ALL";
     let activeChatItem = null;
     let isAllFolded = false;
-    let lastKnownSha = null;
-    let ghPollInterval = null;
+    let dbPollInterval = null;
     let toastTimeout = null;
 
     const collapsedLevel1 = new Set();
     const collapsedLevel2 = new Set();
     const userPills = document.querySelectorAll('.user-switcher-container .segmented-pill-btn');
-
-    // GitHub Repo Info
-    const REPO_OWNER = 'avedevios';
-    const REPO_NAME = 'purchase-request-tracker';
-    const FILE_PATH = 'purchase_requests.json';
 
     // BroadcastChannel for instant 0ms cross-tab real-time sync
     const syncChannel = window.BroadcastChannel ? new BroadcastChannel('pr_tracker_sync') : null;
@@ -1789,41 +1768,29 @@
       });
     }
 
-    // Settings Button Handler (Configure Cloudflare Worker KV Database URL or Personal Access Token)
-    const resetTokenBtn = document.getElementById('resetTokenBtn');
-    if (resetTokenBtn) {
-      resetTokenBtn.addEventListener('click', () => {
+    // Database URL Configuration Button Handler
+    const dbSettingsBtn = document.getElementById('dbSettingsBtn');
+    if (dbSettingsBtn) {
+      dbSettingsBtn.addEventListener('click', () => {
         const currentWorker = localStorage.getItem('worker_url') || '';
-        const currentToken = localStorage.getItem('gh_token') || '';
-
-        const choice = prompt(
-          '⚙️ Settings (Cloudflare KV Database or GitHub PAT):\n\n' +
-          '1. Paste Cloudflare Worker Database URL (Zero Git Commits!)\n' +
-          '2. Or paste GitHub Personal Access Token (PAT)\n\n' +
-          'Current Worker URL: ' + (currentWorker ? currentWorker : 'Not set') + '\n' +
-          'Current Token: ' + (currentToken ? 'Set (ghp_***)' : 'Not set') + '\n\n' +
-          'Paste your Cloudflare Worker URL or PAT below (or leave blank to clear):',
-          currentWorker || currentToken
+        const newUrl = prompt(
+          '⚡ Cloudflare Worker Database URL:\n\n' +
+          'Paste your Cloudflare Worker URL below to connect to your real-time database (Zero GitHub Tokens!):',
+          currentWorker
         );
 
-        if (choice === null) return;
+        if (newUrl === null) return;
 
-        const val = choice.trim();
-        if (val.startsWith('http://') || val.startsWith('https://')) {
-          localStorage.setItem('worker_url', val);
+        const trimmed = newUrl.trim();
+        if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) {
+          localStorage.setItem('worker_url', trimmed);
           updateDataSourceAttribute(activeDataSource);
-          syncFromGitHub();
-          showToast('Cloudflare Database connected! Zero Git commits active.', '⚡');
-        } else if (val.length > 5) {
-          localStorage.setItem('gh_token', val);
-          localStorage.removeItem('worker_url');
-          updateDataSourceAttribute(activeDataSource);
-          showToast('GitHub PAT saved successfully!', '🔑');
+          syncFromDatabase();
+          showToast('Connected to Cloudflare KV Database!', '⚡');
         } else {
           localStorage.removeItem('worker_url');
-          localStorage.removeItem('gh_token');
           updateDataSourceAttribute(activeDataSource);
-          showToast('Database & Token settings cleared.', '💡');
+          showToast('Database URL cleared.', '💡');
         }
       });
     }
@@ -1958,25 +1925,21 @@
       document.documentElement.setAttribute('data-source', source);
       
       const titleBadge = document.getElementById('sourceTitleBadge');
-      const workerUrl = localStorage.getItem('worker_url');
 
       if (titleBadge) {
         if (source === 'local') {
           titleBadge.textContent = 'LOCAL';
           titleBadge.className = 'source-title-badge badge-local';
-        } else if (workerUrl) {
+        } else {
           titleBadge.textContent = 'DATABASE';
           titleBadge.className = 'source-title-badge badge-database';
-        } else {
-          titleBadge.textContent = 'GITHUB';
-          titleBadge.className = 'source-title-badge badge-github';
         }
       }
       
-      if (source === 'github') {
-        startGitHubPolling();
-      } else if (ghPollInterval) {
-        clearInterval(ghPollInterval);
+      if (source !== 'local') {
+        startDatabasePolling();
+      } else if (dbPollInterval) {
+        clearInterval(dbPollInterval);
       }
     }
 
@@ -2042,8 +2005,8 @@
       showToast('Loaded local dataset!', '📄');
     }
 
-    // Sync dataset FROM Cloudflare KV Database or GitHub Repo
-    async function syncFromGitHub() {
+    // Sync dataset FROM Cloudflare KV Database
+    async function syncFromDatabase() {
       const workerUrl = localStorage.getItem('worker_url');
 
       if (workerUrl) {
@@ -2057,64 +2020,36 @@
             return;
           }
         } catch (e) {
-          console.warn('Cloudflare KV Database fetch error, falling back to GitHub API', e);
+          console.warn('Cloudflare KV Database fetch error', e);
         }
       }
 
+      // Initial seed fallback if Worker URL is not configured yet
       try {
-        const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}?cb=${Date.now()}`);
+        const res = await fetch('./purchase_requests.json');
         if (res.ok) {
-          const data = await res.json();
-          lastKnownSha = data.sha;
-          const decodedContent = decodeURIComponent(escape(atob(data.content)));
-          dataset = JSON.parse(decodedContent);
+          dataset = await res.json();
           syncBallToLastMessageAuthor(dataset);
           render();
-          showToast('Synced latest data live from GitHub!', '⚡');
         }
       } catch (err) {
-        console.warn('GitHub fetch failed, loading local dataset fallback', err);
         loadLocalJson();
       }
     }
 
-    // Real-time background poller for Database / GitHub updates
-    async function checkGitHubForUpdates() {
-      if (activeDataSource !== 'github') return;
+    // Real-time background poller for Cloudflare KV Database updates
+    async function checkDatabaseForUpdates() {
+      if (activeDataSource === 'local') return;
       const workerUrl = localStorage.getItem('worker_url');
-
-      if (workerUrl) {
-        try {
-          const res = await fetch(workerUrl + '?cb=' + Date.now());
-          if (res.ok) {
-            const freshData = await res.json();
-            const freshStr = JSON.stringify(freshData);
-            if (freshStr !== JSON.stringify(dataset)) {
-              dataset = freshData;
-              syncBallToLastMessageAuthor(dataset);
-              render();
-              if (activeChatItem) {
-                const updatedItem = dataset.find(d => d.issue === activeChatItem.issue);
-                if (updatedItem) {
-                  activeChatItem = updatedItem;
-                  renderChatThread();
-                }
-              }
-              showToast('Real-time database update received!', '⚡');
-            }
-          }
-        } catch (e) {}
-        return;
-      }
+      if (!workerUrl) return;
 
       try {
-        const res = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}?cb=${Date.now()}`);
+        const res = await fetch(workerUrl + '?cb=' + Date.now());
         if (res.ok) {
-          const data = await res.json();
-          if (lastKnownSha && data.sha !== lastKnownSha) {
-            lastKnownSha = data.sha;
-            const decodedContent = decodeURIComponent(escape(atob(data.content)));
-            dataset = JSON.parse(decodedContent);
+          const freshData = await res.json();
+          const freshStr = JSON.stringify(freshData);
+          if (freshStr !== JSON.stringify(dataset)) {
+            dataset = freshData;
             syncBallToLastMessageAuthor(dataset);
             render();
             if (activeChatItem) {
@@ -2124,135 +2059,63 @@
                 renderChatThread();
               }
             }
-            showToast('New remote message received from GitHub!', '⚡');
-          } else {
-            lastKnownSha = data.sha;
+            showToast('Real-time database update received!', '⚡');
           }
         }
       } catch (e) {}
     }
 
-    function startGitHubPolling() {
-      if (ghPollInterval) clearInterval(ghPollInterval);
-      ghPollInterval = setInterval(checkGitHubForUpdates, 6000);
+    function startDatabasePolling() {
+      if (dbPollInterval) clearInterval(dbPollInterval);
+      dbPollInterval = setInterval(checkDatabaseForUpdates, 5000);
     }
 
-    // Save changes: In Live Mode saves silently to Cloudflare KV DB (ZERO Git commits!) or commits via PAT
-    function saveChanges(commitMessage) {
-      if (activeDataSource === 'github') {
-        saveToGitHub(commitMessage);
+    // Save changes: In Live Mode saves silently to Cloudflare KV DB (Zero GitHub Tokens!); In Local Mode saves in localStorage
+    function saveChanges(logMsg) {
+      if (activeDataSource !== 'local') {
+        saveToDatabase();
       } else {
         broadcastLocalChange();
         showToast('Saved locally & synced across tabs! Use "Export" to download JSON file.', '💾');
       }
     }
 
-    // Save dataset TO Cloudflare KV Database (ZERO Git commits!) or fallback to GitHub PAT
-    async function saveToGitHub(commitMessage) {
+    // Save dataset TO Cloudflare KV Database (Zero GitHub Tokens!)
+    async function saveToDatabase() {
       const workerUrl = localStorage.getItem('worker_url');
 
-      // 1. Save to Cloudflare KV Database silently (ZERO Git Commits!)
-      if (workerUrl) {
-        showToast('Saving to Cloudflare Database...', '⏳');
-        try {
-          const res = await fetch(workerUrl, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              dataset: dataset,
-              author: currentUser
-            })
-          });
-
-          if (res.ok) {
-            broadcastLocalChange();
-            showToast('Saved silently to Cloudflare Database! (Zero Git commits) ⚡', '✅');
-            return;
-          } else {
-            const err = await res.json();
-            showToast(`Database Error: ${err.error || 'Request failed'}`, '❌');
-          }
-        } catch (err) {
-          console.error(err);
-          showToast(`Database Connection Failed: ${err.message}`, '❌');
-        }
-      }
-
-      // 2. Direct PAT token fallback if Worker KV is not configured
-      let token = localStorage.getItem('gh_token');
-      if (!token) {
-        const choice = prompt('Enter your Cloudflare Worker URL or GitHub PAT Token:');
-        if (choice && choice.trim()) {
-          const val = choice.trim();
-          if (val.startsWith('http://') || val.startsWith('https://')) {
-            localStorage.setItem('worker_url', val);
-            return saveToGitHub(commitMessage);
-          } else {
-            token = val;
-            localStorage.setItem('gh_token', token);
-          }
+      if (!workerUrl) {
+        const newUrl = prompt('Enter your Cloudflare Worker URL to connect to your Database:');
+        if (newUrl && newUrl.trim()) {
+          localStorage.setItem('worker_url', newUrl.trim());
+          return saveToDatabase();
         } else {
-          showToast('Worker Database URL or Token required to save live!', '💡');
+          showToast('Worker Database URL required to save live!', '💡');
           return;
         }
       }
 
-      showToast('Committing update to GitHub repository...', '⏳');
-
+      showToast('Saving to Cloudflare Database...', '⏳');
       try {
-        const currentToken = localStorage.getItem('gh_token');
-        const getRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
-          headers: { 'Authorization': `token ${currentToken}` }
-        });
-
-        if (!getRes.ok) {
-          if (getRes.status === 403 || getRes.status === 401) {
-            localStorage.removeItem('gh_token');
-            showToast('GitHub Token invalid or lacks write access. Saved token cleared.', '❌');
-            return;
-          }
-          throw new Error('Could not fetch file SHA');
-        }
-
-        const fileInfo = await getRes.json();
-        const sha = fileInfo.sha;
-
-        const jsonString = JSON.stringify(dataset, null, 2);
-        const encodedContent = btoa(unescape(encodeURIComponent(jsonString)));
-
-        const putRes = await fetch(`https://api.github.com/repos/${REPO_OWNER}/${REPO_NAME}/contents/${FILE_PATH}`, {
-          method: 'PUT',
-          headers: {
-            'Authorization': `token ${currentToken}`,
-            'Content-Type': 'application/json',
-            'Accept': 'application/vnd.github.v3+json',
-            'User-Agent': 'PR-Tracker-App'
-          },
+        const res = await fetch(workerUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            message: `${commitMessage} (by ${currentUser})`,
-            content: encodedContent,
-            sha: sha,
-            branch: 'main'
+            dataset: dataset,
+            author: currentUser
           })
         });
 
-        if (putRes.ok) {
-          const result = await putRes.json();
-          lastKnownSha = result.content.sha;
+        if (res.ok) {
           broadcastLocalChange();
-          showToast(`Saved & committed to GitHub! (${result.commit.sha.substring(0, 7)})`, '✅');
+          showToast('Saved silently to Cloudflare Database! ⚡', '✅');
         } else {
-          const errData = await putRes.json();
-          if (putRes.status === 403 || putRes.status === 404 || (errData.message && errData.message.includes('Resource not accessible'))) {
-            localStorage.removeItem('gh_token');
-            showToast('GitHub Token lacks write access! Cleared token.', '❌');
-          } else {
-            showToast(`GitHub Save Error: ${errData.message}`, '❌');
-          }
+          const err = await res.json();
+          showToast(`Database Error: ${err.error || 'Save failed'}`, '❌');
         }
       } catch (err) {
         console.error(err);
-        showToast(`Commit failed: ${err.message}`, '❌');
+        showToast(`Database Connection Failed: ${err.message}`, '❌');
       }
     }
 
@@ -2863,8 +2726,8 @@
     applyUserTheme(currentUser);
     updateDataSourceAttribute(activeDataSource);
 
-    if (activeDataSource === 'github') {
-      syncFromGitHub();
+    if (activeDataSource !== 'local') {
+      syncFromDatabase();
     } else {
       loadLocalJson();
     }

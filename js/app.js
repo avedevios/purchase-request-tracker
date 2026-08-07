@@ -59,7 +59,7 @@ function render() {
     handleAddSubcat, handleAddItem, handleSetupEditableText, getFilteredData
   );
   renderKanbanView(
-    filtered, currentFilter, handleUpdateItemProp, handleOpenChat, handleSetupEditableText
+    filtered, currentFilter, handleUpdateItemProp, handleOpenChat, handleSetupEditableText, currentUser
   );
 }
 

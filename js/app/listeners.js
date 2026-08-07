@@ -1,11 +1,12 @@
+/** @module app/listeners — Event listeners for user switcher, DB settings, view toggle, shortcuts, and chat modal. */
 import { SVG_FOLD_ALL, SVG_UNFOLD_ALL } from '../config.js';
-import { dataset, syncFromDatabase, initWebSocketConnection, saveChanges } from '../api.js';
+import { dataset, syncFromDatabase, initWebSocketConnection } from '../api.js';
 import { getItemCategoryInfo } from '../components.js';
 import { applyUserTheme, toggleTheme } from '../ui/theme.js';
 import { showToast } from '../ui/toast.js';
 import { postNewChatMessage } from '../ui/modal.js';
 import { initStatCardEvents } from '../views/stats.js';
-import { collapsedLevel1, collapsedLevel2 } from '../views/table.js';
+import { collapsedLevel1, collapsedLevel2, initTableSortListeners } from '../views/table.js';
 
 export function initGlobalListeners(
   getCurrentUser, setCurrentUser,
@@ -19,7 +20,7 @@ export function initGlobalListeners(
     if (btnUser === getCurrentUser()) btn.classList.add('active');
     else btn.classList.remove('active');
 
-    btn.addEventListener('click', (e) => {
+    btn.addEventListener('click', () => {
       userButtons.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       const newUser = btn.getAttribute('data-user');
@@ -34,7 +35,7 @@ export function initGlobalListeners(
   // 2. Database Sync Settings Button
   const dbSettingsBtn = document.getElementById('dbSettingsBtn');
   if (dbSettingsBtn) {
-    dbSettingsBtn.addEventListener('click', (e) => {
+    dbSettingsBtn.addEventListener('click', () => {
       const currentWorker = localStorage.getItem('worker_url') || '';
       const newUrl = prompt('⚡ Cloudflare Worker Database URL:', currentWorker);
       if (newUrl === null) return;
@@ -57,7 +58,7 @@ export function initGlobalListeners(
   const foldToggleBtn = document.getElementById('foldToggleBtn');
   const foldToggleSvg = document.getElementById('foldToggleSvg');
   if (foldToggleBtn) {
-    foldToggleBtn.addEventListener('click', (e) => {
+    foldToggleBtn.addEventListener('click', () => {
       isAllFolded = !isAllFolded;
       if (isAllFolded) {
         dataset.forEach(item => {
@@ -80,14 +81,17 @@ export function initGlobalListeners(
   // 4. Stats Summary Cards Filtering
   initStatCardEvents(getCurrentFilter, setCurrentFilter, render);
 
-  // 5. View Switcher (Table View vs Kanban Board View)
+  // 5. Table Header Column Sorting
+  initTableSortListeners(render);
+
+  // 6. View Switcher (Table View vs Kanban Board View)
   const tableBtn = document.getElementById('tableViewBtn');
   const kanbanBtn = document.getElementById('kanbanViewBtn');
   const tableView = document.getElementById('tableView');
   const kanbanView = document.getElementById('kanbanView');
 
   if (tableBtn && kanbanBtn) {
-    tableBtn.addEventListener('click', (e) => {
+    tableBtn.addEventListener('click', () => {
       tableBtn.classList.add('active');
       kanbanBtn.classList.remove('active');
       if (tableView) tableView.style.display = 'block';
@@ -95,7 +99,7 @@ export function initGlobalListeners(
       if (foldToggleBtn) foldToggleBtn.style.display = 'inline-flex';
     });
 
-    kanbanBtn.addEventListener('click', (e) => {
+    kanbanBtn.addEventListener('click', () => {
       kanbanBtn.classList.add('active');
       tableBtn.classList.remove('active');
       if (tableView) tableView.style.display = 'none';
@@ -104,20 +108,19 @@ export function initGlobalListeners(
     });
   }
 
-
-  // 6. Theme Toggle Button (Light / Dark)
+  // 7. Theme Toggle Button (Light / Dark)
   const themeBtn = document.getElementById('themeToggleBtn');
   const themeToggleSvg = document.getElementById('themeToggleSvg');
   if (themeBtn) {
-    themeBtn.addEventListener('click', (e) => {
+    themeBtn.addEventListener('click', () => {
       toggleTheme(themeToggleSvg, themeBtn);
     });
   }
 
-  // 7. Export JSON Button
+  // 8. Export JSON Button
   const exportBtn = document.getElementById('exportBtn');
   if (exportBtn) {
-    exportBtn.addEventListener('click', (e) => {
+    exportBtn.addEventListener('click', () => {
       const exportObject = getFilteredData();
       const blob = new Blob([JSON.stringify(exportObject, null, 2)], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
@@ -130,7 +133,7 @@ export function initGlobalListeners(
     });
   }
 
-  // 8. Discussion Chat Modal Events
+  // 9. Discussion Chat Modal Events
   const chatInput = document.getElementById('chatInput');
   const sendChatBtn = document.getElementById('sendChatBtn');
   const chatThreadContainer = document.getElementById('chatThreadContainer');
@@ -139,14 +142,14 @@ export function initGlobalListeners(
 
   if (sendChatBtn) {
     sendChatBtn.addEventListener('click', () => {
-      postNewChatMessage(chatInput, getCurrentUser(), chatThreadContainer, render, saveChanges);
+      postNewChatMessage(chatInput, getCurrentUser(), chatThreadContainer, render);
     });
   }
   if (chatInput) {
     chatInput.addEventListener('keydown', (e) => {
       if (e.key === 'Enter' && !e.shiftKey) {
         e.preventDefault();
-        postNewChatMessage(chatInput, getCurrentUser(), chatThreadContainer, render, saveChanges);
+        postNewChatMessage(chatInput, getCurrentUser(), chatThreadContainer, render);
       }
     });
   }
@@ -162,4 +165,24 @@ export function initGlobalListeners(
       if (e.target === chatModal) chatModal.style.display = 'none';
     });
   }
+
+  // 10. Global Keyboard Shortcuts (Escape, T, N)
+  window.addEventListener('keydown', (e) => {
+    const isEditing = ['INPUT', 'TEXTAREA'].includes(e.target.tagName) || e.target.isContentEditable;
+
+    if (e.key === 'Escape') {
+      if (chatModal && chatModal.style.display !== 'none') {
+        chatModal.style.display = 'none';
+      } else if (getCurrentFilter() !== 'ALL') {
+        setCurrentFilter('ALL');
+        render();
+        showToast('Reset filter to show all items', '📋');
+      }
+    } else if (!isEditing) {
+      if (e.key === 't' || e.key === 'T') {
+        if (tableView?.style.display === 'none') tableBtn?.click();
+        else kanbanBtn?.click();
+      }
+    }
+  });
 }

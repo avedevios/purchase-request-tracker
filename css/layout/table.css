@@ -1,20 +1,24 @@
 /* Table View Layout */
 .table-container {
-  background: var(--bg-card);
+  background: var(--glass-bg);
+  backdrop-filter: var(--glass-blur);
+  -webkit-backdrop-filter: var(--glass-blur);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
-  overflow: hidden;
+  overflow-x: auto;
   box-shadow: var(--card-shadow);
 }
 
 table {
   width: 100%;
+  table-layout: fixed;
   border-collapse: collapse;
   text-align: left;
   font-size: 0.825rem;
 }
 
 th {
+  position: relative;
   background: var(--bg-subtle);
   padding: 0.5rem 0.65rem;
   color: var(--text-muted);
@@ -24,6 +28,39 @@ th {
   letter-spacing: 0.04em;
   border-bottom: 1px solid var(--border-color);
 }
+
+.col-resizer {
+  position: absolute;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  width: 6px;
+  cursor: col-resize;
+  user-select: none;
+  touch-action: none;
+  z-index: 10;
+  transition: background-color 0.15s ease;
+}
+
+.col-resizer:hover,
+.col-resizer.resizing {
+  background: var(--header-accent-bar);
+  opacity: 0.8;
+}
+
+th.sortable {
+  cursor: pointer;
+  user-select: none;
+  transition: color 0.15s ease, background-color 0.15s ease;
+}
+
+th.sortable:hover {
+  color: var(--text-main);
+  background: var(--bg-card);
+}
+
+th.sort-asc::after { content: ' ▲'; font-size: 0.65rem; color: var(--header-accent-bar); }
+th.sort-desc::after { content: ' ▼'; font-size: 0.65rem; color: var(--header-accent-bar); }
 
 td {
   padding: 0.4rem 0.65rem;
@@ -66,6 +103,9 @@ tr.level2-item-row td:first-child { padding-left: 1.25rem; }
   align-items: center;
   gap: 0.4rem;
   width: 100%;
+  position: sticky;
+  left: 0.65rem;
+  max-width: calc(100vw - 4.5rem);
 }
 
 .fold-arrow {

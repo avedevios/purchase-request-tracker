@@ -33,6 +33,7 @@
 .duty-badge {
   background: var(--user-theme-bg);
   color: var(--user-theme-color);
+  -webkit-text-fill-color: var(--user-theme-color);
   border: 1px solid var(--user-theme-border);
 }
 
@@ -77,9 +78,9 @@
 }
 
 .prio-btn:hover { color: var(--text-main); background: var(--bg-subtle); }
-.prio-btn.active.prio-must { background: #475569; color: #ffffff; font-weight: 700; }
-.prio-btn.active.prio-should { background: #64748b; color: #ffffff; font-weight: 700; }
-.prio-btn.active.prio-could { background: #94a3b8; color: #ffffff; font-weight: 700; }
+.prio-btn.active.prio-must { background: #e11d48; color: #ffffff; font-weight: 700; box-shadow: 0 0 8px rgba(225, 29, 72, 0.4); }
+.prio-btn.active.prio-should { background: #ea580c; color: #ffffff; font-weight: 700; box-shadow: 0 0 8px rgba(234, 88, 12, 0.4); }
+.prio-btn.active.prio-could { background: #16a34a; color: #ffffff; font-weight: 700; box-shadow: 0 0 8px rgba(22, 163, 74, 0.4); }
 
 /* Badge Selects */
 .badge-select {

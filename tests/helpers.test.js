@@ -12,6 +12,8 @@ import {
   renderResponseBtn
 } from '../js/components.js';
 
+import { sortDataset } from '../js/views/table.js';
+
 
 
 describe('EDSL HTML Builder Helpers', () => {
@@ -80,4 +82,24 @@ describe('Response Button Rendering', () => {
   });
 });
 
+// --- SUITE 9: DATASET SORTING LOGIC ---
+describe('Dataset Sorting Logic', () => {
+  const sampleItems = [
+    { issue: 'Alpha', priority: 'Could', status: 'Deprecated' },
+    { issue: 'Beta', priority: 'Must', status: 'To Do' },
+    { issue: 'Gamma', priority: 'Should', status: 'Fixed' }
+  ];
 
+  it('should sort items by priority (Must > Should > Could)', () => {
+    const sorted = sortDataset(sampleItems, 'priority', 'desc');
+    assert.equal(sorted[0].priority, 'Must');
+    assert.equal(sorted[1].priority, 'Should');
+    assert.equal(sorted[2].priority, 'Could');
+  });
+
+  it('should sort items alphabetically by issue text', () => {
+    const sorted = sortDataset(sampleItems, 'issue', 'asc');
+    assert.equal(sorted[0].issue, 'Alpha');
+    assert.equal(sorted[2].issue, 'Gamma');
+  });
+});
